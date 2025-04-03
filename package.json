@@ -4,7 +4,9 @@
   "description": "Tự động build sitemap, robots.txt và schema cho website tĩnh.",
   "main": "seo-tools/seo_build_script.js",
   "scripts": {
-    "build-seo": "node seo-tools/seo_build_script.js"
+      "build-seo": "node seo-tools/seo_build_script.js",
+      "inject-schema": "node seo-tools/inject_schema_script.js",
+      "build-all": "npm run build-seo && npm run inject-schema"
   },
   "author": "Anh Khang",
   "license": "MIT"
