@@ -50,6 +50,10 @@
               <label class="form-label">Nội dung yêu cầu</label>
               <textarea class="form-control" name="message" rows="4" required></textarea>
             </div>
+            <!-- Honeypot -->
+            <div style="display:none;">
+              <input type="text" name="botcheck">
+            </div>
             <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
           </form>
         </div>
@@ -68,7 +72,7 @@
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
-      fetch("https://script.google.com/macros/s/AKfycbxSXsHplAvyz0h-BhwUBuBYjMnnqOHS9hmE8IBEVMNCMDnUKCYbwTW5yjPRzUKU5rHr/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbwlogKzlsihJ1NE1ZfxTfaytCLmtGXOV0gx0bRsfknYl6f2rawGQUEGlfZVJx568jrA/exec", {
         method: "POST",
         body: formData
       })
