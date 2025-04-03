@@ -1,20 +1,30 @@
 const fs = require('fs');
 const path = require('path');
 
-const metaTags = `
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="image/favicon-32.png" sizes="32x32">
-  <link rel="icon" href="image/favicon-192.png" sizes="192x192">`;
-
 const rootDir = path.resolve(__dirname, '../');
-const htmlFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.html'));
 
-htmlFiles.forEach(file => {
-  const htmlPath = path.join(rootDir, file);
-  let content = fs.readFileSync(htmlPath, 'utf8');
-  if (content.includes('rel="manifest"')) return;
+function scanAndInjectMeta(folder) {
+  const files = fs.readdirSync(folder);
+  files.forEach(file => {
+    const filePath = path.join(folder, file);
+    const stat = fs.statSync(filePath);
 
-  content = content.replace('</head>', `${metaTags}\n</head>`);
-  fs.writeFileSync(htmlPath, content, 'utf8');
-  console.log(`✅ Chèn manifest & favicon: ${file}`);
-});
+    if (stat.isDirectory()) {
+      scanAndInjectMeta(filePath);
+    } else if (file.endsWith('.html')) {
+      let html = fs.readFileSync(filePath, 'utf8');
+
+      // Nếu chưa có meta charset, description, viewport → chèn
+      if (!html.includes('name="viewport"')) {
+        const metaTags = `
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tuvanphongsach.com - Giải pháp phòng sạch chuyên nghiệp">`;
+        html = html.replace('<head>', `<head>${metaTags}`);
+        fs.writeFileSync(filePath, html, 'utf8');
+        console.log(`✅ Đã chèn meta description & viewport vào ${file}`);
+      }
+    }
+  });
+}
+
+scanAndInjectMeta(rootDir);

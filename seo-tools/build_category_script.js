@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const rootDir = path.resolve(__dirname, '../');
 const categoryDirs = [
   { dir: 'ahu', title: 'AHU - Phòng sạch' },
   { dir: 'fcu', title: 'FCU - Thiết bị phòng sạch' },
@@ -8,8 +9,6 @@ const categoryDirs = [
   { dir: 'air-cooled', title: 'Air Cooled - Hệ thống lạnh' },
   { dir: 'tu-van-phong-sach', title: 'Tư vấn phòng sạch' }
 ];
-
-const rootDir = path.resolve(__dirname, '../');
 
 categoryDirs.forEach(category => {
   const dirPath = path.join(rootDir, category.dir);
@@ -23,8 +22,7 @@ categoryDirs.forEach(category => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${category.title}</title>
   <meta name="description" content="Danh mục ${category.title} - Tuvanphongsach.com">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link href="/assets/css/style.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -45,18 +43,9 @@ categoryDirs.forEach(category => {
 
     const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || file;
     const desc = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
-
-    // Tìm og:image
     let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
-
-    // Nếu không có, tìm <img src="">
     if (!img) {
-      img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1];
-    }
-
-    // Nếu vẫn không có, gán ảnh mặc định
-    if (!img) {
-      img = '/image/default.jpg';
+      img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1] || '/image/default.jpg';
     }
 
     content += `
@@ -87,7 +76,7 @@ categoryDirs.forEach(category => {
 </html>`;
 
   fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
-  console.log(`✅ Đã tạo danh mục: ${category.dir}/index.html`);
+  console.log(`✅ Đã build danh mục: ${category.dir}/index.html`);
 });
 
 console.log('\n🎯 Hoàn tất build danh mục!');

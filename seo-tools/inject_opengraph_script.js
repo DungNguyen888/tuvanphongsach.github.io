@@ -1,29 +1,42 @@
 const fs = require('fs');
 const path = require('path');
 
-const domain = 'https://tuvanphongsach.com';
-const defaultImage = `${domain}/image/og-image.jpg`;
-
 const rootDir = path.resolve(__dirname, '../');
-const htmlFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.html'));
 
-htmlFiles.forEach(file => {
-  const htmlPath = path.join(rootDir, file);
-  let content = fs.readFileSync(htmlPath, 'utf8');
+function scanAndInject(folder) {
+  const files = fs.readdirSync(folder);
+  files.forEach(file => {
+    const filePath = path.join(folder, file);
+    const stat = fs.statSync(filePath);
 
-  if (content.includes('property="og:title"')) return;
+    if (stat.isDirectory()) {
+      scanAndInject(filePath);
+    } else if (file.endsWith('.html')) {
+      let html = fs.readFileSync(filePath, 'utf8');
 
-  const title = (content.match(/<title>(.*?)<\/title>/) || [])[1] || 'Tuvanphongsach.com';
-  const desc = (content.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
+      // Kiểm tra đã có og:image chưa
+      if (!html.includes('property="og:image"')) {
+        // Tìm ảnh đầu tiên
+        let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
+        if (!img) {
+          img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1] || '/image/default.jpg';
+        }
 
-  const ogTags = `
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${defaultImage}">
-  <meta property="og:url" content="${domain}/${file}">
-  <meta property="og:type" content="website">`;
+        const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || 'Tuvanphongsach.com';
+        const description = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
 
-  content = content.replace('</head>', `${ogTags}\n</head>`);
-  fs.writeFileSync(htmlPath, content, 'utf8');
-  console.log(`✅ Chèn Open Graph: ${file}`);
-});
+        const ogTags = `
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:image" content="${img}">
+<meta property="og:url" content="https://tuvanphongsach.com${filePath.replace(rootDir, '').replace(/\\/g, '/')}">`;
+
+        html = html.replace('</head>', `${ogTags}\n</head>`);
+        fs.writeFileSync(filePath, html, 'utf8');
+        console.log(`✅ Đã chèn OpenGraph vào ${file}`);
+      }
+    }
+  });
+}
+
+scanAndInject(rootDir);

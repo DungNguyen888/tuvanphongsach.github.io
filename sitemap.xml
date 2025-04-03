@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://tuvanphongsach.com/</loc>
-    <lastmod>2025-04-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1</priority>
-  </url>
-  <url>
-    <loc>https://tuvanphongsach.com/contact.html</loc>
-    <lastmod>2025-04-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://tuvanphongsach.com/camon.html</loc>
-    <lastmod>2025-04-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+<url><loc>https://tuvanphongsach.com/ahu/</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/ahu/services.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/ahu.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/air-cooled/</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/camon.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/chillers/</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/contact.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/danh-muc.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/fcu/</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/</loc><priority>1</priority></url>
+<url><loc>https://tuvanphongsach.com/services.html</loc><priority>0.8</priority></url>
+<url><loc>https://tuvanphongsach.com/tu-van-phong-sach/</loc><priority>0.8</priority></url>
 </urlset>
