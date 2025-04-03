@@ -4,33 +4,28 @@ const path = require('path');
 const rootDir = path.resolve(__dirname, '../');
 const outputDir = path.join(rootDir, 'seo-tools/generated');
 
-fs.readdirSync(outputDir).forEach(file => {
-  if (file.startsWith('schema-') && file.endsWith('.json')) {
-    const htmlName = file.replace('schema-', '').replace('.json', '.html');
-    const htmlPath = findHtmlFile(rootDir, htmlName);
-    if (htmlPath) {
-      const schema = fs.readFileSync(path.join(outputDir, file), 'utf8');
-      let html = fs.readFileSync(htmlPath, 'utf8');
-      if (!html.includes('application/ld+json')) {
-        html = html.replace('</head>', `<script type="application/ld+json">${schema}</script>\n</head>`);
-        fs.writeFileSync(htmlPath, html, 'utf8');
-        console.log(`✅ Đã chèn Schema vào ${htmlName}`);
+function injectSchema(folder) {
+  const files = fs.readdirSync(folder);
+  files.forEach(file => {
+    const filePath = path.join(folder, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat.isDirectory()) {
+      injectSchema(filePath);
+    } else if (file.endsWith('.html')) {
+      const html = fs.readFileSync(filePath, 'utf8');
+      const schemaFileName = `schema-${filePath.replace(rootDir, '').replace(/\//g, '-').replace('.html', '')}.json`;
+      const schemaFilePath = path.join(outputDir, schemaFileName);
+
+      if (fs.existsSync(schemaFilePath) && !html.includes('application/ld+json')) {
+        const schema = fs.readFileSync(schemaFilePath, 'utf8');
+        const newHtml = html.replace('</head>', `<script type="application/ld+json">${schema}</script>\n</head>`);
+        fs.writeFileSync(filePath, newHtml, 'utf8');
+        console.log(`✅ Đã chèn Schema vào ${filePath.replace(rootDir, '')}`);
       }
     }
-  }
-});
-
-function findHtmlFile(dir, fileName) {
-  const files = fs.readdirSync(dir);
-  for (const file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-    if (stat.isDirectory()) {
-      const result = findHtmlFile(filePath, fileName);
-      if (result) return result;
-    } else if (file === fileName) {
-      return filePath;
-    }
-  }
-  return null;
+  });
 }
+
+injectSchema(rootDir);
+console.log('🎯 Hoàn tất inject schema!');

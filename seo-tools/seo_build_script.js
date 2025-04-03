@@ -2,61 +2,81 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.resolve(__dirname, '../');
-const outputDir = path.join(rootDir, 'seo-tools/generated');
+const categoryDirs = [
+  { dir: 'ahu', title: 'AHU - Phòng sạch' },
+  { dir: 'fcu', title: 'FCU - Thiết bị phòng sạch' },
+  { dir: 'chillers', title: 'Chillers - Giải pháp làm lạnh' },
+  { dir: 'air-cooled', title: 'Air Cooled - Hệ thống lạnh' },
+  { dir: 'tu-van-phong-sach', title: 'Tư vấn phòng sạch' }
+];
 
-// Tạo thư mục output nếu chưa có
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
-}
+categoryDirs.forEach(category => {
+  const dirPath = path.join(rootDir, category.dir);
+  if (!fs.existsSync(dirPath)) return;
 
-let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-let robots = `User-agent: *\nAllow: /\nSitemap: https://tuvanphongsach.com/sitemap.xml\n`;
+  let content = `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${category.title}</title>
+  <meta name="description" content="Danh mục ${category.title} - Tuvanphongsach.com">
+  <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Tuvanphongsach.com</a>
+    </div>
+  </nav>
+  <section class="py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">${category.title}</h1>
+      <div class="row">`;
 
-const htmlFiles = [];
+  const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
 
-function scanFolder(folder) {
-  const files = fs.readdirSync(folder);
   files.forEach(file => {
-    const filePath = path.join(folder, file);
-    const stat = fs.statSync(filePath);
+    const filePath = path.join(dirPath, file);
+    let html = fs.readFileSync(filePath, 'utf8');
 
-    if (stat.isDirectory()) {
-      scanFolder(filePath);
-    } else if (file.endsWith('.html')) {
-      const relativePath = filePath.replace(rootDir, '').replace(/\\/g, '/');
-      htmlFiles.push({ path: relativePath, fullPath: filePath });
+    const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || file;
+    const desc = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || 'Bài viết về phòng sạch';
+    let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
+    if (!img) {
+      img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1] || '/image/default.jpg';
     }
+
+    content += `
+        <div class="col-md-4 mb-4">
+          <a href="./${file}" class="text-decoration-none text-dark">
+            <div class="card h-100">
+              <img src="${img}" class="card-img-top" alt="${title}">
+              <div class="card-body">
+                <h5 class="card-title">${title}</h5>
+                <p class="card-text">${desc}</p>
+              </div>
+            </div>
+          </a>
+        </div>`;
   });
-}
 
-scanFolder(rootDir);
+  content += `
+      </div>
+    </div>
+  </section>
+  <footer class="text-center mt-4">
+    <div class="container py-3">
+      &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>`;
 
-// Tạo schema & sitemap
-htmlFiles.forEach(file => {
-  const url = file.path.replace('/index.html', '/');
-  const htmlContent = fs.readFileSync(file.fullPath, 'utf8');
-
-  const title = (htmlContent.match(/<title>(.*?)<\/title>/) || [])[1] || 'Trang';
-  const priority = url === '/' ? 1.0 : 0.8;
-
-  // Schema
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": title,
-    "url": `https://tuvanphongsach.com${url}`
-  };
-
-  const schemaFileName = `schema-${file.path.replace(/\//g, '-').replace('.html', '')}.json`;
-  const schemaFilePath = path.join(outputDir, schemaFileName);
-  fs.writeFileSync(schemaFilePath, JSON.stringify(schema, null, 2), 'utf8');
-
-  // Sitemap
-  sitemap += `<url><loc>https://tuvanphongsach.com${url}</loc><priority>${priority}</priority></url>\n`;
+  fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
+  console.log(`✅ Đã build danh mục: ${category.dir}/index.html`);
 });
 
-sitemap += '</urlset>';
-fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), sitemap, 'utf8');
-fs.writeFileSync(path.join(rootDir, 'robots.txt'), robots, 'utf8');
-
-console.log('✅ Đã tạo sitemap.xml, robots.txt và schema đầy đủ cho toàn bộ site');
+console.log('\n🎯 Hoàn tất build danh mục!');
