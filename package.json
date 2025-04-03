@@ -1,12 +1,14 @@
 {
   "name": "seo-tools",
   "version": "1.0.0",
-  "description": "Tự động build sitemap, robots.txt và schema cho website tĩnh.",
+  "description": "Tự động build sitemap, robots.txt, schema, Open Graph, manifest cho website tĩnh.",
   "main": "seo-tools/seo_build_script.js",
   "scripts": {
-      "build-seo": "node seo-tools/seo_build_script.js",
-      "inject-schema": "node seo-tools/inject_schema_script.js",
-      "build-all": "npm run build-seo && npm run inject-schema"
+    "build-seo": "node seo-tools/seo_build_script.js",
+    "inject-schema": "node seo-tools/inject_schema_script.js",
+    "inject-opengraph": "node seo-tools/inject_opengraph_script.js",
+    "inject-meta": "node seo-tools/inject_meta_script.js",
+    "build-all": "npm run build-seo && npm run inject-schema && npm run inject-opengraph && npm run inject-meta"
   },
   "author": "Anh Khang",
   "license": "MIT"
