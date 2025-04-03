@@ -1,16 +1,28 @@
 const fs = require('fs');
 const path = require('path');
 
-const categoryDirs = ['ahu', 'fcu', 'chillers', 'air-cooled', 'tu-van-phong-sach'];
+const categoryDirs = [
+  { dir: 'ahu', title: 'AHU - Phòng sạch' },
+  { dir: 'fcu', title: 'FCU - Thiết bị phòng sạch' },
+  { dir: 'chillers', title: 'Chillers - Giải pháp làm lạnh' },
+  { dir: 'air-cooled', title: 'Air Cooled - Hệ thống lạnh' },
+  { dir: 'tu-van-phong-sach', title: 'Tư vấn phòng sạch' }
+];
+
 const rootDir = path.resolve(__dirname, '../');
 
-const templateHeader = `
+categoryDirs.forEach(category => {
+  const dirPath = path.join(rootDir, category.dir);
+  if (!fs.existsSync(dirPath)) return;
+
+  let content = `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh mục - Tuvanphongsach.com</title>
+  <title>${category.title}</title>
+  <meta name="description" content="Danh mục ${category.title} - Tuvanphongsach.com">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/style.css">
 </head>
@@ -22,27 +34,9 @@ const templateHeader = `
   </nav>
   <section class="py-5">
     <div class="container">
-      <h1 class="mb-4 text-center">Danh mục bài viết</h1>
+      <h1 class="mb-4 text-center">${category.title}</h1>
       <div class="row">`;
 
-const templateFooter = `
-      </div>
-    </div>
-  </section>
-  <footer class="text-center mt-4">
-    <div class="container py-3">
-      &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
-    </div>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>`;
-
-categoryDirs.forEach(dir => {
-  const dirPath = path.join(rootDir, dir);
-  if (!fs.existsSync(dirPath)) return;
-
-  let content = templateHeader;
   const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
 
   files.forEach(file => {
@@ -51,7 +45,16 @@ categoryDirs.forEach(dir => {
 
     const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || file;
     const desc = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
-    const img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1] || '/image/default.jpg';
+    let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
+
+    if (!img) {
+      img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1];
+    }
+
+    if (!img) {
+      console.warn(`⚠️ Bài viết thiếu hình ảnh: ${filePath}`);
+      img = '/image/default.jpg'; // fallback
+    }
 
     content += `
         <div class="col-md-4 mb-4">
@@ -67,9 +70,21 @@ categoryDirs.forEach(dir => {
         </div>`;
   });
 
-  content += templateFooter;
+  content += `
+      </div>
+    </div>
+  </section>
+  <footer class="text-center mt-4">
+    <div class="container py-3">
+      &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>`;
+
   fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
-  console.log(`✅ Đã tạo danh mục: ${dir}/index.html`);
+  console.log(`✅ Đã tạo danh mục: ${category.dir}/index.html`);
 });
 
 console.log('\n🎯 Hoàn tất build danh mục!');
