@@ -1,0 +1,53 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.banner, .service-banner, .contact-banner {
+  position: relative;
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+
+.banner::before, .service-banner::before, .contact-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.banner-content, .service-content, .contact-content {
+  position: relative;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.hotline-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #dc3545;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  z-index: 9999;
+}
+
+.hotline-button:hover {
+  background: #c82333;
+  text-decoration: none;
+}
+
+footer {
+  background: #212529;
+  color: white;
+  padding: 12px 0;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  color: #f8f9fa;
+  font-weight: bold;
+}
