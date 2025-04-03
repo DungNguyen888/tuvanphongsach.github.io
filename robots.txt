@@ -1,4 +1,4 @@
 User-agent: *
-Disallow:
+Allow: /
 
-Sitemap: https://www.tuvanphongsach.com/sitemap.xml
+Sitemap: https://tuvanphongsach.com/sitemap.xml

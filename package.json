@@ -1,0 +1,11 @@
+{
+  "name": "seo-tools",
+  "version": "1.0.0",
+  "description": "Tự động build sitemap, robots.txt và schema cho website tĩnh.",
+  "main": "seo-tools/seo_build_script.js",
+  "scripts": {
+    "build-seo": "node seo-tools/seo_build_script.js"
+  },
+  "author": "Anh Khang",
+  "license": "MIT"
+}
