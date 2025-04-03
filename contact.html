@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
-    form {
+    .form-container {
       background: #f8f9fa;
       padding: 30px;
       border-radius: 10px;
@@ -29,26 +29,8 @@
     <div class="container">
       <h2 class="mb-4 text-center">Gửi yêu cầu tư vấn</h2>
       <div class="row justify-content-center">
-        <div class="col-md-8">
-          <form id="contact-form">
-            <div class="mb-3">
-              <label class="form-label">Họ và tên</label>
-              <input type="text" class="form-control" name="name" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control" name="email" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Số điện thoại</label>
-              <input type="tel" class="form-control" name="phone" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Nội dung yêu cầu</label>
-              <textarea class="form-control" name="message" rows="4" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
-          </form>
+        <div class="col-md-10 form-container">
+          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfWO3lYInzPuEkiD363yBwD2iLg_dvmShNgsl60LJgary2PBA/viewform" width="100%" height="750" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
         </div>
       </div>
     </div>
@@ -59,28 +41,6 @@
       &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
     </div>
   </footer>
-
-  <script>
-    const form = document.getElementById("contact-form");
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      fetch("https://script.google.com/macros/s/AKfycbyLFiqTLHt7N1tPF67YxIZyvV4zGjhPjq0g3Z3BxsVPJv079iV9-isiyBOPY3IpdkIc/exec", {
-        method: "POST",
-        body: JSON.stringify({
-          name: form.name.value,
-          email: form.email.value,
-          phone: form.phone.value,
-          message: form.message.value
-        }),
-        headers: { "Content-Type": "application/json" }
-      }).then(() => {
-        alert("Gửi yêu cầu thành công!");
-        window.location.href = "camon.html";
-      }).catch(err => {
-        alert("Lỗi gửi yêu cầu: " + err);
-      });
-    });
-  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
