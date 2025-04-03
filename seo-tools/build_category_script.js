@@ -45,15 +45,18 @@ categoryDirs.forEach(category => {
 
     const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || file;
     const desc = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
+
+    // Tìm og:image
     let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
 
+    // Nếu không có, tìm <img src="">
     if (!img) {
       img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1];
     }
 
+    // Nếu vẫn không có, gán ảnh mặc định
     if (!img) {
-      console.warn(`⚠️ Bài viết thiếu hình ảnh: ${filePath}`);
-      img = '/image/default.jpg'; // fallback
+      img = '/image/default.jpg';
     }
 
     content += `
