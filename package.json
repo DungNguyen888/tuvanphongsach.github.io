@@ -8,7 +8,8 @@
     "inject-schema": "node seo-tools/inject_schema_script.js",
     "inject-opengraph": "node seo-tools/inject_opengraph_script.js",
     "inject-meta": "node seo-tools/inject_meta_script.js",
-    "build-all": "npm run build-seo && npm run inject-schema && npm run inject-opengraph && npm run inject-meta"
+    "build-category": "node seo-tools/build_category_script.js",
+    "build-all": "npm run build-seo && npm run inject-schema && npm run inject-opengraph && npm run inject-meta && npm run build-category"
   },
   "author": "Anh Khang",
   "license": "MIT"
