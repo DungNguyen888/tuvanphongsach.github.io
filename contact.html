@@ -49,29 +49,36 @@
         </div>
         <div class="col-md-6">
           <h4>Gửi yêu cầu tư vấn</h4>
-         <form action="https://formsubmit.io/send/mguardvn@gmail.com" method="POST">
-  <div class="mb-3">
-    <label class="form-label">Họ và tên</label>
-    <input type="text" class="form-control" name="name" placeholder="Nhập họ tên" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Email</label>
-    <input type="email" class="form-control" name="email" placeholder="Nhập email" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Số điện thoại</label>
-    <input type="tel" class="form-control" name="phone" placeholder="Nhập số điện thoại" required>
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Nội dung yêu cầu</label>
-    <textarea class="form-control" name="message" rows="4" placeholder="Nội dung yêu cầu" required></textarea>
-  </div>
-  <!-- Chống bot spam -->
-  <input name="_formsubmit_id" type="text" style="display:none">
-  <!-- Redirect sau khi gửi -->
-  <input type="hidden" name="_redirect" value="https://tuvanphongsach.com/camon.html">
-  <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
+       <form id="contact-form">
+  <input type="text" name="name" placeholder="Họ và tên" required>
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="tel" name="phone" placeholder="Số điện thoại" required>
+  <textarea name="message" placeholder="Nội dung yêu cầu" required></textarea>
+  <button type="submit">Gửi yêu cầu</button>
 </form>
+
+<script>
+  const form = document.getElementById("contact-form");
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    fetch("https://script.google.com/macros/s/AKfycbz0qnHA7B3rOkijskCo1EionrLmJHlwaaZ1PYumbqxikgZVrXlF65lj25uGSvFKPP4/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        name: form.name.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        message: form.message.value
+      }),
+      headers: { "Content-Type": "application/json" }
+    }).then(() => {
+      alert("Gửi yêu cầu thành công!");
+      form.reset();
+    }).catch(err => {
+      alert("Lỗi gửi yêu cầu: " + err);
+    });
+  });
+</script>
+
 
         </div>
       </div>
