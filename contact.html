@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Liên hệ tư vấn, hợp tác dịch vụ phòng sạch với Tuvanphongsach.com">
+  <meta name="description" content="Liên hệ tư vấn phòng sạch - Tuvanphongsach.com">
   <title>Liên hệ - Tuvanphongsach.com</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
@@ -29,8 +29,26 @@
     <div class="container">
       <h2 class="mb-4 text-center">Gửi yêu cầu tư vấn</h2>
       <div class="row justify-content-center">
-        <div class="col-md-10 form-container">
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfWO3lYInzPuEkiD363yBwD2iLg_dvmShNgsl60LJgary2PBA/viewform" width="100%" height="750" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        <div class="col-md-8 form-container">
+          <form id="contact-form">
+            <div class="mb-3">
+              <label class="form-label">Họ và tên</label>
+              <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Số điện thoại</label>
+              <input type="tel" class="form-control" name="phone" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nội dung yêu cầu</label>
+              <textarea class="form-control" name="message" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
+          </form>
         </div>
       </div>
     </div>
@@ -41,6 +59,26 @@
       &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
     </div>
   </footer>
+
+  <script>
+    const form = document.getElementById("contact-form");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      fetch("https://script.google.com/macros/s/AKfycbxX81vrgUjobNRlVflkDP9kVqEg5XI7k9A0dLnkLUGQPIkF4JhfoWNo4VsjCcynzFwO/exec", {
+        method: "POST",
+        body: new FormData(form)
+      }).then(response => {
+        if (response.ok) {
+          alert("Gửi yêu cầu thành công!");
+          form.reset();
+        } else {
+          alert("Lỗi gửi yêu cầu, vui lòng thử lại.");
+        }
+      }).catch(error => {
+        alert("Lỗi gửi yêu cầu: " + error);
+      });
+    });
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
