@@ -1,82 +1,98 @@
 const fs = require('fs');
 const path = require('path');
+const cheerio = require('cheerio');
 
-const rootDir = path.resolve(__dirname, '../');
-const categoryDirs = [
-  { dir: 'ahu', title: 'AHU - Phòng sạch' },
-  { dir: 'fcu', title: 'FCU - Thiết bị phòng sạch' },
-  { dir: 'chillers', title: 'Chillers - Giải pháp làm lạnh' },
-  { dir: 'air-cooled', title: 'Air Cooled - Hệ thống lạnh' },
-  { dir: 'tu-van-phong-sach', title: 'Tư vấn phòng sạch' }
-];
+const contentDir = './category';
+const postDir = './posts';
+const outputFile = path.join(contentDir, 'index.html');
 
-categoryDirs.forEach(category => {
-  const dirPath = path.join(rootDir, category.dir);
-  if (!fs.existsSync(dirPath)) return;
+const defaultImage = '/image/default.jpg';
 
-  let content = `
-<!DOCTYPE html>
+const getMeta = (html, selector) => {
+  const $ = cheerio.load(html);
+  return $(selector).attr('content') || '';
+};
+
+const getOGImage = ($) => {
+  return $('meta[property="og:image"]').attr('content') || $('img').first().attr('src') || defaultImage;
+};
+
+const categories = {};
+
+fs.readdirSync(postDir).forEach(file => {
+  if (!file.endsWith('.html')) return;
+  const filePath = path.join(postDir, file);
+  const html = fs.readFileSync(filePath, 'utf8');
+  const $ = cheerio.load(html);
+
+  const category = getMeta(html, 'meta[name="category"]');
+  const title = getMeta(html, 'meta[name="title"]') || $('title').text();
+  const description = getMeta(html, 'meta[name="description"]') || $('p').first().text();
+  const image = getOGImage($);
+
+  if (!categories[category]) categories[category] = [];
+  categories[category].push({ title, description, image, file });
+});
+
+const buildCategoryIndex = () => {
+  let html = `<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${category.title}</title>
-  <meta name="description" content="Danh mục ${category.title} - Tuvanphongsach.com">
-  <link href="/assets/css/style.css" rel="stylesheet">
+  <title>Danh mục bài viết - Tư vấn Phòng Sạch</title>
+  <meta name="description" content="Danh sách các danh mục bài viết trên tuvanphongsach.com">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Danh mục bài viết",
+    "mainEntity": [
+      ${Object.entries(categories).map(([cat, posts]) => `{
+        "@type": "ItemList",
+        "name": "${cat}",
+        "itemListElement": [
+          ${posts.map((p, i) => `{
+            "@type": "ListItem",
+            "position": ${i + 1},
+            "url": "/posts/${p.file}",
+            "name": "${p.title}"
+          }`).join(',
+')}
+        ]
+      }`).join(',
+')}
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="/">Tuvanphongsach.com</a>
-    </div>
-  </nav>
-  <section class="py-5">
-    <div class="container">
-      <h1 class="mb-4 text-center">${category.title}</h1>
-      <div class="row">`;
+  <h1>Danh mục bài viết</h1>
+  <div class="category-grid">
+`;
 
-  const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
-
-  files.forEach(file => {
-    const filePath = path.join(dirPath, file);
-    let html = fs.readFileSync(filePath, 'utf8');
-
-    const title = (html.match(/<title>(.*?)<\/title>/) || [])[1] || file;
-    const desc = (html.match(/<meta name="description" content="(.*?)"/) || [])[1] || '';
-    let img = (html.match(/<meta property="og:image" content="(.*?)"/) || [])[1];
-    if (!img) {
-      img = (html.match(/<img[^>]*src="([^"]*)"/) || [])[1] || '/image/default.jpg';
-    }
-
-    content += `
-        <div class="col-md-4 mb-4">
-          <a href="./${file}" class="text-decoration-none text-dark">
-            <div class="card h-100">
-              <img src="${img}" class="card-img-top" alt="${title}">
-              <div class="card-body">
-                <h5 class="card-title">${title}</h5>
-                <p class="card-text">${desc}</p>
-              </div>
-            </div>
-          </a>
-        </div>`;
+  Object.entries(categories).forEach(([cat, posts]) => {
+    html += `<section class="category-block">
+      <h2>${cat}</h2>
+      <div class="post-list">
+        ${posts.map(p => `
+        <a href="/posts/${p.file}" class="post-item">
+          <img src="${p.image}" alt="${p.title}">
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+        </a>`).join('\n')}
+      </div>
+    </section>`;
   });
 
-  content += `
-      </div>
-    </div>
-  </section>
-  <footer class="text-center mt-4">
-    <div class="container py-3">
-      &copy; 2025 Tuvanphongsach.com - Chuyên gia giải pháp phòng sạch
-    </div>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  html += `
+  </div>
 </body>
 </html>`;
 
-  fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
-  console.log(`✅ Đã build danh mục: ${category.dir}/index.html`);
-});
+  fs.writeFileSync(outputFile, html);
+  console.log('✅ Đã tạo category index tại:', outputFile);
+};
 
-console.log('\n🎯 Hoàn tất build danh mục!');
+buildCategoryIndex();
