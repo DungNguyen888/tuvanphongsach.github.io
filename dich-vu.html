@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="vi"><head>
+  <meta charset="UTF-8">
+  <title>Tuvanphongsach.com</title>
+  <!-- style.css -->
+  <link rel="stylesheet" href="/style.css">
+  <!-- Bootstrap local -->
+  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">
+          <img src="/image/logo.png" alt="Logo" style="height:40px;">
+        </a>
+        <!-- Toggle mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTuvan" aria-controls="navbarTuvan" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- MENU -->
+        <div class="collapse navbar-collapse" id="navbarTuvan">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html">Giới thiệu</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dich-vu.html">Dịch vụ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/lien-he.html">Liên hệ</a></li>
+            <!-- Danh mục con -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Danh mục
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownDanhMuc">
+                <li><a class="dropdown-item" href="/ahu/">AHU - Phòng sạch</a></li>
+                <li><a class="dropdown-item" href="/fcu/">FCU - Thiết bị phòng sạch</a></li>
+                <li><a class="dropdown-item" href="/chillers/">Chillers - Giải pháp làm lạnh</a></li>
+                <li><a class="dropdown-item" href="/air-cooled/">Air Cooled - Hệ thống lạnh</a></li>
+                <li><a class="dropdown-item" href="/tu-van-phong-sach/">Tư vấn phòng sạch</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Nội dung trang -->
+  <main class="container my-4">
+
+<title>Untitled</title>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "https://tuvanphongsach.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Dịch vụ",
+      "item": "https://tuvanphongsach.com/dich-vu.html"
+    }
+  ]
+}
+</script>
+
+  </main> <!-- end .container -->
+
+  <footer class="bg-light py-4 mt-5">
+    <div class="container text-center">
+      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
+    </div>
+  </footer>
+
+  <!-- Nút cuộn top -->
+  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+  <!-- Hotline -->
+  <div id="hotline">
+    <a href="tel:0988123456">HOTLINE: 0988 123 456</a>
+  </div>
+
+  <!-- Bootstrap local -->
+  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+
+  <!-- Script cuộn lên -->
+  <script>
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    window.onscroll = function() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        scrollBtn.style.display = 'block';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    };
+    scrollBtn.onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  </script>
+
+
+</body></html>
