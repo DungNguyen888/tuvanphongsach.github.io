@@ -95,7 +95,7 @@ async function convertImages(html) {
 // 3) buildArticles => ghép header/footer, skip file tĩnh
 //-----------------------------------------
 async function buildArticles() {
-  const { header, footer } = loadPartials();
+  let { header, footer } = loadPartials();
   if (!fs.existsSync(pagesDir)) {
     console.log('❌ pages/ ko tồn tại');
     return;
@@ -104,23 +104,30 @@ async function buildArticles() {
   const allFiles = fs.readdirSync(pagesDir).filter(f => f.endsWith('.html'));
   const articleFiles = allFiles.filter(f => !STATIC_FILES.includes(f));
 
-  for(const file of articleFiles) {
+  for (const file of articleFiles) {
     const filePath = path.join(pagesDir, file);
-    const raw = fs.readFileSync(filePath,'utf8');
-    const $ = cheerio.load(raw,{ decodeEntities:false });
-    const h1 = $('h1').first().text().trim() || 'Untitled Article';
-    let content = raw;
-    if(!raw.includes('<title>')) {
-      content = `<title>${h1}</title>\n` + raw;
-    }
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(raw, { decodeEntities: false });
 
-    // GHÉP
+    // Loại bỏ các thẻ <title> có trong nội dung bài viết để tránh trùng lặp
+    $('title').remove();
+
+    // Lấy tiêu đề bài viết từ thẻ <h1> đầu tiên trong nội dung
+    const h1 = $('h1').first().text().trim() || 'Untitled Article';
+
+    // Thay thế title trong header bằng tiêu đề bài viết (đảm bảo mỗi bài viết có title riêng)
+    header = header.replace(/<title>.*<\/title>/, `<title>${h1}</title>`);
+
+    // Bọc nội dung bài viết trong container để dễ xử lý
+    let content = `<main class="article-content">\n${$.html()}\n</main>`;
+
+    // Ghép header, nội dung bài viết và footer
     let finalHtml = header + '\n' + content + '\n' + footer;
 
-    // Tối ưu ảnh
+    // Tối ưu ảnh nếu cần
     finalHtml = await convertImages(finalHtml);
 
-    // Lấy category => folder
+    // Lấy category từ thẻ meta trong bài viết
     const cat = $('meta[name="category"]').attr('content') || 'misc';
     const outDir = path.join(rootDir, cat);
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
