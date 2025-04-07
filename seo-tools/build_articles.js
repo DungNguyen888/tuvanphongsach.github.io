@@ -67,22 +67,41 @@ async function makeWebp(inputPath) {
 }
 
 async function convertImages(html) {
-  const $ = cheerio.load(html,{ decodeEntities: false });
+  const $ = cheerio.load(html, { decodeEntities: false });
   const imgs = $('img');
-  if (imgs.length===0) return html;
+  if (imgs.length === 0) return html;
 
-  for(let i=0;i<imgs.length; i++){
+  for (let i = 0; i < imgs.length; i++) {
     const el = imgs[i];
     const src = $(el).attr('src');
-    if(!src) continue;
+    if (!src) continue;
     const alt = $(el).attr('alt') || '';
+
+    // Xác định đường dẫn thật của ảnh
     const realPath = path.join(rootDir, src);
+    
+    // Nếu ảnh chưa có width/height, thử lấy thông tin từ file ảnh
+    try {
+      const metadata = await sharp(realPath).metadata();
+      if (metadata.width && metadata.height) {
+        // Chỉ thiết lập nếu các thuộc tính này chưa có
+        if (!$(el).attr('width')) $(el).attr('width', metadata.width);
+        if (!$(el).attr('height')) $(el).attr('height', metadata.height);
+      }
+    } catch(err) {
+      console.error('Error reading image metadata:', err);
+    }
+    
+    // Tạo file webp nếu có thể
     const webpRel = await makeWebp(realPath);
     if (webpRel) {
+      // Lấy lại width và height đã thêm (nếu có)
+      const width = $(el).attr('width') || '';
+      const height = $(el).attr('height') || '';
       const pictureHtml = `
 <picture>
   <source srcset="${webpRel}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid">
+  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>
 </picture>`;
       $(el).replaceWith(pictureHtml);
     }
