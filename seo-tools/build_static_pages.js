@@ -2,7 +2,7 @@
 //------------------------------------------------------------
 // Xây trang tĩnh: home.html, gioi-thieu.html, lien-he.html, dich-vu.html
 // => Tạo index.html, gioi-thieu.html, lien-he.html, dich-vu.html ở root
-// => Tối ưu ảnh, chèn meta, OG, schema, breadcrumb
+// => Tối ưu ảnh (bao gồm cả ảnh nền), chèn meta, OG, schema, breadcrumb
 //------------------------------------------------------------
 
 const fs = require('fs');
@@ -21,14 +21,14 @@ const headerFile = path.join(partialsDir, 'header.html');
 const footerFile = path.join(partialsDir, 'footer.html');
 
 // 4 file tĩnh
-const STATIC_FILES = ['home.html','gioi-thieu.html','lien-he.html','dich-vu.html'];
+const STATIC_FILES = ['home.html', 'gioi-thieu.html', 'lien-he.html', 'dich-vu.html'];
 
 // Domain
 const BASE_URL = 'https://tuvanphongsach.com';
 const defaultImage = '/image/default.jpg';
 
 //-----------------------------------------
-// 1) Load partial
+// 1) Load partials
 //-----------------------------------------
 function loadPartials() {
   const header = fs.readFileSync(headerFile, 'utf8');
@@ -37,22 +37,22 @@ function loadPartials() {
 }
 
 //-----------------------------------------
-// 2) Tạo webp & Chuyển <img> => <picture>
+// 2) Tạo WebP & Chuyển <img> => <picture>
 //-----------------------------------------
 async function makeWebp(inputPath) {
   if (!fs.existsSync(inputPath)) return null;
   const ext = path.extname(inputPath).toLowerCase();
-  if (!['.jpg','.jpeg','.png'].includes(ext)) return null;
+  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return null;
 
   try {
     const { dir, name } = path.parse(inputPath);
     const webpPath = path.join(dir, `${name}.webp`);
     await sharp(inputPath)
       .withMetadata()
-      .webp({ quality: 80 })
+      .webp({ quality: 80 })  // Có thể điều chỉnh chất lượng nếu cần
       .toFile(webpPath);
     return webpPath.replace(rootDir, '').replace(/\\/g, '/');
-  } catch(err) {
+  } catch (err) {
     console.error('[makeWebp] error:', err);
     return null;
   }
@@ -71,19 +71,19 @@ async function convertImages(html) {
 
     // Xác định đường dẫn thật của ảnh
     const realPath = path.join(rootDir, src);
-    
-    // Nếu ảnh chưa có width/height, thử lấy thông tin từ file ảnh
+
+    // Nếu ảnh chưa có width/height, lấy thông tin từ file ảnh
     try {
       const metadata = await sharp(realPath).metadata();
       if (metadata.width && metadata.height) {
         if (!$(el).attr('width')) $(el).attr('width', metadata.width);
         if (!$(el).attr('height')) $(el).attr('height', metadata.height);
       }
-    } catch(err) {
+    } catch (err) {
       console.error('Error reading image metadata:', err);
     }
-    
-    // Tạo file webp nếu có thể
+
+    // Tạo file WebP nếu có thể
     const webpRel = await makeWebp(realPath);
     if (webpRel) {
       const width = $(el).attr('width') || '';
@@ -96,12 +96,32 @@ async function convertImages(html) {
       $(el).replaceWith(pictureHtml);
     }
   }
-
   return $.html();
 }
 
 //-----------------------------------------
-// 3) Chèn Meta, OG, Schema
+// 3) Xử lý ảnh nền (background images)
+//-----------------------------------------
+async function convertBackgroundImages(html) {
+  // Tìm các thuộc tính inline có background-image
+  const regex = /background-image:\s*url\(['"]?([^'")]+)['"]?\)/g;
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const originalStyle = match[0];
+    const imageUrl = match[1];
+    const realPath = path.join(rootDir, imageUrl);
+    const webpRel = await makeWebp(realPath);
+    if (webpRel) {
+      // Thay thế URL ảnh nền bằng phiên bản WebP
+      const newStyle = originalStyle.replace(imageUrl, webpRel);
+      html = html.replace(originalStyle, newStyle);
+    }
+  }
+  return html;
+}
+
+//-----------------------------------------
+// 4) Chèn Meta, OG, Schema (giữ nguyên phần này)
 //-----------------------------------------
 function injectMeta(folder) {
   const files = fs.readdirSync(folder);
@@ -118,7 +138,7 @@ function injectMeta(folder) {
 <meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">`;
         html = html.replace(/<head([^>]*)>/i, `<head$1>${metaInsert}`);
         fs.writeFileSync(filePath, html, 'utf8');
-        console.log(`✅ [Meta] => ${filePath.replace(rootDir,'')}`);
+        console.log(`✅ [Meta] => ${filePath.replace(rootDir, '')}`);
       }
     }
   });
@@ -127,12 +147,12 @@ function injectMeta(folder) {
 function injectOpenGraph(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
-    const filePath = path.join(folder,file);
+    const filePath = path.join(folder, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
       injectOpenGraph(filePath);
     } else if (file.endsWith('.html')) {
-      let html = fs.readFileSync(filePath,'utf8');
+      let html = fs.readFileSync(filePath, 'utf8');
       if (!html.includes('property="og:image"')) {
         const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
         const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
@@ -159,27 +179,27 @@ function injectOpenGraph(folder) {
 function injectSchema(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
-    const filePath = path.join(folder,file);
+    const filePath = path.join(folder, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
       injectSchema(filePath);
     } else if (file.endsWith('.html')) {
-      let html = fs.readFileSync(filePath,'utf8');
-      const schemaFileName = `schema-${filePath.replace(rootDir,'').replace(/\\/g,'-').replace('.html','')}.json`;
-      const schemaFilePath = path.join(rootDir,'seo-tools','generated',schemaFileName);
+      let html = fs.readFileSync(filePath, 'utf8');
+      const schemaFileName = `schema-${filePath.replace(rootDir, '').replace(/\\/g, '-').replace('.html', '')}.json`;
+      const schemaFilePath = path.join(rootDir, 'seo-tools', 'generated', schemaFileName);
       if (fs.existsSync(schemaFilePath) && !html.includes('application/ld+json')) {
-        const schemaContent = fs.readFileSync(schemaFilePath,'utf8');
+        const schemaContent = fs.readFileSync(schemaFilePath, 'utf8');
         const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
         html = html.includes('</head>') ? html.replace('</head>', snippet + '\n</head>') : html + snippet;
-        fs.writeFileSync(filePath, html,'utf8');
-        console.log(`✅ [Schema] => ${filePath.replace(rootDir,'')}`);
+        fs.writeFileSync(filePath, html, 'utf8');
+        console.log(`✅ [Schema] => ${filePath.replace(rootDir, '')}`);
       }
     }
   });
 }
 
 //-----------------------------------------
-// 4) Tạo Breadcrumb JSON-LD cho các trang tĩnh
+// 5) Tạo Breadcrumb JSON-LD cho các trang tĩnh
 //-----------------------------------------
 const pageMap = {
   'index.html': 'Trang chủ',
@@ -191,13 +211,13 @@ const pageMap = {
 function injectBreadcrumbAuto(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
-    const filePath = path.join(folder,file);
+    const filePath = path.join(folder, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
       injectBreadcrumbAuto(filePath);
     } else if (file.endsWith('.html')) {
-      if (file==='header.html' || file==='footer.html') return;
-      let html = fs.readFileSync(filePath,'utf8');
+      if (file === 'header.html' || file === 'footer.html') return;
+      let html = fs.readFileSync(filePath, 'utf8');
       if (html.includes('"@type": "BreadcrumbList"')) return;
       const itemList = [{
         "@type": "ListItem",
@@ -228,14 +248,14 @@ ${JSON.stringify(breadcrumbJSON, null, 2)}
 </script>
 `;
       html = html.includes('</body>') ? html.replace('</body>', snippet + '\n</body>') : html + snippet;
-      fs.writeFileSync(filePath, html,'utf8');
-      console.log(`✅ [Breadcrumb Tĩnh] => ${filePath.replace(rootDir,'')}`);
+      fs.writeFileSync(filePath, html, 'utf8');
+      console.log(`✅ [Breadcrumb Tĩnh] => ${filePath.replace(rootDir, '')}`);
     }
   });
 }
 
 //-----------------------------------------
-// 5) Build Static Pages
+// 6) Build Static Pages (bao gồm xử lý ảnh <img> và ảnh nền)
 //-----------------------------------------
 async function buildStaticPages() {
   const { header, footer } = loadPartials();
@@ -244,29 +264,29 @@ async function buildStaticPages() {
     return;
   }
 
-  for(const file of STATIC_FILES) {
+  for (const file of STATIC_FILES) {
     const filePath = path.join(pagesDir, file);
     if (!fs.existsSync(filePath)) {
       console.log(`❌ Không tìm thấy ${file}`);
       continue;
     }
     let raw = fs.readFileSync(filePath, 'utf8');
-
     // Lấy H1 để tạo <title> nếu chưa có
     const $ = cheerio.load(raw, { decodeEntities: false });
     const h1 = $('h1').first().text().trim() || 'Untitled';
     if (!raw.includes('<title>')) {
       raw = `<title>${h1}</title>\n` + raw;
     }
-
     // Ghép header, nội dung và footer
     let finalHtml = header + '\n' + raw + '\n' + footer;
-    // Chuyển đổi ảnh sang <picture> với WebP
+    // Xử lý ảnh <img>
     finalHtml = await convertImages(finalHtml);
+    // Xử lý ảnh nền trong inline style
+    finalHtml = await convertBackgroundImages(finalHtml);
 
     // Xác định tên file đầu ra
     let outName;
-    switch(file) {
+    switch (file) {
       case 'home.html':
         outName = 'index.html';
         break;
@@ -290,7 +310,4 @@ async function buildStaticPages() {
   console.log('\n🎯 Hoàn tất build trang tĩnh + SEO + Breadcrumb!\n');
 }
 
-//-----------------------------------------
-// CHẠY SCRIPT
-//-----------------------------------------
 buildStaticPages().catch(err => console.error('❌ Lỗi build trang:', err));
