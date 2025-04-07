@@ -44,49 +44,12 @@
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
-/* style.css */
-
-/* Nút cuộn top */
-#scrollToTopBtn {
-  display: none;
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  z-index: 99;
-  font-size: 18px;
-  border: none;
-  background-color: #0d6efd;
-  color: white;
-  cursor: pointer;
-  padding: 10px 14px;
-  border-radius: 4px;
-  transition: opacity 0.3s;
+.banner {
+  background-size: cover;
+  background-position: center;
+  min-height: 500px; /* thay cứng height: 500px => min-height */
 }
-#scrollToTopBtn:hover {
-  opacity: 0.8;
-}
-
-/* Hotline góc dưới phải */
-#hotline {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 100;
-  background-color: #dc3545;
-  border-radius: 4px;
-  padding: 8px 12px;
-}
-#hotline a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-#hotline a:hover {
-  opacity: 0.9;
-}
-
-/* Bài viết liên quan */
-.related-posts h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+.img-fluid {
+  max-width: 100%;
+  height: auto;
 }
