@@ -151,7 +151,7 @@ async function convertImages(html) {
       const pictureHtml = `
 <picture>
   <source srcset="${webpRel}" type="image/webp">
-  <img src="${src}" alt="${alt}">
+  <img src="${src}" alt="${alt}" class="img-fluid">
 </picture>
 `;
       $(el).replaceWith(pictureHtml);
