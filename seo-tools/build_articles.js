@@ -182,7 +182,6 @@ function buildSubCategoryIndexes() {
     const dirPath = path.join(rootDir, cfg.dir);
     if (!fs.existsSync(dirPath)) return;
 
-    // Dùng header chung từ partials
     let content = header + "\n" +
     `<section class="py-5">
       <div class="container">
@@ -192,13 +191,17 @@ function buildSubCategoryIndexes() {
     const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
     files.forEach(file => {
       const filePath = path.join(dirPath, file);
-      const html = fs.readFileSync(filePath, 'utf8');
-      const $ = cheerio.load(html, { decodeEntities: false });
+      const rawHtml = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(rawHtml, { decodeEntities: false });
+      
+      // Loại bỏ header và footer để chỉ lấy nội dung bài viết
+      $('header, footer').remove();
+      
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
-      let img = $('meta[property="og:image"]').attr('content')
-        || $('img').first().attr('src')
-        || defaultImage;
+      let img = $('meta[property="og:image"]').attr('content') ||
+                $('img').first().attr('src') ||
+                defaultImage;
 
       content += `
         <div class="col-12 mb-4">
@@ -217,15 +220,12 @@ function buildSubCategoryIndexes() {
     content += `
         </div>
       </div>
-    </section>`;
-    // Dùng footer chung từ partials
-    content += "\n" + footer;
+    </section>` + "\n" + footer;
 
     fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   });
 }
-
 function buildMainCategoryFile() {
   const { header, footer } = loadPartials();
   let content = header + "\n" +
@@ -241,8 +241,12 @@ function buildMainCategoryFile() {
     let img = defaultImage;
     const indexPath = path.join(dirPath, 'index.html');
     if (fs.existsSync(indexPath)) {
-      const html = fs.readFileSync(indexPath, 'utf8');
-      const $ = cheerio.load(html);
+      const rawHtml = fs.readFileSync(indexPath, 'utf8');
+      const $ = cheerio.load(rawHtml);
+      
+      // Loại bỏ header và footer để lấy hình ảnh của bài viết chính
+      $('header, footer').remove();
+      
       const firstImg = $('img').first().attr('src');
       if (firstImg) img = firstImg;
     }
@@ -263,8 +267,7 @@ function buildMainCategoryFile() {
   content += `
       </div>
     </div>
-  </section>`;
-  content += "\n" + footer;
+  </section>` + "\n" + footer;
 
   fs.writeFileSync(mainCategoryFile, content, 'utf8');
   console.log('✅ Tạo trang danh mục chính: danh-muc.html');
