@@ -194,14 +194,20 @@ function buildSubCategoryIndexes() {
       const rawHtml = fs.readFileSync(filePath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Chỉ lấy nội dung bài viết: nếu đã bọc trong main.article-content
-      const articleContent = $('main.article-content');
+      // Cố gắng lấy container bài viết; nếu không có thì dùng body đã loại bỏ header/footer
+      let articleContent = $('main.article-content');
+      if (articleContent.length === 0) {
+         articleContent = $('body').clone();
+         articleContent.find('header, footer').remove();
+      }
+      
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
-      // Lọc bỏ các ảnh có src là logo
+      // Lấy ảnh từ meta og:image hoặc ảnh đầu tiên không chứa "logo"
       let img = articleContent.find('meta[property="og:image"]').attr('content') ||
                 articleContent.find('img').filter(function() {
-                  return $(this).attr('src') !== '/image/logo.png';
+                  const src = $(this).attr('src') || '';
+                  return !src.toLowerCase().includes('logo');
                 }).first().attr('src') ||
                 defaultImage;
 
@@ -229,6 +235,7 @@ function buildSubCategoryIndexes() {
   });
 }
 
+
 function buildMainCategoryFile() {
   const { header, footer } = loadPartials();
   let content = header + "\n" +
@@ -247,11 +254,17 @@ function buildMainCategoryFile() {
       const rawHtml = fs.readFileSync(indexPath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Lấy hình ảnh từ container nội dung bài viết, bỏ qua logo
-      const articleContent = $('main.article-content');
+      // Cố gắng lấy container bài viết; nếu không có thì dùng body đã loại bỏ header/footer
+      let articleContent = $('main.article-content');
+      if (articleContent.length === 0) {
+         articleContent = $('body').clone();
+         articleContent.find('header, footer').remove();
+      }
+      
       const firstImg = articleContent.find('meta[property="og:image"]').attr('content') ||
                        articleContent.find('img').filter(function() {
-                         return $(this).attr('src') !== '/image/logo.png';
+                         const src = $(this).attr('src') || '';
+                         return !src.toLowerCase().includes('logo');
                        }).first().attr('src');
       if (firstImg) img = firstImg;
     }
