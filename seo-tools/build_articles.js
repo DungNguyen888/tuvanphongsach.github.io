@@ -177,30 +177,17 @@ function gatherCategoryAndTags() {
 // 5) buildSubCategoryIndexes, buildCategoryTagsIndex, buildMainCategoryFile
 //-----------------------------------------
 function buildSubCategoryIndexes() {
+  const { header, footer } = loadPartials();
   categoryConfigs.forEach(cfg => {
     const dirPath = path.join(rootDir, cfg.dir);
     if (!fs.existsSync(dirPath)) return;
 
-    let content = `
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>${cfg.title}</title>
-  <meta name="description" content="Danh mục ${cfg.title}">
-  <!-- Link tới Bootstrap CSS chuẩn -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="/">Tuvanphongsach.com</a>
-    </div>
-  </nav>
-  <section class="py-5">
-    <div class="container">
-      <h1 class="mb-4 text-center">${cfg.title}</h1>
-      <div class="row">`;
+    // Dùng header chung từ partials
+    let content = header + "\n" +
+    `<section class="py-5">
+      <div class="container">
+        <h1 class="mb-4 text-center">${cfg.title}</h1>
+        <div class="row">`;
 
     const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
     files.forEach(file => {
@@ -228,34 +215,21 @@ function buildSubCategoryIndexes() {
     });
 
     content += `
+        </div>
       </div>
-    </div>
-  </section>
-</body>
-</html>`;
+    </section>`;
+    // Dùng footer chung từ partials
+    content += "\n" + footer;
 
     fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   });
 }
+
 function buildMainCategoryFile() {
-  let content = `
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Danh mục bài viết</title>
-  <meta name="description" content="Tổng hợp danh mục phòng sạch">
-  <!-- Link tới Bootstrap CSS chuẩn -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" href="/">Tuvanphongsach.com</a>
-    </div>
-  </nav>
-  <section class="py-5">
+  const { header, footer } = loadPartials();
+  let content = header + "\n" +
+  `<section class="py-5">
     <div class="container">
       <h1 class="mb-4 text-center">Danh mục bài viết</h1>
       <div class="row">`;
@@ -274,24 +248,23 @@ function buildMainCategoryFile() {
     }
 
     content += `
-        <div class="col-12 mb-4">
-          <a href="/${cfg.dir}/" class="text-decoration-none text-dark">
-            <div class="card h-100">
-              <img src="${img}" class="card-img-top" alt="${cfg.title}">
-              <div class="card-body">
-                <h5 class="card-title">${cfg.title}</h5>
-              </div>
+      <div class="col-12 mb-4">
+        <a href="/${cfg.dir}/" class="text-decoration-none text-dark">
+          <div class="card h-100">
+            <img src="${img}" class="card-img-top" alt="${cfg.title}">
+            <div class="card-body">
+              <h5 class="card-title">${cfg.title}</h5>
             </div>
-          </a>
-        </div>`;
+          </div>
+        </a>
+      </div>`;
   });
 
   content += `
       </div>
     </div>
-  </section>
-</body>
-</html>`;
+  </section>`;
+  content += "\n" + footer;
 
   fs.writeFileSync(mainCategoryFile, content, 'utf8');
   console.log('✅ Tạo trang danh mục chính: danh-muc.html');
