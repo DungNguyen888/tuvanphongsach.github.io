@@ -97,7 +97,7 @@ async function convertImages(html) {
 async function buildArticles() {
   let { header, footer } = loadPartials();
   if (!fs.existsSync(pagesDir)) {
-    console.log('❌ pages/ ko tồn tại');
+    console.log('❌ pages/ không tồn tại');
     return;
   }
 
@@ -109,29 +109,41 @@ async function buildArticles() {
     const raw = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(raw, { decodeEntities: false });
 
-    // Loại bỏ các thẻ <title> có trong nội dung bài viết để tránh trùng lặp
-    $('title').remove();
+    // Lấy giá trị category trước khi xóa meta
+    const cat = $('meta[name="category"]').attr('content') || 'misc';
+
+    // Trích xuất meta tags cần chuyển lên head
+    const metaCategory = $('meta[name="category"]').toString();
+    const metaDescription = $('meta[name="description"]').toString();
+    const metaTags = $('meta[name="tags"]').toString();
+
+    // Xóa các meta tags khỏi nội dung bài viết (trong body)
+    $('meta[name="category"]').remove();
+    $('meta[name="description"]').remove();
+    $('meta[name="tags"]').remove();
 
     // Lấy tiêu đề bài viết từ thẻ <h1> đầu tiên trong nội dung
-    const h1 = $('h1').first().text().trim() || 'Untitled Article';
+    const h1Title = $('h1').first().text().trim() || 'Untitled Article';
 
-    // Thay thế title trong header bằng tiêu đề bài viết (đảm bảo mỗi bài viết có title riêng)
-    header = header.replace(/<title>.*<\/title>/, `<title>${h1}</title>`);
+    // Cập nhật header: thay thế thẻ <title> bằng tiêu đề của bài viết
+    header = header.replace(/<title>.*<\/title>/, `<title>${h1Title}</title>`);
 
-    // Bọc nội dung bài viết trong container để dễ xử lý
+    // Chèn meta tags đã trích xuất vào phần <head> của header (trước </head>)
+    const combinedMeta = metaCategory + "\n" + metaDescription + "\n" + metaTags;
+    header = header.replace('</head>', combinedMeta + "\n</head>");
+
+    // Bọc nội dung bài viết trong container cố định
     let content = `<main class="article-content">\n${$.html()}\n</main>`;
 
     // Ghép header, nội dung bài viết và footer
-    let finalHtml = header + '\n' + content + '\n' + footer;
+    let finalHtml = header + "\n" + content + "\n" + footer;
 
     // Tối ưu ảnh nếu cần
     finalHtml = await convertImages(finalHtml);
 
-    // Lấy category từ thẻ meta trong bài viết
-    const cat = $('meta[name="category"]').attr('content') || 'misc';
+    // Lưu bài viết vào thư mục dựa trên category
     const outDir = path.join(rootDir, cat);
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
-
     const outPath = path.join(outDir, file);
     fs.writeFileSync(outPath, finalHtml, 'utf8');
     console.log(`✅ Build [${file}] => /${cat}/${file}`);
