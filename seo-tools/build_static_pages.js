@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const cheerio = require('cheerio');
 const sharp = require('sharp'); // npm i sharp
+
 //------------------------------------------------------------
 // CẤU HÌNH
 //------------------------------------------------------------
@@ -75,7 +76,6 @@ async function convertImages(html) {
     try {
       const metadata = await sharp(realPath).metadata();
       if (metadata.width && metadata.height) {
-        // Chỉ thiết lập nếu các thuộc tính này chưa có
         if (!$(el).attr('width')) $(el).attr('width', metadata.width);
         if (!$(el).attr('height')) $(el).attr('height', metadata.height);
       }
@@ -86,7 +86,6 @@ async function convertImages(html) {
     // Tạo file webp nếu có thể
     const webpRel = await makeWebp(realPath);
     if (webpRel) {
-      // Lấy lại width và height đã thêm (nếu có)
       const width = $(el).attr('width') || '';
       const height = $(el).attr('height') || '';
       const pictureHtml = `
@@ -102,8 +101,7 @@ async function convertImages(html) {
 }
 
 //-----------------------------------------
-// 3) Chèn Meta (nếu thiếu), OG (nếu thiếu), Schema (nếu file .json),
-//    - Dưới đây code sẵn sàng
+// 3) Chèn Meta, OG, Schema
 //-----------------------------------------
 function injectMeta(folder) {
   const files = fs.readdirSync(folder);
@@ -114,8 +112,6 @@ function injectMeta(folder) {
       injectMeta(filePath);
     } else if (file.endsWith('.html')) {
       let html = fs.readFileSync(filePath, 'utf8');
-
-      // Check viewport, description
       if (!html.includes('name="viewport"')) {
         const metaInsert = `
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -127,6 +123,7 @@ function injectMeta(folder) {
     }
   });
 }
+
 function injectOpenGraph(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
@@ -137,12 +134,10 @@ function injectOpenGraph(folder) {
     } else if (file.endsWith('.html')) {
       let html = fs.readFileSync(filePath,'utf8');
       if (!html.includes('property="og:image"')) {
-        // Tìm <title>
         const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
         const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
         const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
         const description = descMatch ? descMatch[1] : '';
-        // Tìm ảnh
         const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
         const img = matchImg ? matchImg[1] : defaultImage;
         const rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
@@ -160,6 +155,7 @@ function injectOpenGraph(folder) {
     }
   });
 }
+
 function injectSchema(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
@@ -174,11 +170,7 @@ function injectSchema(folder) {
       if (fs.existsSync(schemaFilePath) && !html.includes('application/ld+json')) {
         const schemaContent = fs.readFileSync(schemaFilePath,'utf8');
         const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
-        if (html.includes('</head>')) {
-          html = html.replace('</head>', snippet + '\n</head>');
-        } else {
-          html += snippet;
-        }
+        html = html.includes('</head>') ? html.replace('</head>', snippet + '\n</head>') : html + snippet;
         fs.writeFileSync(filePath, html,'utf8');
         console.log(`✅ [Schema] => ${filePath.replace(rootDir,'')}`);
       }
@@ -187,7 +179,7 @@ function injectSchema(folder) {
 }
 
 //-----------------------------------------
-// 4) Tạo Breadcrumb JSON-LD cho 4 file tĩnh
+// 4) Tạo Breadcrumb JSON-LD cho các trang tĩnh
 //-----------------------------------------
 const pageMap = {
   'index.html': 'Trang chủ',
@@ -195,6 +187,7 @@ const pageMap = {
   'lien-he.html': 'Liên hệ',
   'dich-vu.html': 'Dịch vụ'
 };
+
 function injectBreadcrumbAuto(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
@@ -206,7 +199,6 @@ function injectBreadcrumbAuto(folder) {
       if (file==='header.html' || file==='footer.html') return;
       let html = fs.readFileSync(filePath,'utf8');
       if (html.includes('"@type": "BreadcrumbList"')) return;
-      // itemList
       const itemList = [{
         "@type": "ListItem",
         "position": 1,
@@ -221,8 +213,6 @@ function injectBreadcrumbAuto(folder) {
             "name": pageMap[file],
             "item": BASE_URL + "/" + file
           });
-        } else {
-          // index.html => skip (1 item)
         }
       } else {
         return;
@@ -237,11 +227,7 @@ function injectBreadcrumbAuto(folder) {
 ${JSON.stringify(breadcrumbJSON, null, 2)}
 </script>
 `;
-      if (html.includes('</body>')) {
-        html = html.replace('</body>', snippet + '\n</body>');
-      } else {
-        html += snippet;
-      }
+      html = html.includes('</body>') ? html.replace('</body>', snippet + '\n</body>') : html + snippet;
       fs.writeFileSync(filePath, html,'utf8');
       console.log(`✅ [Breadcrumb Tĩnh] => ${filePath.replace(rootDir,'')}`);
     }
@@ -249,64 +235,62 @@ ${JSON.stringify(breadcrumbJSON, null, 2)}
 }
 
 //-----------------------------------------
-// 5) buildStaticPages
+// 5) Build Static Pages
 //-----------------------------------------
 async function buildStaticPages() {
   const { header, footer } = loadPartials();
   if (!fs.existsSync(pagesDir)) {
-    console.log('❌ pages/ ko tồn tại');
+    console.log('❌ Thư mục pages/ không tồn tại');
     return;
   }
 
   for(const file of STATIC_FILES) {
     const filePath = path.join(pagesDir, file);
     if (!fs.existsSync(filePath)) {
-      console.log(`❌ Ko thấy ${file}`);
+      console.log(`❌ Không tìm thấy ${file}`);
       continue;
     }
     let raw = fs.readFileSync(filePath, 'utf8');
-    // Lấy H1 => <title> (nếu thiếu)
+
+    // Lấy H1 để tạo <title> nếu chưa có
     const $ = cheerio.load(raw, { decodeEntities: false });
     const h1 = $('h1').first().text().trim() || 'Untitled';
-
     if (!raw.includes('<title>')) {
       raw = `<title>${h1}</title>\n` + raw;
     }
 
-    // GHÉP header + raw + footer
+    // Ghép header, nội dung và footer
     let finalHtml = header + '\n' + raw + '\n' + footer;
-
-    // Chuyển <img> => <picture>
+    // Chuyển đổi ảnh sang <picture> với WebP
     finalHtml = await convertImages(finalHtml);
 
-    // outName
+    // Xác định tên file đầu ra
     let outName;
     switch(file) {
       case 'home.html':
-        outName='index.html';
+        outName = 'index.html';
         break;
       case 'gioi-thieu.html':
       case 'lien-he.html':
       case 'dich-vu.html':
-        outName=file;
+        outName = file;
         break;
     }
     const outPath = path.join(rootDir, outName);
-    fs.writeFileSync(outPath, finalHtml,'utf8');
+    fs.writeFileSync(outPath, finalHtml, 'utf8');
     console.log(`✅ Build [${file}] => /${outName}`);
   }
 
-  // chèn meta, og, schema
+  // Chèn Meta, OG, Schema và Breadcrumb
   injectMeta(rootDir);
   injectOpenGraph(rootDir);
   injectSchema(rootDir);
-  // breadcrumb
   injectBreadcrumbAuto(rootDir);
 
-  console.log('\n🎯 Hoàn tất build trang tĩnh + SEO + breadcrumb!\n');
+  console.log('\n🎯 Hoàn tất build trang tĩnh + SEO + Breadcrumb!\n');
 }
 
 //-----------------------------------------
-// CHẠY
+// CHẠY SCRIPT
 //-----------------------------------------
-buildStaticPages().catch(err => console.error(err));
+buildStaticPages().catch(err => console.error('❌ Lỗi build trang:', err));

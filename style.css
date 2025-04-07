@@ -14,10 +14,11 @@
   cursor: pointer;
   padding: 10px 14px;
   border-radius: 4px;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, transform 0.3s;
 }
 #scrollToTopBtn:hover {
   opacity: 0.8;
+  transform: scale(1.05);
 }
 
 /* Hotline góc dưới phải */
@@ -29,6 +30,7 @@
   background-color: #dc3545;
   border-radius: 4px;
   padding: 8px 12px;
+  transition: opacity 0.3s;
 }
 #hotline a {
   color: #fff;
@@ -44,11 +46,15 @@
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
+
+/* Banner: Sử dụng min-height thay vì height cố định để linh hoạt hơn */
 .banner {
   background-size: cover;
   background-position: center;
-  min-height: 500px; /* thay cứng height: 500px => min-height */
+  min-height: 500px;
 }
+
+/* Hình ảnh linh hoạt */
 .img-fluid {
   max-width: 100%;
   height: auto;
