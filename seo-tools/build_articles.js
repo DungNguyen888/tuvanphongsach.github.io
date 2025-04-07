@@ -183,10 +183,10 @@ function buildSubCategoryIndexes() {
     if (!fs.existsSync(dirPath)) return;
 
     let content = header + "\n" +
-    `<section class="py-5">
-      <div class="container">
-        <h1 class="mb-4 text-center">${cfg.title}</h1>
-        <div class="row">`;
+      `<section class="py-5">
+        <div class="container">
+          <h1 class="mb-4 text-center">${cfg.title}</h1>
+          <div class="row">`;
 
     const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
     files.forEach(file => {
@@ -194,13 +194,15 @@ function buildSubCategoryIndexes() {
       const rawHtml = fs.readFileSync(filePath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Loại bỏ header và footer để chỉ lấy nội dung bài viết
-      $('header, footer').remove();
-      
+      // Chỉ lấy nội dung bài viết: nếu đã bọc trong main.article-content
+      const articleContent = $('main.article-content');
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
-      let img = $('meta[property="og:image"]').attr('content') ||
-                $('img').first().attr('src') ||
+      // Lọc bỏ các ảnh có src là logo
+      let img = articleContent.find('meta[property="og:image"]').attr('content') ||
+                articleContent.find('img').filter(function() {
+                  return $(this).attr('src') !== '/image/logo.png';
+                }).first().attr('src') ||
                 defaultImage;
 
       content += `
@@ -218,21 +220,22 @@ function buildSubCategoryIndexes() {
     });
 
     content += `
+          </div>
         </div>
-      </div>
-    </section>` + "\n" + footer;
+      </section>` + "\n" + footer;
 
     fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   });
 }
+
 function buildMainCategoryFile() {
   const { header, footer } = loadPartials();
   let content = header + "\n" +
-  `<section class="py-5">
-    <div class="container">
-      <h1 class="mb-4 text-center">Danh mục bài viết</h1>
-      <div class="row">`;
+    `<section class="py-5">
+      <div class="container">
+        <h1 class="mb-4 text-center">Danh mục bài viết</h1>
+        <div class="row">`;
 
   categoryConfigs.forEach(cfg => {
     const dirPath = path.join(rootDir, cfg.dir);
@@ -242,12 +245,14 @@ function buildMainCategoryFile() {
     const indexPath = path.join(dirPath, 'index.html');
     if (fs.existsSync(indexPath)) {
       const rawHtml = fs.readFileSync(indexPath, 'utf8');
-      const $ = cheerio.load(rawHtml);
+      const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Loại bỏ header và footer để lấy hình ảnh của bài viết chính
-      $('header, footer').remove();
-      
-      const firstImg = $('img').first().attr('src');
+      // Lấy hình ảnh từ container nội dung bài viết, bỏ qua logo
+      const articleContent = $('main.article-content');
+      const firstImg = articleContent.find('meta[property="og:image"]').attr('content') ||
+                       articleContent.find('img').filter(function() {
+                         return $(this).attr('src') !== '/image/logo.png';
+                       }).first().attr('src');
       if (firstImg) img = firstImg;
     }
 
@@ -265,9 +270,9 @@ function buildMainCategoryFile() {
   });
 
   content += `
+        </div>
       </div>
-    </div>
-  </section>` + "\n" + footer;
+    </section>` + "\n" + footer;
 
   fs.writeFileSync(mainCategoryFile, content, 'utf8');
   console.log('✅ Tạo trang danh mục chính: danh-muc.html');
