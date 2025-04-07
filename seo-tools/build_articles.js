@@ -188,7 +188,8 @@ function buildSubCategoryIndexes() {
   <meta charset="UTF-8">
   <title>${cfg.title}</title>
   <meta name="description" content="Danh mục ${cfg.title}">
-  <link rel="stylesheet" href="/style.css">
+  <!-- Link tới Bootstrap CSS chuẩn -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -201,11 +202,11 @@ function buildSubCategoryIndexes() {
       <h1 class="mb-4 text-center">${cfg.title}</h1>
       <div class="row">`;
 
-    const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f!=='index.html');
+    const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
     files.forEach(file => {
       const filePath = path.join(dirPath, file);
-      const html = fs.readFileSync(filePath,'utf8');
-      const $ = cheerio.load(html,{ decodeEntities:false });
+      const html = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(html, { decodeEntities: false });
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
       let img = $('meta[property="og:image"]').attr('content')
@@ -213,7 +214,7 @@ function buildSubCategoryIndexes() {
         || defaultImage;
 
       content += `
-        <div class="col-md-4 mb-4">
+        <div class="col-12 mb-4">
           <a href="./${file}" class="text-decoration-none text-dark">
             <div class="card h-100">
               <img src="${img}" class="card-img-top" alt="${t}">
@@ -233,10 +234,69 @@ function buildSubCategoryIndexes() {
 </body>
 </html>`;
 
-    fs.writeFileSync(path.join(dirPath, 'index.html'), content,'utf8');
+    fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   });
 }
+function buildMainCategoryFile() {
+  let content = `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh mục bài viết</title>
+  <meta name="description" content="Tổng hợp danh mục phòng sạch">
+  <!-- Link tới Bootstrap CSS chuẩn -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Tuvanphongsach.com</a>
+    </div>
+  </nav>
+  <section class="py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">Danh mục bài viết</h1>
+      <div class="row">`;
+
+  categoryConfigs.forEach(cfg => {
+    const dirPath = path.join(rootDir, cfg.dir);
+    if (!fs.existsSync(dirPath)) return;
+
+    let img = defaultImage;
+    const indexPath = path.join(dirPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      const html = fs.readFileSync(indexPath, 'utf8');
+      const $ = cheerio.load(html);
+      const firstImg = $('img').first().attr('src');
+      if (firstImg) img = firstImg;
+    }
+
+    content += `
+        <div class="col-12 mb-4">
+          <a href="/${cfg.dir}/" class="text-decoration-none text-dark">
+            <div class="card h-100">
+              <img src="${img}" class="card-img-top" alt="${cfg.title}">
+              <div class="card-body">
+                <h5 class="card-title">${cfg.title}</h5>
+              </div>
+            </div>
+          </a>
+        </div>`;
+  });
+
+  content += `
+      </div>
+    </div>
+  </section>
+</body>
+</html>`;
+
+  fs.writeFileSync(mainCategoryFile, content, 'utf8');
+  console.log('✅ Tạo trang danh mục chính: danh-muc.html');
+}
+
 
 function buildIndexPage(items, outputFile, pageTitle, schemaType) {
   let html = `<!DOCTYPE html>
