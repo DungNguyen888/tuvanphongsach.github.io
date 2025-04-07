@@ -1,106 +1,54 @@
-<!-- Hero Banner -->
-<header class="banner" style="background-image: url('image/tu-van-phong-sach.jpg'); height: 500px;">
-  <div class="container banner-content">
-    <h1 class="display-4">Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
-    <p class="lead">Thiết kế – Thi công – Bảo trì, tối ưu cho mọi doanh nghiệp</p>
-    <a href="contact.html" class="btn btn-primary btn-lg">Liên hệ ngay</a>
-  </div>
-</header>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tuvanphongsach.com</title>
+  <!-- style.css -->
+  <link rel="stylesheet" href="/style.css">
+  <!-- Bootstrap local -->
+  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+      <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">
+          <img src="/image/logo.png" alt="Logo" style="height:40px;">
+        </a>
+        <!-- Toggle mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarTuvan" aria-controls="navbarTuvan"
+          aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-<!-- Giới thiệu ngắn -->
-<section class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-4">Tư Vấn Phòng Sạch: Chúng tôi là ai?</h2>
-    <p class="text-center">
-      Hơn 15 năm kinh nghiệm về phòng sạch, ...
-    </p>
-  </div>
-</section>
-
-
-  <!-- Điểm nổi bật / lợi thế -->
-  <section class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center mb-4">Tại sao chọn Dịch vụ Tư Vấn Phòng Sạch?</h2>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">15+ năm kinh nghiệm</h5>
-              <p class="card-text mt-3">
-                Hoàn thành hàng trăm dự án phòng sạch dược phẩm, thực phẩm, điện tử trên toàn quốc.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">Giải pháp trọn gói</h5>
-              <p class="card-text mt-3">
-                Tư vấn, thiết kế, cung cấp thiết bị, thi công & bảo trì – tất cả trong một.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">Đội ngũ tận tâm</h5>
-              <p class="card-text mt-3">
-                Kỹ sư, chuyên viên được đào tạo bài bản, hỗ trợ quý doanh nghiệp mọi lúc, mọi nơi.
-              </p>
-            </div>
-          </div>
+        <!-- MENU -->
+        <div class="collapse navbar-collapse" id="navbarTuvan">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html">Giới thiệu</a></li>
+            <li class="nav-item"><a class="nav-link" href="/dich-vu.html">Dịch vụ</a></li>
+            <li class="nav-item"><a class="nav-link" href="/lien-he.html">Liên hệ</a></li>
+            <!-- Danh mục con -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc"
+                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Danh mục
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownDanhMuc">
+                <li><a class="dropdown-item" href="/ahu/">AHU - Phòng sạch</a></li>
+                <li><a class="dropdown-item" href="/fcu/">FCU - Thiết bị phòng sạch</a></li>
+                <li><a class="dropdown-item" href="/chillers/">Chillers - Giải pháp làm lạnh</a></li>
+                <li><a class="dropdown-item" href="/air-cooled/">Air Cooled - Hệ thống lạnh</a></li>
+                <li><a class="dropdown-item" href="/tu-van-phong-sach/">Tư vấn phòng sạch</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-  </section>
+    </nav>
+  </header>
 
-  <!-- Dịch vụ chính (demo) -->
-  <section class="py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">Dịch vụ phòng sạch</h2>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
-            <img src="image/tu-van-phong-sach.jpg" class="card-img-top" alt="thi-cong-phong-sach">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">Thi công & Lắp đặt</h5>
-              <p class="card-text">Đáp ứng tiêu chuẩn GMP/ISO, lắp đặt tối ưu cho nhiều ngành công nghiệp.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
-            <img src="image/tu-van-phong-sach.jpg" class="card-img-top" alt="tu-van-phong-sach">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">Tư vấn - Thiết kế</h5>
-              <p class="card-text">Định hình giải pháp phù hợp với nhu cầu, ngân sách của doanh nghiệp.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
-            <img src="image/tu-van-phong-sach.jpg" class="card-img-top" alt="bao-tri-phong-sach">
-            <div class="card-body">
-              <h5 class="card-title fw-bold">Bảo trì - Nâng cấp</h5>
-              <p class="card-text">Duy trì hoạt động ổn định, nâng cao hiệu suất và tuổi thọ phòng sạch.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="text-center mt-4">
-        <a href="services.html" class="btn btn-primary btn-lg">Xem tất cả dịch vụ</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="py-5 bg-light text-center">
-    <div class="container">
-      <h2 class="mb-4">Sẵn sàng nhận tư vấn?</h2>
-      <p class="mb-4">Đội ngũ chuyên gia Tư Vấn Phòng Sạch luôn sẵn lòng hỗ trợ quý doanh nghiệp. Nhấp để liên hệ ngay.</p>
-      <a href="contact.html" class="btn btn-success btn-lg">Liên hệ tư vấn</a>
-    </div>
-  </section>
+  <!-- Nội dung trang -->
+  <main class="container my-4">
