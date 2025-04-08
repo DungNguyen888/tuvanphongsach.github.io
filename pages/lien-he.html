@@ -7,11 +7,14 @@
 <!-- Nội dung chính -->
 <section class="py-5">
   <div class="container">
+    <!-- Tiêu đề phụ -->
     <h2 class="mb-4 text-center">Gửi yêu cầu tư vấn</h2>
     <div class="row">
+      <!-- Khối thông tin liên hệ -->
       <div class="col-md-5 mb-4">
-        <div class="bg-light p-4 rounded shadow-sm">
-          <h5>Thông tin liên hệ</h5>
+        <div class="bg-light p-4 rounded shadow-sm contact-info">
+          <!-- Sử dụng heading h3 cho thông tin liên hệ -->
+          <h3>Thông tin liên hệ</h3>
           <ul class="list-unstyled mb-3">
             <li><strong>Hotline:</strong> <a href="tel:0937953493">0937 953 493</a></li>
             <li><strong>Email:</strong> <a href="mailto:info@tuvanphongsach.com">info@tuvanphongsach.com</a></li>
@@ -20,25 +23,26 @@
           <img src="image/contact.jpg" alt="Liên hệ Anh Khang Cleanroom" class="img-fluid rounded">
         </div>
       </div>
+      <!-- Khối form liên hệ -->
       <div class="col-md-7">
-        <form id="contact-form" class="p-4 bg-light rounded shadow-sm">
+        <form id="contact-form" class="p-4 bg-light rounded shadow-sm" novalidate>
           <div class="mb-3">
-            <label class="form-label">Họ và tên</label>
-            <input type="text" class="form-control" name="name" required>
+            <label for="name" class="form-label">Họ và tên</label>
+            <input type="text" id="name" class="form-control" name="name" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" name="email" required>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" name="email" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Số điện thoại</label>
-            <input type="tel" class="form-control" name="phone" required>
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input type="tel" id="phone" class="form-control" name="phone" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Nội dung yêu cầu</label>
-            <textarea class="form-control" name="message" rows="4" required></textarea>
+            <label for="message" class="form-label">Nội dung yêu cầu</label>
+            <textarea id="message" class="form-control" name="message" rows="4" required></textarea>
           </div>
-          <!-- Honeypot -->
+          <!-- Honeypot chống spam -->
           <div style="display:none;">
             <input type="text" name="botcheck">
           </div>
@@ -51,14 +55,14 @@
 
 <!-- Script xử lý form -->
 <script>
-const form = document.getElementById("contact-form");
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  const formData = new FormData(form);
-  fetch("https://script.google.com/macros/s/AKfycbwlogKzlsihJ1NE1ZfxTfaytCLmtGXOV0gx0bRsfknYl6f2rawGQUEGlfZVJx568jrA/exec", {
-    method: "POST",
-    body: formData
-  })
+  const form = document.getElementById("contact-form");
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    fetch("https://script.google.com/macros/s/AKfycbwlogKzlsihJ1NE1ZfxTfaytCLmtGXOV0gx0bRsfknYl6f2rawGQUEGlfZVJx568jrA/exec", {
+      method: "POST",
+      body: formData
+    })
     .then(response => response.json())
     .then(data => {
       if (data.result === "success") {
@@ -71,11 +75,10 @@ form.addEventListener("submit", e => {
       console.error(error);
       alert("Lỗi kết nối, vui lòng thử lại.");
     });
-});
+  });
 </script>
 
-
-
+<!-- Schema Breadcrumb -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
