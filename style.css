@@ -24,7 +24,7 @@
 /* Hotline góc dưới phải */
 #hotline {
   position: fixed;
-  bottom: 20px;
+  bottom: 35px;
   right: 20px;
   z-index: 100;
   background-color: #dc3545;
