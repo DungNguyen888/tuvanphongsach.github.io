@@ -232,14 +232,13 @@ function buildSubCategoryIndexes() {
       const rawHtml = fs.readFileSync(filePath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Cố gắng lấy container bài viết; nếu không có thì dùng body đã loại bỏ header/footer
+      // Lấy phần nội dung bài viết, nếu không có thì lấy body bỏ header, footer
       let articleContent = $('main.article-content');
       if (articleContent.length === 0) {
          articleContent = $('body').clone();
          articleContent.find('header, footer').remove();
       }
       
-      // SEO: Lấy tiêu đề và meta description hợp lý
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
       // Lấy ảnh từ meta og:image hoặc ảnh đầu tiên không chứa "logo"
@@ -250,7 +249,7 @@ function buildSubCategoryIndexes() {
                 }).first().attr('src') ||
                 defaultImage;
 
-      // Sử dụng Bootstrap col để hiển thị 3 cột trên một dòng (trên màn hình lớn)
+      // Sử dụng Bootstrap để hiển thị 3 cột trên mỗi hàng (col-lg-4 cho màn hình lớn, col-md-6 cho màn hình trung)
       content += `
         <div class="col-lg-4 col-md-6 mb-4">
           <a href="./${file}" class="text-decoration-none text-dark">
@@ -270,8 +269,13 @@ function buildSubCategoryIndexes() {
         </div>
       </section>` + "\n" + footer;
 
-    fs.writeFileSync(path.join(dirPath, 'index.html'), content, 'utf8');
-    console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
+    // Áp dụng hàm convertImages cập nhật để chuyển đổi ảnh sang AVIF/WebP (resize nếu cần)
+    convertImages(content).then(finalHtml => {
+      fs.writeFileSync(path.join(dirPath, 'index.html'), finalHtml, 'utf8');
+      console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
+    }).catch(err => {
+      console.error('❌ Lỗi chuyển đổi ảnh:', err);
+    });
   });
 }
 function buildMainCategoryFile() {
@@ -292,7 +296,7 @@ function buildMainCategoryFile() {
       const rawHtml = fs.readFileSync(indexPath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
       
-      // Cố gắng lấy container bài viết; nếu không có thì dùng body đã loại bỏ header/footer
+      // Lấy phần nội dung bài viết, nếu không có thì loại bỏ header/footer
       let articleContent = $('main.article-content');
       if (articleContent.length === 0) {
          articleContent = $('body').clone();
@@ -307,7 +311,7 @@ function buildMainCategoryFile() {
       if (firstImg) img = firstImg;
     }
 
-    // Sử dụng Bootstrap col để hiển thị 3 cột trên một dòng (trên màn hình lớn)
+    // Hiển thị danh mục theo dạng 3 cột trên mỗi hàng
     content += `
       <div class="col-lg-4 col-md-6 mb-4">
         <a href="/${cfg.dir}/" class="text-decoration-none text-dark">
@@ -326,8 +330,13 @@ function buildMainCategoryFile() {
       </div>
     </section>` + "\n" + footer;
 
-  fs.writeFileSync(mainCategoryFile, content, 'utf8');
-  console.log('✅ Tạo trang danh mục chính: danh-muc.html');
+  // Áp dụng chuyển đổi ảnh cập nhật cho trang danh mục chính nếu cần
+  convertImages(content).then(finalHtml => {
+    fs.writeFileSync(mainCategoryFile, finalHtml, 'utf8');
+    console.log('✅ Tạo trang danh mục chính: danh-muc.html');
+  }).catch(err => {
+    console.error('❌ Lỗi chuyển đổi ảnh:', err);
+  });
 }
 
 
