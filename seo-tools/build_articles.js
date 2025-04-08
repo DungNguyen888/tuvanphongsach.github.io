@@ -239,6 +239,7 @@ function buildSubCategoryIndexes() {
          articleContent.find('header, footer').remove();
       }
       
+      // SEO: Lấy tiêu đề và meta description hợp lý
       const t = $('title').text().trim() || file;
       const d = $('meta[name="description"]').attr('content') || '';
       // Lấy ảnh từ meta og:image hoặc ảnh đầu tiên không chứa "logo"
@@ -249,8 +250,9 @@ function buildSubCategoryIndexes() {
                 }).first().attr('src') ||
                 defaultImage;
 
+      // Sử dụng Bootstrap col để hiển thị 3 cột trên một dòng (trên màn hình lớn)
       content += `
-        <div class="col-12 mb-4">
+        <div class="col-lg-4 col-md-6 mb-4">
           <a href="./${file}" class="text-decoration-none text-dark">
             <div class="card h-100">
               <img src="${img}" class="card-img-top" alt="${t}">
@@ -272,8 +274,6 @@ function buildSubCategoryIndexes() {
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   });
 }
-
-
 function buildMainCategoryFile() {
   const { header, footer } = loadPartials();
   let content = header + "\n" +
@@ -307,8 +307,9 @@ function buildMainCategoryFile() {
       if (firstImg) img = firstImg;
     }
 
+    // Sử dụng Bootstrap col để hiển thị 3 cột trên một dòng (trên màn hình lớn)
     content += `
-      <div class="col-12 mb-4">
+      <div class="col-lg-4 col-md-6 mb-4">
         <a href="/${cfg.dir}/" class="text-decoration-none text-dark">
           <div class="card h-100">
             <img src="${img}" class="card-img-top" alt="${cfg.title}">
