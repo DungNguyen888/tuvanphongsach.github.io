@@ -65,3 +65,16 @@
   max-width: 100%;
   height: auto;
 }
+/* Logo cố định kích thước */
+.logo-fixed {
+  width: 150px;     /* Chiều rộng 150px cho desktop */
+  height: auto;     /* Giữ tỉ lệ gốc */
+  max-width: none;  /* Loại bỏ mọi giới hạn từ img-fluid */
+}
+
+/* Điều chỉnh cho màn hình nhỏ */
+@media (max-width: 768px) {
+  .logo-fixed {
+    width: 120px;   /* Giảm kích thước trên tablet/mobil */
+  }
+}
