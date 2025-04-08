@@ -153,39 +153,37 @@ form.addEventListener("submit", e => {
 }
 </script>
 
-  </main> <!-- end .container -->
+</main> <!-- end .container -->
 
+<!-- Nút cuộn top -->
+<button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+<!-- Hotline -->
+<div id="hotline">
+  <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
+</div>
 
-  <!-- Nút cuộn top -->
-  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
-  <!-- Hotline -->
-  <div id="hotline">
-    <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
+<!-- Bootstrap local -->
+<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+
+<!-- Script cuộn lên -->
+<script>
+  const scrollBtn = document.getElementById('scrollToTopBtn');
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      scrollBtn.style.display = 'block';
+    } else {
+      scrollBtn.style.display = 'none';
+    }
+  };
+  scrollBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
+<footer class="bg-light py-4 mt-5">
+  <div class="container text-center">
+    <p class="mb-0">© 2025 Tuvanphongsach.com</p>
   </div>
-
-  <!-- Bootstrap local -->
-  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
-
-  <!-- Script cuộn lên -->
-  <script>
-    const scrollBtn = document.getElementById('scrollToTopBtn');
-    window.onscroll = function() {
-      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        scrollBtn.style.display = 'block';
-      } else {
-        scrollBtn.style.display = 'none';
-      }
-    };
-    scrollBtn.onclick = function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-  </script>
-    <footer class="bg-light py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
-    </div>
-  </footer>
-
+</footer>
 
 
 </body></html>

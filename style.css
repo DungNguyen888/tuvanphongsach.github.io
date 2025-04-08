@@ -26,22 +26,26 @@
   position: fixed;
   bottom: 25px;
   right: 20px;
-  z-index: 100;
+  z-index: 9999; /* Tăng z-index để đảm bảo hotline luôn hiển thị trên các phần tử khác */
   background-color: #dc3545;
   border-radius: 4px;
   padding: 8px 12px;
   transition: opacity 0.3s;
 }
+
 #hotline a {
-  position: relative; /* Cho phép điều chỉnh vị trí nội dung */
-  top: -5px; /* Dời nội dung hotline lên trên 5px */
+  /* Loại bỏ vị trí relative và offset không cần thiết */
   color: #fff;
   text-decoration: none;
   font-weight: bold;
+  display: block;
+  text-align: center;
+  line-height: 1.5;  /* Căn chỉnh chiều cao dòng, thay đổi nếu cần */
 }
 #hotline a:hover {
   opacity: 0.9;
 }
+
 
 /* Bài viết liên quan */
 .related-posts h2 {
