@@ -1,7 +1,3 @@
-// File: seo-tools/build_articles.js
-//------------------------------------------------------------
-// Xây bài viết => Danh mục, tags, "danh-muc.html", chèn SEO, breadcrumb
-//------------------------------------------------------------
 const fs = require('fs');
 const path = require('path');
 const cheerio = require('cheerio');
@@ -35,6 +31,27 @@ let tagsData = {};
 
 const defaultImage = '/image/default.jpg';
 const BASE_URL = 'https://tuvanphongsach.com';
+
+//-----------------------------------------
+// 0) Thu thập metadata từ /pages trước khi build
+//-----------------------------------------
+function gatherRawArticles() {
+  const rawData = {};
+  if (!fs.existsSync(pagesDir)) return rawData;
+  const files = fs.readdirSync(pagesDir)
+    .filter(f => f.endsWith('.html') && !STATIC_FILES.includes(f));
+  files.forEach(file => {
+    const html = fs.readFileSync(path.join(pagesDir, file), 'utf8');
+    const $ = cheerio.load(html);
+    const title = $('h1').first().text().trim() || 'Untitled';
+    const tags = ($('meta[name="tags"]').attr('content') || '')
+      .split(',').map(t => t.trim()).filter(Boolean);
+    const category = $('meta[name="category"]').attr('content') || 'misc';
+    const url = `/${category}/${file}`;
+    rawData[file] = { title, tags, url };
+  });
+  return rawData;
+}
 
 //-----------------------------------------
 // 1) load partials
@@ -77,25 +94,19 @@ async function convertImages(html) {
     if (!src) continue;
     const alt = $(el).attr('alt') || '';
 
-    // Xác định đường dẫn thật của ảnh
     const realPath = path.join(rootDir, src);
-    
-    // Nếu ảnh chưa có width/height, thử lấy thông tin từ file ảnh
     try {
       const metadata = await sharp(realPath).metadata();
       if (metadata.width && metadata.height) {
-        // Chỉ thiết lập nếu các thuộc tính này chưa có
         if (!$(el).attr('width')) $(el).attr('width', metadata.width);
         if (!$(el).attr('height')) $(el).attr('height', metadata.height);
       }
     } catch(err) {
       console.error('Error reading image metadata:', err);
     }
-    
-    // Tạo file webp nếu có thể
+
     const webpRel = await makeWebp(realPath);
     if (webpRel) {
-      // Lấy lại width và height đã thêm (nếu có)
       const width = $(el).attr('width') || '';
       const height = $(el).attr('height') || '';
       const pictureHtml = `
@@ -111,9 +122,9 @@ async function convertImages(html) {
 }
 
 //-----------------------------------------
-// 3) buildArticles => ghép header/footer, skip file tĩnh
+// 3) buildArticles => ghép header/footer, thêm Related, skip file tĩnh
 //-----------------------------------------
-async function buildArticles() {
+async function buildArticles(rawData) {
   let { header, footer } = loadPartials();
   if (!fs.existsSync(pagesDir)) {
     console.log('❌ pages/ không tồn tại');
@@ -136,23 +147,32 @@ async function buildArticles() {
     const metaDescription = $('meta[name="description"]').toString();
     const metaTags = $('meta[name="tags"]').toString();
 
-    // Xóa các meta tags khỏi nội dung bài viết (trong body)
+    // Xóa các meta tags khỏi nội dung bài viết
     $('meta[name="category"]').remove();
     $('meta[name="description"]').remove();
     $('meta[name="tags"]').remove();
 
-    // Lấy tiêu đề bài viết từ thẻ <h1> đầu tiên trong nội dung
+    // Lấy tiêu đề bài viết từ thẻ <h1>
     const h1Title = $('h1').first().text().trim() || 'Untitled Article';
 
-    // Cập nhật header: thay thế thẻ <title> bằng tiêu đề của bài viết
+    // Cập nhật header: <title> và chèn meta tags
     header = header.replace(/<title>.*<\/title>/, `<title>${h1Title}</title>`);
-
-    // Chèn meta tags đã trích xuất vào phần <head> của header (trước </head>)
     const combinedMeta = metaCategory + "\n" + metaDescription + "\n" + metaTags;
     header = header.replace('</head>', combinedMeta + "\n</head>");
 
-    // Bọc nội dung bài viết trong container cố định
-    let content = `<main class="article-content">\n${$.html()}\n</main>`;
+    // Sinh phần "Bài viết liên quan"
+    const thisTags = rawData[file].tags;
+    const related = Object.values(rawData)
+      .filter(r => r.url !== rawData[file].url && r.tags.some(t => thisTags.includes(t)))
+      .slice(0, 5);
+    let relatedHtml = '<section class="related-articles"><h2>Bài viết liên quan</h2><ul>';
+    related.forEach(r => {
+      relatedHtml += `<li><a href="${r.url}">${r.title}</a></li>`;
+    });
+    relatedHtml += '</ul></section>';
+
+    // Bọc nội dung và chèn related
+    let content = `<main class="article-content">\n${$.html()}\n${relatedHtml}\n</main>`;
 
     // Ghép header, nội dung bài viết và footer
     let finalHtml = header + "\n" + content + "\n" + footer;
@@ -160,7 +180,7 @@ async function buildArticles() {
     // Tối ưu ảnh nếu cần
     finalHtml = await convertImages(finalHtml);
 
-    // Lưu bài viết vào thư mục dựa trên category
+    // Lưu bài viết vào thư mục theo category
     const outDir = path.join(rootDir, cat);
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
     const outPath = path.join(outDir, file);
@@ -168,7 +188,6 @@ async function buildArticles() {
     console.log(`✅ Build [${file}] => /${cat}/${file}`);
   }
 }
-
 //-----------------------------------------
 // 4) gatherCategoryAndTags => quét data => categoriesData, tagsData
 //-----------------------------------------
@@ -633,8 +652,11 @@ ${JSON.stringify(breadcrumbJSON,null,2)}
 // 8) buildAllArticles
 //-----------------------------------------
 async function buildAllArticles() {
-  // 1) build articles
-  await buildArticles();
+  // 0) Thu thập metadata
+  const rawData = gatherRawArticles();
+
+  // 1) build articles (có Related)
+  await buildArticles(rawData);
 
   // 2) gather => build subcat => build cat/tags => build main
   gatherCategoryAndTags();
@@ -653,7 +675,5 @@ async function buildAllArticles() {
   console.log('\n🎯 Hoàn tất build bài viết + SEO + breadcrumb!\n');
 }
 
-//-----------------------------------------
 // RUN
-//-----------------------------------------
 buildAllArticles().catch(err => console.error(err));
