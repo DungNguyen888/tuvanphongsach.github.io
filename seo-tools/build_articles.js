@@ -143,18 +143,13 @@ async function buildArticles(rawData) {
     const raw = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(raw, { decodeEntities: false });
 
-    // Lấy tiêu đề từ h1
     const h1Title = $('h1').first().text().trim() || 'Untitled Article';
-
-    // Lấy hình ảnh đầu tiên để làm ảnh đại diện (hero image)
     const heroImage = $('img').first().prop('outerHTML') || '';
-    $('img').first().remove(); // Xóa hình ảnh khỏi nội dung chính
-    $('h1').first().remove(); // Xóa h1 khỏi nội dung chính để tránh trùng lặp
+    $('img').first().remove();
+    $('h1').first().remove();
 
-    // Làm sạch nội dung gốc
     $('title, meta:not([name="category"]):not([name="tags"]), script[type="application/ld+json"]').remove();
 
-    // Sinh phần "Bài viết liên quan"
     const thisTags = rawData[file].tags;
     const related = Object.values(rawData)
       .filter(r => r.url !== rawData[file].url && r.tags.some(t => thisTags.includes(t)))
@@ -166,7 +161,7 @@ async function buildArticles(rawData) {
           <a href="${r.url}" class="related-card">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">${r.title}</h5>
+                <h3 class="card-title">${r.title}</h3>
               </div>
             </div>
           </a>
@@ -174,18 +169,14 @@ async function buildArticles(rawData) {
     });
     relatedHtml += '</div></section>';
 
-    // Tạo HTML mới với hero section
     const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
     
-    // Chèn các thẻ CSS và JS vào head
     $doc('head').append(`
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
-      <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
     `);
     $doc('head').append(`<title>${h1Title}</title>`);
 
-    // Tạo hero section
     const heroSection = `
       <section class="hero-section">
         <div class="container">
@@ -200,16 +191,15 @@ async function buildArticles(rawData) {
         </div>
       </section>`;
 
-    // Chèn menu, hero section, nội dung bài viết, và footer
     $doc('body').append(header);
     $doc('body').append(heroSection);
     $doc('body').append(`<main class="article-content container my-5">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
+    $doc('body').append(`<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>`); // Chèn script ở cuối body
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
 
-    // Lưu bài viết
     const cat = rawData[file].category;
     const outDir = path.join(rootDir, cat);
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
@@ -263,7 +253,7 @@ function gatherCategoryAndTags() {
 //-----------------------------------------
 async function buildSubCategoryIndexes() {
   let { header, footer } = loadPartials();
-  const rawData = gatherRawArticles(); // Lấy lại rawData để sử dụng image
+  const rawData = gatherRawArticles();
 
   for (const cfg of categoryConfigs) {
     const dirPath = path.join(rootDir, cfg.dir);
@@ -274,7 +264,6 @@ async function buildSubCategoryIndexes() {
     $doc('head').append(`
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
-      <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
     `);
     $doc('head').append(`<title>${cfg.title}</title>`);
 
@@ -296,7 +285,6 @@ async function buildSubCategoryIndexes() {
 
       const t = $('title').text().trim() || file;
       const d = $('p').first().text().trim() || '';
-      // Lấy hình ảnh từ rawData
       const img = rawData[file]?.image || defaultImage;
 
       content += `
@@ -321,6 +309,7 @@ async function buildSubCategoryIndexes() {
     $doc('body').append(header);
     $doc('body').append(content);
     $doc('body').append(footer);
+    $doc('body').append(`<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>`); // Chèn script ở cuối body
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
@@ -331,7 +320,6 @@ async function buildSubCategoryIndexes() {
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   }
 }
-
 
 async function buildMainCategoryFile() {
   let { header, footer } = loadPartials();
