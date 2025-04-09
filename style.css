@@ -65,18 +65,20 @@
 
 /* Logo cố định kích thước */
 .logo-fixed {
-  width: 150px;
-  height: auto;
+  width: 50px; /* Kích thước mong muốn */
+  height: 50px; /* Đảm bảo tỷ lệ 1:1 */
+  object-fit: contain; /* Giữ tỷ lệ khung hình, không làm méo */
   max-width: none;
 }
+
 
 /* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 768px) {
   .logo-fixed {
-    width: 120px;
+    width: 40px;
+    height: 40px;
   }
 }
-
 /* CSS mới để cải thiện giao diện */
 
 /* Reset và cơ bản */
@@ -210,8 +212,9 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-brand img {
-  max-height: 40px;
+.navbar-brand {
+  line-height: normal; /* Tránh ảnh hưởng từ line-height */
+  padding: 5px 0; /* Điều chỉnh padding nếu cần */
 }
 
 .nav-link {
