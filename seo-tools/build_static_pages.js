@@ -213,47 +213,53 @@ function injectBreadcrumbAuto(folder) {
   files.forEach(file => {
     const filePath = path.join(folder, file);
     const stat = fs.statSync(filePath);
-    if (stat.isDirectory()) {
-      injectBreadcrumbAuto(filePath);
-    } else if (file.endsWith('.html')) {
-      if (file === 'header.html' || file === 'footer.html') return;
-      let html = fs.readFileSync(filePath, 'utf8');
-      if (html.includes('"@type": "BreadcrumbList"')) return;
-      const itemList = [{
+    if (stat.isDirectory()) return;
+    if (!file.endsWith('.html')) return;
+    if (file === 'header.html' || file === 'footer.html') return;
+
+    let html = fs.readFileSync(filePath, 'utf8');
+    // Nếu đã có Breadcrumb thì bỏ qua
+    if (html.includes('"@type": "BreadcrumbList"')) return;
+
+    // Xây mảng itemListElement
+    const itemList = [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": BASE_URL + "/"
+    }];
+    if (pageMap[file] && file !== 'index.html') {
+      itemList.push({
         "@type": "ListItem",
-        "position": 1,
-        "name": "Trang chủ",
-        "item": BASE_URL + "/"
-      }];
-      if (pageMap[file]) {
-        if (file !== 'index.html') {
-          itemList.push({
-            "@type": "ListItem",
-            "position": 2,
-            "name": pageMap[file],
-            "item": BASE_URL + "/" + file
-          });
-        }
-      } else {
-        return;
-      }
-      const breadcrumbJSON = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": itemList
-      };
-      const snippet = `
+        "position": 2,
+        "name": pageMap[file],
+        "item": BASE_URL + "/" + file
+      });
+    }
+
+    const breadcrumbJSON = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": itemList
+    };
+    const snippet = `
 <script type="application/ld+json">
 ${JSON.stringify(breadcrumbJSON, null, 2)}
 </script>
 `;
-      html = html.includes('</body>') ? html.replace('</body>', snippet + '\n</body>') : html + snippet;
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [Breadcrumb Tĩnh] => ${filePath.replace(rootDir, '')}`);
+
+    // Chèn trước thẻ </head>
+    if (html.includes('</head>')) {
+      html = html.replace('</head>', snippet + '\n</head>');
+    } else {
+      // Nếu không tìm thấy head, append lên đầu
+      html = snippet + html;
     }
+
+    fs.writeFileSync(filePath, html, 'utf8');
+    console.log(`✅ [Breadcrumb Tĩnh] => ${filePath.replace(rootDir, '')}`);
   });
 }
-
 //-----------------------------------------
 // 6) Build Static Pages (bao gồm xử lý ảnh <img> và ảnh nền)
 //-----------------------------------------
