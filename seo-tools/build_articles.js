@@ -51,7 +51,7 @@ function gatherRawArticles() {
       .split(',').map(t => t.trim()).filter(Boolean);
     const category = $('meta[name="category"]').attr('content') || 'misc';
     const url = `/${category}/${file}`;
-    rawData[file] = { title, tags, url, category }; // Thêm category để dùng sau
+    rawData[file] = { title, tags, url, category };
   });
   return rawData;
 }
@@ -136,11 +136,6 @@ async function buildArticles(rawData) {
   const allFiles = fs.readdirSync(pagesDir).filter(f => f.endsWith('.html'));
   const articleFiles = allFiles.filter(f => !STATIC_FILES.includes(f));
 
-  // Làm sạch header
-  const $header = cheerio.load(header, { decodeEntities: false });
-  $header('title, meta, script[type="application/ld+json"]').remove();
-  header = $header.html();
-
   for (const file of articleFiles) {
     const filePath = path.join(pagesDir, file);
     const raw = fs.readFileSync(filePath, 'utf8');
@@ -150,7 +145,7 @@ async function buildArticles(rawData) {
     const h1Title = $('h1').first().text().trim() || 'Untitled Article';
 
     // Làm sạch nội dung gốc
-    $('title, meta, script[type="application/ld+json"]').remove();
+    $('title, meta:not([name="category"]):not([name="tags"]), script[type="application/ld+json"]').remove();
 
     // Sinh phần "Bài viết liên quan"
     const thisTags = rawData[file].tags;
@@ -163,17 +158,25 @@ async function buildArticles(rawData) {
     });
     relatedHtml += '</ul></section>';
 
-    // Tạo HTML sạch
-    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-    $doc('head').append(header);
-    $doc('head').append(`<title>${h1Title}</title>`);
+    // Tạo HTML mới
+    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+    
+    // Chèn các thẻ CSS vào head
+    $doc('head').append(`
+      <link rel="stylesheet" href="/style.css">
+      <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+    `);
+    $doc('head').append(`<title>${h1Title}</title>`); // Đảm bảo title trong head
+
+    // Chèn menu vào đầu body, sau đó là nội dung bài viết và footer
+    $doc('body').append(header); // Menu từ header.html
     $doc('body').append(`<main class="article-content">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
 
-    // Lưu bài viết vào thư mục theo category
+    // Lưu bài viết
     const cat = rawData[file].category;
     const outDir = path.join(rootDir, cat);
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
@@ -183,7 +186,6 @@ async function buildArticles(rawData) {
     console.log(`✅ Build [${file}] => /${cat}/${file}`);
   }
 }
-
 //-----------------------------------------
 // 4) gatherCategoryAndTags => quét data => categoriesData, tagsData
 //-----------------------------------------
@@ -342,228 +344,228 @@ async function buildMainCategoryFile() {
         </div>
       </div>
     </section>`;
-  $doc('body').append(content);
-  $doc('body').append(footer);
+    $doc('body').append(content);
+    $doc('body').append(footer);
 
-  let finalHtml = $doc.html();
-  finalHtml = await convertImages(finalHtml);
+    let finalHtml = $doc.html();
+    finalHtml = await convertImages(finalHtml);
 
-  fs.writeFileSync(mainCategoryFile, finalHtml, 'utf8');
-  ARTICLE_RELATED_FILES.push(mainCategoryFile);
-  console.log('✅ Tạo trang danh mục chính: danh-muc.html');
+    fs.writeFileSync(mainCategoryFile, finalHtml, 'utf8');
+    ARTICLE_RELATED_FILES.push(mainCategoryFile);
+    console.log('✅ Tạo trang danh mục chính: danh-muc.html');
 }
 
 async function buildIndexPage(items, outputFile, pageTitle, schemaType) {
-  const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-  $doc('head').append(`
-    <meta charset="UTF-8">
-    <title>${pageTitle}</title>
-    <link rel="stylesheet" href="/style.css">
-  `);
+    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
+    $doc('head').append(`
+      <meta charset="UTF-8">
+      <title>${pageTitle}</title>
+      <link rel="stylesheet" href="/style.css">
+    `);
 
-  let html = `
-  <body>
-    <h1>${pageTitle}</h1>
-    <div class="category-grid">`;
+    let html = `
+    <body>
+      <h1>${pageTitle}</h1>
+      <div class="category-grid">`;
 
-  Object.entries(items).forEach(([key, posts]) => {
-    html += `<section class="category-block">
-      <h2>${key}</h2>
-      <div class="post-list">`;
-    posts.forEach(p => {
-      html += `
-        <a href="${p.url}" class="post-item">
-          <img src="${p.image}" alt="${p.title}">
-          <h3>${p.title}</h3>
-          <p>${p.description}</p>
-        </a>`;
+    Object.entries(items).forEach(([key, posts]) => {
+      html += `<section class="category-block">
+        <h2>${key}</h2>
+        <div class="post-list">`;
+      posts.forEach(p => {
+        html += `
+          <a href="${p.url}" class="post-item">
+            <img src="${p.image}" alt="${p.title}">
+            <h3>${p.title}</h3>
+            <p>${p.description}</p>
+          </a>`;
+      });
+      html += `</div></section>`;
     });
-    html += `</div></section>`;
-  });
 
-  html += `
-    </div>
-  </body>`;
-  $doc('body').append(html);
+    html += `
+      </div>
+    </body>`;
+    $doc('body').append(html);
 
-  let finalHtml = $doc.html();
-  finalHtml = await convertImages(finalHtml);
+    let finalHtml = $doc.html();
+    finalHtml = await convertImages(finalHtml);
 
-  fs.writeFileSync(outputFile, finalHtml, 'utf8');
-  ARTICLE_RELATED_FILES.push(outputFile);
-  console.log(`✅ ${pageTitle} => ${outputFile.replace(rootDir, '')}`);
+    fs.writeFileSync(outputFile, finalHtml, 'utf8');
+    ARTICLE_RELATED_FILES.push(outputFile);
+    console.log(`✅ ${pageTitle} => ${outputFile.replace(rootDir, '')}`);
 }
 
 async function buildCategoryTagsIndex() {
-  if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir);
-  if (!fs.existsSync(tagDir)) fs.mkdirSync(tagDir);
+    if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir);
+    if (!fs.existsSync(tagDir)) fs.mkdirSync(tagDir);
 
-  await buildIndexPage(categoriesData, categoryIndexFile, 'Danh mục bài viết', 'CollectionPage');
-  await buildIndexPage(tagsData, tagIndexFile, 'Thẻ bài viết', 'CollectionPage');
+    await buildIndexPage(categoriesData, categoryIndexFile, 'Danh mục bài viết', 'CollectionPage');
+    await buildIndexPage(tagsData, tagIndexFile, 'Thẻ bài viết', 'CollectionPage');
 }
 
 //-----------------------------------------
 // 6) Chèn Meta, OG, Schema
 //-----------------------------------------
 function injectMeta() {
-  ARTICLE_RELATED_FILES.forEach(filePath => {
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html, { decodeEntities: false });
+    ARTICLE_RELATED_FILES.forEach(filePath => {
+      let html = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa meta cũ nếu có
-    $('meta[name="viewport"], meta[name="description"]').remove();
+      // Xóa meta cũ nếu có
+      $('meta[name="viewport"], meta[name="description"]').remove();
 
-    const metaInsert = `
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Tuvanphongsach.com - Giải pháp phòng sạch">`;
-    $('head').prepend(metaInsert);
+      const metaInsert = `
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tuvanphongsach.com - Giải pháp phòng sạch">`;
+      $('head').prepend(metaInsert);
 
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
-    console.log(`✅ [Meta] => ${filePath.replace(rootDir, '')}`);
-  });
+      html = $.html();
+      fs.writeFileSync(filePath, html, 'utf8');
+      console.log(`✅ [Meta] => ${filePath.replace(rootDir, '')}`);
+    });
 }
 
 function injectOpenGraph() {
-  ARTICLE_RELATED_FILES.forEach(filePath => {
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html, { decodeEntities: false });
+    ARTICLE_RELATED_FILES.forEach(filePath => {
+      let html = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa OG cũ nếu có
-    $('meta[property^="og:"]').remove();
+      // Xóa OG cũ nếu có
+      $('meta[property^="og:"]').remove();
 
-    const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
-    const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
-    const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
-    const desc = descMatch ? descMatch[1] : '';
-    const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
-    const img = matchImg ? matchImg[1] : defaultImage;
-    const rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
-    const ogUrl = BASE_URL + rel;
+      const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+      const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
+      const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
+      const desc = descMatch ? descMatch[1] : '';
+      const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
+      const img = matchImg ? matchImg[1] : defaultImage;
+      const rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
+      const ogUrl = BASE_URL + rel;
 
-    const ogTags = `
-<meta property="og:title" content="${title}">
-<meta property="og:description" content="${desc}">
-<meta property="og:image" content="${img}">
-<meta property="og:url" content="${ogUrl}">`;
-    $('head').append(ogTags);
+      const ogTags = `
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${desc}">
+  <meta property="og:image" content="${img}">
+  <meta property="og:url" content="${ogUrl}">`;
+      $('head').append(ogTags);
 
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
-    console.log(`✅ [OG] => ${rel}`);
-  });
+      html = $.html();
+      fs.writeFileSync(filePath, html, 'utf8');
+      console.log(`✅ [OG] => ${rel}`);
+    });
 }
 
 function injectSchema() {
-  ARTICLE_RELATED_FILES.forEach(filePath => {
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html, { decodeEntities: false });
+    ARTICLE_RELATED_FILES.forEach(filePath => {
+      let html = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa schema cũ nếu có (trừ breadcrumb)
-    $('script[type="application/ld+json"]').filter((i, el) => {
-      return !$(el).html().includes('"BreadcrumbList"');
-    }).remove();
+      // Xóa schema cũ nếu có (trừ breadcrumb)
+      $('script[type="application/ld+json"]').filter((i, el) => {
+        return !$(el).html().includes('"BreadcrumbList"');
+      }).remove();
 
-    const schemaFileName = `schema-${filePath.replace(rootDir, '').replace(/\\/g, '-').replace('.html', '')}.json`;
-    const schemaPath = path.join(generatedSchemaDir, schemaFileName);
-    if (fs.existsSync(schemaPath)) {
-      const schemaContent = fs.readFileSync(schemaPath, 'utf8');
-      const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
-      $('head').append(snippet);
-      html = $.html();
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [Schema] => ${filePath.replace(rootDir, '')}`);
-    }
-  });
+      const schemaFileName = `schema-${filePath.replace(rootDir, '').replace(/\\/g, '-').replace('.html', '')}.json`;
+      const schemaPath = path.join(generatedSchemaDir, schemaFileName);
+      if (fs.existsSync(schemaPath)) {
+        const schemaContent = fs.readFileSync(schemaPath, 'utf8');
+        const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
+        $('head').append(snippet);
+        html = $.html();
+        fs.writeFileSync(filePath, html, 'utf8');
+        console.log(`✅ [Schema] => ${filePath.replace(rootDir, '')}`);
+      }
+    });
 }
 
 //-----------------------------------------
 // 7) injectBreadcrumbAuto
 //-----------------------------------------
 function injectBreadcrumbAuto() {
-  ARTICLE_RELATED_FILES.forEach(filePath => {
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html, { decodeEntities: false });
+    ARTICLE_RELATED_FILES.forEach(filePath => {
+      let html = fs.readFileSync(filePath, 'utf8');
+      const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa breadcrumb cũ nếu có
-    $('script[type="application/ld+json"]').filter((i, el) => {
-      return $(el).html().includes('"BreadcrumbList"');
-    }).remove();
+      // Xóa breadcrumb cũ nếu có
+      $('script[type="application/ld+json"]').filter((i, el) => {
+        return $(el).html().includes('"BreadcrumbList"');
+      }).remove();
 
-    const itemList = [{
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Trang chủ",
-      "item": BASE_URL + "/"
-    }];
-
-    let rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
-    if (rel.startsWith('/')) rel = rel.slice(1);
-    const parts = rel.split('/');
-
-    parts.forEach((slug, i) => {
-      if (slug === 'index.html' && parts.length === 2) return;
-      const currentUrl = BASE_URL + '/' + parts.slice(0, i + 1).join('/');
-      const isLast = (i === parts.length - 1 && slug.endsWith('.html'));
-      let name;
-      if (isLast) {
-        const match = html.match(/<title>([\s\S]*?)<\/title>/);
-        name = match ? match[1].trim() : slug.replace('.html', '');
-      } else {
-        const found = categoryConfigs.find(c => c.dir === slug);
-        name = found ? found.title : slug;
-      }
-      itemList.push({
+      const itemList = [{
         "@type": "ListItem",
-        "position": itemList.length + 1,
-        "name": name,
-        "item": isLast ? currentUrl : currentUrl + '/'
+        "position": 1,
+        "name": "Trang chủ",
+        "item": BASE_URL + "/"
+      }];
+
+      let rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
+      if (rel.startsWith('/')) rel = rel.slice(1);
+      const parts = rel.split('/');
+
+      parts.forEach((slug, i) => {
+        if (slug === 'index.html' && parts.length === 2) return;
+        const currentUrl = BASE_URL + '/' + parts.slice(0, i + 1).join('/');
+        const isLast = (i === parts.length - 1 && slug.endsWith('.html'));
+        let name;
+        if (isLast) {
+          const match = html.match(/<title>([\s\S]*?)<\/title>/);
+          name = match ? match[1].trim() : slug.replace('.html', '');
+        } else {
+          const found = categoryConfigs.find(c => c.dir === slug);
+          name = found ? found.title : slug;
+        }
+        itemList.push({
+          "@type": "ListItem",
+          "position": itemList.length + 1,
+          "name": name,
+          "item": isLast ? currentUrl : currentUrl + '/'
+        });
       });
+
+      const breadcrumbJSON = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": itemList
+      };
+      const snippet = `
+  <script type="application/ld+json">
+  ${JSON.stringify(breadcrumbJSON, null, 2)}
+  </script>`;
+
+      $('head').prepend(snippet);
+      html = $.html();
+      fs.writeFileSync(filePath, html, 'utf8');
+      console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir, '')}`);
     });
-
-    const breadcrumbJSON = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": itemList
-    };
-    const snippet = `
-<script type="application/ld+json">
-${JSON.stringify(breadcrumbJSON, null, 2)}
-</script>`;
-
-    $('head').prepend(snippet);
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
-    console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir, '')}`);
-  });
 }
 
 //-----------------------------------------
 // 8) buildAllArticles
 //-----------------------------------------
 async function buildAllArticles() {
-  // Reset danh sách file mỗi lần chạy
-  ARTICLE_RELATED_FILES.length = 0;
+    // Reset danh sách file mỗi lần chạy
+    ARTICLE_RELATED_FILES.length = 0;
 
-  // 0) Thu thập metadata
-  const rawData = gatherRawArticles();
+    // 0) Thu thập metadata
+    const rawData = gatherRawArticles();
 
-  // 1) build articles (có Related)
-  await buildArticles(rawData);
+    // 1) build articles (có Related)
+    await buildArticles(rawData);
 
-  // 2) gather => build subcat => build cat/tags => build main
-  gatherCategoryAndTags();
-  await buildSubCategoryIndexes();
-  await buildCategoryTagsIndex();
-  await buildMainCategoryFile();
+    // 2) gather => build subcat => build cat/tags => build main
+    gatherCategoryAndTags();
+    await buildSubCategoryIndexes();
+    await buildCategoryTagsIndex();
+    await buildMainCategoryFile();
 
-  // 3) chèn meta, OG, schema, breadcrumb sau khi build
-  injectMeta();
-  injectOpenGraph();
-  injectSchema();
-  injectBreadcrumbAuto();
+    // 3) chèn meta, OG, schema, breadcrumb sau khi build
+    injectMeta();
+    injectOpenGraph();
+    injectSchema();
+    injectBreadcrumbAuto();
 
-  console.log('\n🎯 Hoàn tất build bài viết + SEO + breadcrumb!\n');
+    console.log('\n🎯 Hoàn tất build bài viết + SEO + breadcrumb!\n');
 }
 
 // RUN

@@ -244,23 +244,20 @@ async function buildStaticPages() {
       continue;
     }
     let raw = fs.readFileSync(filePath, 'utf8');
-
-    // Làm sạch nội dung gốc
     const $raw = cheerio.load(raw, { decodeEntities: false });
     const h1Text = $raw('h1').first().text().trim() || 'Untitled';
     $raw('title, meta, script[type="application/ld+json"]').remove();
     raw = $raw.html();
 
-    // Load partials
     let { header, footer } = loadPartials();
-    const $header = cheerio.load(header, { decodeEntities: false });
-    $header('title, meta, script[type="application/ld+json"]').remove();
-    $header('head').append(`<title>${h1Text}</title>`);
-    header = $header.html();
 
-    // Tạo HTML sạch
-    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-    $doc('head').append(header);
+    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+    $doc('head').append(`
+      <link rel="stylesheet" href="/style.css">
+      <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+    `);
+    $doc('head').append(`<title>${h1Text}</title>`);
+    $doc('body').append(header); // Menu từ header.html
     $doc('body').append(raw);
     $doc('body').append(footer);
 
@@ -268,14 +265,12 @@ async function buildStaticPages() {
     finalHtml = await convertImages(finalHtml);
     finalHtml = await convertBackgroundImages(finalHtml);
 
-    // Xác định tên file đầu ra
     const outName = file === 'home.html' ? 'index.html' : file;
     const outPath = path.join(rootDir, outName);
     fs.writeFileSync(outPath, finalHtml, 'utf8');
     console.log(`✅ Build [${file}] => /${outName}`);
   }
 
-  // Chèn các thành phần SEO chỉ cho các trang tĩnh
   injectMeta();
   injectOpenGraph();
   injectSchema();
