@@ -144,6 +144,10 @@ async function buildArticles(rawData) {
     // Lấy tiêu đề từ h1
     const h1Title = $('h1').first().text().trim() || 'Untitled Article';
 
+    // Lấy hình ảnh đầu tiên để làm ảnh đại diện (hero image)
+    const heroImage = $('img').first().prop('outerHTML') || '';
+    $('img').first().remove(); // Xóa hình ảnh khỏi nội dung chính để tránh trùng lặp
+
     // Làm sạch nội dung gốc
     $('title, meta:not([name="category"]):not([name="tags"]), script[type="application/ld+json"]').remove();
 
@@ -152,25 +156,51 @@ async function buildArticles(rawData) {
     const related = Object.values(rawData)
       .filter(r => r.url !== rawData[file].url && r.tags.some(t => thisTags.includes(t)))
       .slice(0, 5);
-    let relatedHtml = '<section class="related-articles"><h2>Bài viết liên quan</h2><ul>';
+    let relatedHtml = '<section class="related-articles"><h2 class="section-title">Bài viết liên quan</h2><div class="row">';
     related.forEach(r => {
-      relatedHtml += `<li><a href="${r.url}">${r.title}</a></li>`;
+      relatedHtml += `
+        <div class="col-md-4 mb-3">
+          <a href="${r.url}" class="related-card">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">${r.title}</h5>
+              </div>
+            </div>
+          </a>
+        </div>`;
     });
-    relatedHtml += '</ul></section>';
+    relatedHtml += '</div></section>';
 
-    // Tạo HTML mới
+    // Tạo HTML mới với hero section
     const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
     
-    // Chèn các thẻ CSS vào head
+    // Chèn các thẻ CSS và JS vào head
     $doc('head').append(`
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+      <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
     `);
-    $doc('head').append(`<title>${h1Title}</title>`); // Đảm bảo title trong head
+    $doc('head').append(`<title>${h1Title}</title>`);
 
-    // Chèn menu vào đầu body, sau đó là nội dung bài viết và footer
+    // Tạo hero section
+    const heroSection = `
+      <section class="hero-section">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h1 class="hero-title">${h1Title}</h1>
+            </div>
+            <div class="col-md-6 text-center">
+              ${heroImage}
+            </div>
+          </div>
+        </div>
+      </section>`;
+
+    // Chèn menu, hero section, nội dung bài viết, và footer
     $doc('body').append(header); // Menu từ header.html
-    $doc('body').append(`<main class="article-content">\n${$.html()}\n${relatedHtml}\n</main>`);
+    $doc('body').append(heroSection); // Hero section
+    $doc('body').append(`<main class="article-content container my-5">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
 
     let finalHtml = $doc.html();
@@ -236,17 +266,21 @@ async function buildSubCategoryIndexes() {
 
     const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
     
-    // Chèn các thẻ CSS vào head
     $doc('head').append(`
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+      <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
     `);
     $doc('head').append(`<title>${cfg.title}</title>`);
 
     let content = `
-      <section class="py-5">
+      <section class="category-hero">
         <div class="container">
-          <h1 class="mb-4 text-center">${cfg.title}</h1>
+          <h1 class="category-title">${cfg.title}</h1>
+        </div>
+      </section>
+      <section class="category-content py-5">
+        <div class="container">
           <div class="row">`;
 
     const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
@@ -269,12 +303,12 @@ async function buildSubCategoryIndexes() {
 
       content += `
         <div class="col-lg-4 col-md-6 mb-4">
-          <a href="./${file}" class="text-decoration-none text-dark">
+          <a href="./${file}" class="category-card">
             <div class="card h-100">
               <img src="${img}" class="card-img-top" alt="${t}">
               <div class="card-body">
                 <h5 class="card-title">${t}</h5>
-                <p class="card-text">${d}</p>
+                <p class="card-text">${d.slice(0, 100)}...</p>
               </div>
             </div>
           </a>
@@ -286,8 +320,7 @@ async function buildSubCategoryIndexes() {
         </div>
       </section>`;
 
-    // Chèn menu vào đầu body, sau đó là nội dung danh mục và footer
-    $doc('body').append(header); // Menu từ header.html
+    $doc('body').append(header);
     $doc('body').append(content);
     $doc('body').append(footer);
 

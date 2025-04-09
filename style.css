@@ -26,26 +26,23 @@
   position: fixed;
   bottom: 25px;
   right: 20px;
-  z-index: 9999; /* Tăng z-index để đảm bảo hotline luôn hiển thị trên các phần tử khác */
+  z-index: 9999;
   background-color: #dc3545;
   border-radius: 4px;
   padding: 8px 12px;
   transition: opacity 0.3s;
 }
-
 #hotline a {
-  /* Loại bỏ vị trí relative và offset không cần thiết */
   color: #fff;
   text-decoration: none;
   font-weight: bold;
   display: block;
   text-align: center;
-  line-height: 1.5;  /* Căn chỉnh chiều cao dòng, thay đổi nếu cần */
+  line-height: 1.5;
 }
 #hotline a:hover {
   opacity: 0.9;
 }
-
 
 /* Bài viết liên quan */
 .related-posts h2 {
@@ -65,16 +62,220 @@
   max-width: 100%;
   height: auto;
 }
+
 /* Logo cố định kích thước */
 .logo-fixed {
-  width: 150px;     /* Chiều rộng 150px cho desktop */
-  height: auto;     /* Giữ tỉ lệ gốc */
-  max-width: none;  /* Loại bỏ mọi giới hạn từ img-fluid */
+  width: 150px;
+  height: auto;
+  max-width: none;
 }
 
 /* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 768px) {
   .logo-fixed {
-    width: 120px;   /* Giảm kích thước trên tablet/mobil */
+    width: 120px;
   }
+}
+
+/* CSS mới để cải thiện giao diện */
+
+/* Reset và cơ bản */
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: #f8f9fa;
+  padding: 50px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #046087;
+  margin-bottom: 20px;
+}
+
+.hero-section img {
+  max-width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Article Content */
+.article-content {
+  padding: 20px 0;
+}
+
+.article-content h2 {
+  font-size: 1.8rem;
+  color: #046087;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #046087;
+  padding-bottom: 10px;
+}
+
+.article-content h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.article-content p {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.article-content img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* Mục lục */
+.bang-noi-dung {
+  background-color: #f1f3f5;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.bang-noi-dung summary {
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #046087;
+}
+
+.bang-noi-dung ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.bang-noi-dung ul li {
+  margin-bottom: 8px;
+}
+
+.bang-noi-dung a {
+  color: #046087;
+  text-decoration: none;
+}
+
+.bang-noi-dung a:hover {
+  text-decoration: underline;
+}
+
+/* Related Articles */
+.related-articles {
+  margin-top: 50px;
+  padding: 30px 0;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #046087;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.related-card {
+  text-decoration: none;
+  color: #333;
+}
+
+.related-card .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.related-card .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.related-card .card-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* Menu (tùy chỉnh nếu cần) */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+  max-height: 40px;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #046087 !important;
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item:hover {
+  background-color: #f1f3f5;
+  color: #046087;
+}
+
+/* Category Hero */
+.category-hero {
+  background-color: #046087;
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.category-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Category Content */
+.category-content {
+  background-color: #fff;
+}
+
+.category-card {
+  text-decoration: none;
+  color: #333;
+}
+
+.category-card .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.category-card .card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.category-card .card-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.category-card .card-text {
+  font-size: 0.95rem;
+  color: #666;
 }
