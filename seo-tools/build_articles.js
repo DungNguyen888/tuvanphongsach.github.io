@@ -45,13 +45,15 @@ function gatherRawArticles() {
     .filter(f => f.endsWith('.html') && !STATIC_FILES.includes(f));
   files.forEach(file => {
     const html = fs.readFileSync(path.join(pagesDir, file), 'utf8');
-    const $ = cheerio.load(html);
+    const $ = cheerio.load(html, { decodeEntities: false });
     const title = $('h1').first().text().trim() || 'Untitled';
     const tags = ($('meta[name="tags"]').attr('content') || '')
       .split(',').map(t => t.trim()).filter(Boolean);
     const category = $('meta[name="category"]').attr('content') || 'misc';
     const url = `/${category}/${file}`;
-    rawData[file] = { title, tags, url, category };
+    // Lấy hình ảnh đầu tiên
+    const image = $('img').first().attr('src') || defaultImage;
+    rawData[file] = { title, tags, url, category, image };
   });
   return rawData;
 }
@@ -146,7 +148,8 @@ async function buildArticles(rawData) {
 
     // Lấy hình ảnh đầu tiên để làm ảnh đại diện (hero image)
     const heroImage = $('img').first().prop('outerHTML') || '';
-    $('img').first().remove(); // Xóa hình ảnh khỏi nội dung chính để tránh trùng lặp
+    $('img').first().remove(); // Xóa hình ảnh khỏi nội dung chính
+    $('h1').first().remove(); // Xóa h1 khỏi nội dung chính để tránh trùng lặp
 
     // Làm sạch nội dung gốc
     $('title, meta:not([name="category"]):not([name="tags"]), script[type="application/ld+json"]').remove();
@@ -191,15 +194,15 @@ async function buildArticles(rawData) {
               <h1 class="hero-title">${h1Title}</h1>
             </div>
             <div class="col-md-6 text-center">
-              ${heroImage}
+              ${heroImage ? `<div class="hero-image-wrapper">${heroImage}</div>` : '<p>Không có hình ảnh</p>'}
             </div>
           </div>
         </div>
       </section>`;
 
     // Chèn menu, hero section, nội dung bài viết, và footer
-    $doc('body').append(header); // Menu từ header.html
-    $doc('body').append(heroSection); // Hero section
+    $doc('body').append(header);
+    $doc('body').append(heroSection);
     $doc('body').append(`<main class="article-content container my-5">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
 
@@ -216,6 +219,7 @@ async function buildArticles(rawData) {
     console.log(`✅ Build [${file}] => /${cat}/${file}`);
   }
 }
+
 //-----------------------------------------
 // 4) gatherCategoryAndTags => quét data => categoriesData, tagsData
 //-----------------------------------------
@@ -259,6 +263,7 @@ function gatherCategoryAndTags() {
 //-----------------------------------------
 async function buildSubCategoryIndexes() {
   let { header, footer } = loadPartials();
+  const rawData = gatherRawArticles(); // Lấy lại rawData để sử dụng image
 
   for (const cfg of categoryConfigs) {
     const dirPath = path.join(rootDir, cfg.dir);
@@ -289,17 +294,10 @@ async function buildSubCategoryIndexes() {
       const rawHtml = fs.readFileSync(filePath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
 
-      let articleContent = $('main.article-content');
-      if (articleContent.length === 0) {
-        articleContent = $('body').clone();
-        articleContent.find('header, footer').remove();
-      }
-
       const t = $('title').text().trim() || file;
       const d = $('p').first().text().trim() || '';
-      let img = articleContent.find('img').filter(function() {
-        return !($(this).attr('src') || '').toLowerCase().includes('logo');
-      }).first().attr('src') || defaultImage;
+      // Lấy hình ảnh từ rawData
+      const img = rawData[file]?.image || defaultImage;
 
       content += `
         <div class="col-lg-4 col-md-6 mb-4">
@@ -333,6 +331,7 @@ async function buildSubCategoryIndexes() {
     console.log(`✅ Danh mục: ${cfg.dir}/index.html`);
   }
 }
+
 
 async function buildMainCategoryFile() {
   let { header, footer } = loadPartials();
