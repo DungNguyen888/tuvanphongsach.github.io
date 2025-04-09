@@ -566,85 +566,79 @@ function injectSchema(folder) {
 //-----------------------------------------
 // 7) injectBreadcrumbAuto => parse slug
 //-----------------------------------------
+//-----------------------------------------
+// 7) injectBreadcrumbAuto => parse slug, chèn vào <head>
+//-----------------------------------------
 function injectBreadcrumbAuto(folder) {
   const files = fs.readdirSync(folder);
   files.forEach(file => {
-    const filePath = path.join(folder,file);
+    const filePath = path.join(folder, file);
     const stat = fs.statSync(filePath);
     if (stat.isDirectory()) {
       injectBreadcrumbAuto(filePath);
-    } else if (file.endsWith('.html')) {
-      if (file==='header.html' || file==='footer.html') return;
-      let html = fs.readFileSync(filePath,'utf8');
-      if (html.includes('"@type": "BreadcrumbList"')) return;
-
-      // Always item#1: Trang chủ
-      const itemList = [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Trang chủ",
-        "item": BASE_URL + "/"
-      }];
-
-      // e.g. "ahu/ahu-bai1.html"
-      let rel = filePath.replace(rootDir,'').replace(/\\/g,'/');
-      if(rel.startsWith('/')) rel=rel.slice(1);
-      const parts = rel.split('/');
-
-      for(let i=0; i<parts.length; i++){
-        let slug = parts[i];
-        if(slug==='index.html') continue;
-
-        // Tạo link
-        let currentUrl = BASE_URL;
-        for(let j=0; j<=i; j++){
-          currentUrl += '/' + parts[j];
-        }
-
-        const isLast = (i===parts.length-1 && slug.endsWith('.html'));
-        if(isLast) {
-          // get <title>
-          const matchTitle = html.match(/<title>([\s\S]*?)<\/title>/);
-          let lastName = slug.replace('.html','');
-          if(matchTitle) lastName = matchTitle[1].trim();
-          itemList.push({
-            "@type": "ListItem",
-            "position": itemList.length+1,
-            "name": lastName,
-            "item": currentUrl
-          });
-        } else {
-          // folder => check categoryConfigs
-          let folderName = slug;
-          const found = categoryConfigs.find(c=> c.dir===slug);
-          if(found) folderName = found.title;
-
-          itemList.push({
-            "@type": "ListItem",
-            "position": itemList.length+1,
-            "name": folderName,
-            "item": currentUrl+'/'
-          });
-        }
-      }
-
-      const breadcrumbJSON = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": itemList
-      };
-      const snippet = `
-<script type="application/ld+json">
-${JSON.stringify(breadcrumbJSON,null,2)}
-</script>`;
-      if (html.includes('</body>')) {
-        html = html.replace('</body>', snippet+'\n</body>');
-      } else {
-        html += snippet;
-      }
-      fs.writeFileSync(filePath, html,'utf8');
-      console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir,'')}`);
+      return;
     }
+    if (!file.endsWith('.html')) return;
+    if (file === 'header.html' || file === 'footer.html') return;
+
+    let html = fs.readFileSync(filePath, 'utf8');
+    if (html.includes('"@type": "BreadcrumbList"')) return;
+
+    // Always item#1: Trang chủ
+    const itemList = [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": BASE_URL + "/"
+    }];
+
+    // Tạo đường dẫn tương đối và phân tách slug
+    let rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
+    if (rel.startsWith('/')) rel = rel.slice(1);
+    const parts = rel.split('/');
+
+    parts.forEach((slug, i) => {
+      if (slug === 'index.html') return;
+      // Build currentUrl
+      const currentUrl = BASE_URL + '/' + parts.slice(0, i + 1).join('/');
+      const isLast = (i === parts.length - 1 && slug.endsWith('.html'));
+      let name;
+      if (isLast) {
+        // Lấy tên từ <title>
+        const match = html.match(/<title>([\s\S]*?)<\/title>/);
+        name = match ? match[1].trim() : slug.replace('.html', '');
+      } else {
+        // Thư mục: tìm trong categoryConfigs
+        const found = categoryConfigs.find(c => c.dir === slug);
+        name = found ? found.title : slug;
+      }
+      itemList.push({
+        "@type": "ListItem",
+        "position": itemList.length + 1,
+        "name": name,
+        "item": isLast ? currentUrl : currentUrl + '/'
+      });
+    });
+
+    const breadcrumbJSON = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": itemList
+    };
+    const snippet = `
+<script type="application/ld+json">
+${JSON.stringify(breadcrumbJSON, null, 2)}
+</script>`;
+
+    // Chèn trước </head>, nếu không có head thì prepend
+    if (html.includes('</head>')) {
+      html = html.replace('</head>', snippet + '\n</head>');
+    } else {
+      html = snippet + '\n' + html;
+    }
+
+    fs.writeFileSync(filePath, html, 'utf8');
+    console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir, '')}`);
   });
 }
 
