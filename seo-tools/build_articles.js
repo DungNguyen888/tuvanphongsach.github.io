@@ -305,7 +305,7 @@ async function buildSubCategoryIndexes() {
             <div class="card h-100">
               <img src="${img}" class="card-img-top" alt="${t}">
               <div class="card-body">
-                <h5 class="card-title">${t}</h5>
+                <h2 class="card-title">${t}</h2>
                 <p class="card-text">${d.slice(0, 100)}...</p>
               </div>
             </div>
