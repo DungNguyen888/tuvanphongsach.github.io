@@ -229,16 +229,18 @@ function gatherCategoryAndTags() {
 //-----------------------------------------
 async function buildSubCategoryIndexes() {
   let { header, footer } = loadPartials();
-  const $header = cheerio.load(header, { decodeEntities: false });
-  $header('title, meta, script[type="application/ld+json"]').remove();
-  header = $header.html();
 
   for (const cfg of categoryConfigs) {
     const dirPath = path.join(rootDir, cfg.dir);
     if (!fs.existsSync(dirPath)) continue;
 
-    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-    $doc('head').append(header);
+    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+    
+    // Chèn các thẻ CSS vào head
+    $doc('head').append(`
+      <link rel="stylesheet" href="/style.css">
+      <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+    `);
     $doc('head').append(`<title>${cfg.title}</title>`);
 
     let content = `
@@ -283,6 +285,9 @@ async function buildSubCategoryIndexes() {
           </div>
         </div>
       </section>`;
+
+    // Chèn menu vào đầu body, sau đó là nội dung danh mục và footer
+    $doc('body').append(header); // Menu từ header.html
     $doc('body').append(content);
     $doc('body').append(footer);
 
@@ -298,12 +303,12 @@ async function buildSubCategoryIndexes() {
 
 async function buildMainCategoryFile() {
   let { header, footer } = loadPartials();
-  const $header = cheerio.load(header, { decodeEntities: false });
-  $header('title, meta, script[type="application/ld+json"]').remove();
-  header = $header.html();
 
-  const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-  $doc('head').append(header);
+  const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+  $doc('head').append(`
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+  `);
   $doc('head').append(`<title>Danh mục bài viết</title>`);
 
   let content = `
@@ -344,56 +349,59 @@ async function buildMainCategoryFile() {
         </div>
       </div>
     </section>`;
-    $doc('body').append(content);
-    $doc('body').append(footer);
 
-    let finalHtml = $doc.html();
-    finalHtml = await convertImages(finalHtml);
+  $doc('body').append(header); // Menu
+  $doc('body').append(content);
+  $doc('body').append(footer);
 
-    fs.writeFileSync(mainCategoryFile, finalHtml, 'utf8');
-    ARTICLE_RELATED_FILES.push(mainCategoryFile);
-    console.log('✅ Tạo trang danh mục chính: danh-muc.html');
+  let finalHtml = $doc.html();
+  finalHtml = await convertImages(finalHtml);
+
+  fs.writeFileSync(mainCategoryFile, finalHtml, 'utf8');
+  ARTICLE_RELATED_FILES.push(mainCategoryFile);
+  console.log('✅ Tạo trang danh mục chính: danh-muc.html');
 }
 
 async function buildIndexPage(items, outputFile, pageTitle, schemaType) {
-    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head></head><body></body></html>', { decodeEntities: false });
-    $doc('head').append(`
-      <meta charset="UTF-8">
-      <title>${pageTitle}</title>
-      <link rel="stylesheet" href="/style.css">
-    `);
+  const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+  let { header, footer } = loadPartials();
+  
+  $doc('head').append(`
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+  `);
+  $doc('head').append(`<title>${pageTitle}</title>`);
 
-    let html = `
-    <body>
-      <h1>${pageTitle}</h1>
-      <div class="category-grid">`;
+  let html = `
+    <div class="category-grid">`;
 
-    Object.entries(items).forEach(([key, posts]) => {
-      html += `<section class="category-block">
-        <h2>${key}</h2>
-        <div class="post-list">`;
-      posts.forEach(p => {
-        html += `
-          <a href="${p.url}" class="post-item">
-            <img src="${p.image}" alt="${p.title}">
-            <h3>${p.title}</h3>
-            <p>${p.description}</p>
-          </a>`;
-      });
-      html += `</div></section>`;
+  Object.entries(items).forEach(([key, posts]) => {
+    html += `<section class="category-block">
+      <h2>${key}</h2>
+      <div class="post-list">`;
+    posts.forEach(p => {
+      html += `
+        <a href="${p.url}" class="post-item">
+          <img src="${p.image}" alt="${p.title}">
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+        </a>`;
     });
+    html += `</div></section>`;
+  });
 
-    html += `
-      </div>
-    </body>`;
-    $doc('body').append(html);
+  html += `</div>`;
 
-    let finalHtml = $doc.html();
-    finalHtml = await convertImages(finalHtml);
+  $doc('body').append(header); // Menu
+  $doc('body').append(html);
+  $doc('body').append(footer);
 
-    fs.writeFileSync(outputFile, finalHtml, 'utf8');
-    ARTICLE_RELATED_FILES.push(outputFile);
-    console.log(`✅ ${pageTitle} => ${outputFile.replace(rootDir, '')}`);
+  let finalHtml = $doc.html();
+  finalHtml = await convertImages(finalHtml);
+
+  fs.writeFileSync(outputFile, finalHtml, 'utf8');
+  ARTICLE_RELATED_FILES.push(outputFile);
+  console.log(`✅ ${pageTitle} => ${outputFile.replace(rootDir, '')}`);
 }
 
 async function buildCategoryTagsIndex() {
