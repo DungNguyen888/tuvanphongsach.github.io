@@ -1,119 +1,147 @@
-<html><head>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Trang chủ",
-      "item": "https://tuvanphongsach.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "pages",
-      "item": "https://tuvanphongsach.com/pages/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
-      "name": "Liên hệ - Tuvanphongsach.com",
-      "item": "https://tuvanphongsach.com/pages/lien-he.html"
-    }
-  ]
-}
-</script>
-  
-
-<title>Liên hệ - Tuvanphongsach.com</title>
-
-
-<!-- Tiêu đề chính -->
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-<meta property="og:title" content="Liên hệ - Tuvanphongsach.com">
-<meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-<meta property="og:image" content="image/contact.jpg">
-<meta property="og:url" content="https://tuvanphongsach.com/pages/lien-he.html"></head><body><h1>Liên hệ</h1>
+  <meta name="description" content="Liên hệ Tuvanphongsach.com để được tư vấn phòng sạch miễn phí. Hỗ trợ thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO.">
+  <meta property="og:title" content="Liên hệ - Tuvanphongsach.com">
+  <meta property="og:description" content="Liên hệ Tuvanphongsach.com để được tư vấn phòng sạch miễn phí. Hỗ trợ thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO.">
+  <meta property="og:image" content="/image/contact.jpg">
+  <meta property="og:url" content="https://tuvanphongsach.com/lien-he.html">
+  <title>Liên hệ - Tuvanphongsach.com</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+  <style>
+    /* Style bổ sung cho trang liên hệ */
+    .contact-info {
+      background-color: var(--background-light);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      height: 100%; /* Đảm bảo chiều cao đồng đều với form */
+    }
+    .contact-info h3 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    .contact-info ul li {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .contact-info img {
+      margin-top: 20px;
+      border-radius: 8px;
+      aspect-ratio: 4 / 3; /* Giữ tỷ lệ ảnh */
+    }
+    #contact-form {
+      background-color: var(--background-light);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    #contact-form .form-label {
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+    #contact-form .form-control {
+      border-radius: 8px;
+      padding: 10px;
+    }
+    #contact-form button {
+      background-color: var(--secondary-color);
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    #contact-form button:hover {
+      background-color: #218838;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header từ partials -->
+  <header class="hero-banner">
+    <img src="/image/contact.jpg" alt="Liên hệ Tuvanphongsach.com" class="banner-img">
+    <div class="container">
+      <h1>Liên hệ</h1>
+      <p>Gửi yêu cầu tư vấn để nhận giải pháp phòng sạch tối ưu từ chúng tôi.</p>
+      <a href="#contact-form" class="btn btn-custom">Điền thông tin ngay</a>
+    </div>
+  </header>
 
-<!-- Nội dung chính -->
-<section class="py-5">
-  <div class="container">
-    <!-- Tiêu đề phụ -->
-    <h2 class="mb-4 text-center">Gửi yêu cầu tư vấn</h2>
-    <div class="row">
-      <!-- Khối thông tin liên hệ -->
-      <div class="col-md-5 mb-4">
-        <div class="bg-light p-4 rounded shadow-sm contact-info">
-          <!-- Sử dụng heading h3 cho thông tin liên hệ -->
-          <h3>Thông tin liên hệ</h3>
-          <ul class="list-unstyled mb-3">
-            <li><strong>Hotline:</strong> <a href="tel:0937953493">0937 953 493</a></li>
-            <li><strong>Email:</strong> <a href="mailto:info@tuvanphongsach.com">info@tuvanphongsach.com</a></li>
-            <li><strong>Địa chỉ:</strong> 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</li>
-          </ul>
-          <img src="image/contact.jpg" alt="Liên hệ Anh Khang Cleanroom" class="img-fluid rounded">
+  <!-- Nội dung chính -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title text-center">Gửi yêu cầu tư vấn</h2>
+      <div class="row g-4">
+        <!-- Khối thông tin liên hệ -->
+        <div class="col-md-5 mb-4">
+          <div class="contact-info">
+            <h3>Thông tin liên hệ</h3>
+            <ul class="list-unstyled mb-3">
+              <li><strong>Hotline:</strong> <a href="tel:0937953493">0937 953 493</a></li>
+              <li><strong>Email:</strong> <a href="mailto:info@tuvanphongsach.com">info@tuvanphongsach.com</a></li>
+              <li><strong>Địa chỉ:</strong> 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</li>
+            </ul>
+            <img src="/image/contact.jpg" alt="Liên hệ Anh Khang Cleanroom" class="img-fluid">
+          </div>
+        </div>
+        <!-- Khối form liên hệ -->
+        <div class="col-md-7">
+          <form id="contact-form" novalidate>
+            <div class="mb-3">
+              <label for="name" class="form-label">Họ và tên</label>
+              <input type="text" id="name" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" id="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Số điện thoại</label>
+              <input type="tel" id="phone" class="form-control" name="phone" required>
+            </div>
+            <div class="mb-3">
+              <label for="message" class="form-label">Nội dung yêu cầu</label>
+              <textarea id="message" class="form-control" name="message" rows="4" required></textarea>
+            </div>
+            <!-- Honeypot chống spam -->
+            <div style="display:none;">
+              <input type="text" name="botcheck">
+            </div>
+            <button type="submit" aria-label="Gửi yêu cầu" class="btn btn-custom">Gửi yêu cầu</button>
+          </form>
         </div>
       </div>
-      <!-- Khối form liên hệ -->
-      <div class="col-md-7">
-        <form id="contact-form" class="p-4 bg-light rounded shadow-sm" novalidate="">
-          <div class="mb-3">
-            <label for="name" class="form-label">Họ và tên</label>
-            <input type="text" id="name" class="form-control" name="name" required="">
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" id="email" class="form-control" name="email" required="">
-          </div>
-          <div class="mb-3">
-            <label for="phone" class="form-label">Số điện thoại</label>
-            <input type="tel" id="phone" class="form-control" name="phone" required="">
-          </div>
-          <div class="mb-3">
-            <label for="message" class="form-label">Nội dung yêu cầu</label>
-            <textarea id="message" class="form-control" name="message" rows="4" required=""></textarea>
-          </div>
-          <!-- Honeypot chống spam -->
-          <div style="display:none;">
-            <input type="text" name="botcheck">
-          </div>
-          <button type="submit" aria-label="Gửi yêu cầu" class="btn btn-primary">Gửi yêu cầu</button>
-        </form>
-      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Script xử lý form -->
-<script>
-  const form = document.getElementById("contact-form");
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    fetch("https://script.google.com/macros/s/AKfycbwlogKzlsihJ1NE1ZfxTfaytCLmtGXOV0gx0bRsfknYl6f2rawGQUEGlfZVJx568jrA/exec", {
-      method: "POST",
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.result === "success") {
-        window.location.href = "camon.html";
-      } else {
-        alert("Lỗi gửi yêu cầu: " + (data.error || "Không xác định"));
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      alert("Lỗi kết nối, vui lòng thử lại.");
+  <!-- Script xử lý form -->
+  <script>
+    const form = document.getElementById("contact-form");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      fetch("https://script.google.com/macros/s/AKfycbwlogKzlsihJ1NE1ZfxTfaytCLmtGXOV0gx0bRsfknYl6f2rawGQUEGlfZVJx568jrA/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.result === "success") {
+          window.location.href = "camon.html";
+        } else {
+          alert("Lỗi gửi yêu cầu: " + (data.error || "Không xác định"));
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        alert("Lỗi kết nối, vui lòng thử lại.");
+      });
     });
-  });
-</script>
-</body></html>
+  </script>
+</body>
+</html>
