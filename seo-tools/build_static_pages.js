@@ -82,19 +82,25 @@ async function convertImages(html) {
 
 // Convert background images
 async function convertBackgroundImages(html) {
-  const regex = /background-image:\s*url\(['"]?([^'")]+)['"]?\)/g;
-  let match;
-  while ((match = regex.exec(html)) !== null) {
-    const originalStyle = match[0];
+  const $ = cheerio.load(html, { decodeEntities: false });
+  const elementsWithBg = $('[style*="background"], [style*="background-image"]');
+
+  for (let i = 0; i < elementsWithBg.length; i++) {
+    const el = elementsWithBg[i];
+    let style = $(el).attr('style') || '';
+    const regex = /background(?:-image)?:\s*url\(['"]?([^'")]+)['"]?\)/;
+    const match = style.match(regex);
+    if (!match) continue;
+
     const imageUrl = match[1];
     const realPath = path.join(rootDir, imageUrl);
     const webpRel = await makeWebp(realPath);
     if (webpRel) {
-      const newStyle = originalStyle.replace(imageUrl, webpRel);
-      html = html.replace(originalStyle, newStyle);
+      const newStyle = style.replace(imageUrl, webpRel);
+      $(el).attr('style', newStyle);
     }
   }
-  return html;
+  return $.html();
 }
 
 // Inject Meta (chỉ áp dụng cho STATIC_FILES)

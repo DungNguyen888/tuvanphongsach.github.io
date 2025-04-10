@@ -52,72 +52,160 @@
       </div>
     </div>
   </nav>
-</header><!-- Hero Banner -->
-
-
-  
-  
-
-
-
-<header class="banner" style="background-image: url('/image/tu-van-phong-sach.webp'); height: 500px;">
-
-
-  <div class="container banner-content">
-    <h1 class="display-4" style="text-align:center; font-weight:bold; color:#0056b3;">
-  Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO
-</h1>
-<p class="lead" style="text-align:center; font-weight:bold; color:#0056b3;">
-  Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.
-</p>
-    <a href="lien-he.html" class="btn btn-primary btn-lg">Liên hệ ngay</a>
-  </div>
 </header>
+  
+  
+  
+  
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+  <style>
+    /* Custom styles */
+    .hero-banner {
+      position: relative;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/image/tu-van-phong-sach.jpg') no-repeat center center/cover;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+    .hero-banner h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner p {
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .btn-custom {
+      background-color: #ff6200;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      transition: background-color 0.3s;
+    }
+    .btn-custom:hover {
+      background-color: #e55a00;
+    }
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #0056b3;
+      margin-bottom: 2rem;
+    }
+    .highlight-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .highlight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .service-card img {
+      transition: transform 0.3s;
+    }
+    .service-card:hover img {
+      transform: scale(1.05);
+    }
+    .cta-section {
+      background: linear-gradient(135deg, #0056b3, #00aaff);
+      color: white;
+      padding: 3rem 0;
+    }
+    .cta-section .btn {
+      background-color: #28a745;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+    }
+    .cta-section .btn:hover {
+      background-color: #218838;
+    }
+  </style>
 
-<!-- Giới thiệu ngắn -->
-<section class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-4">Chúng tôi là ai?</h2>
-    <p class="text-center">
-      Chào mừng Quý khách đến với <strong>Tuvanphongsach.com</strong> – đơn vị <strong>chuyên gia về phòng sạch</strong> với hơn 15 năm kinh nghiệm. Chúng tôi tự hào đã hỗ trợ hàng trăm doanh nghiệp trong lĩnh vực dược phẩm, thực phẩm, điện tử… xây dựng phòng sạch <strong>đạt tiêu chuẩn quốc tế</strong>, vận hành hiệu quả và tiết kiệm chi phí.
-    </p>
-    <p class="text-center">
-      Hệ thống phòng sạch <strong>đạt chuẩn GMP/ISO</strong> không chỉ giúp doanh nghiệp tuân thủ quy định mà còn <strong>nâng tầm uy tín sản phẩm, bảo đảm an toàn</strong> cho quá trình sản xuất. Với đội ngũ kỹ sư tận tâm và am hiểu sâu, chúng tôi mang đến <strong>giải pháp phòng sạch toàn diện nhất</strong> phù hợp nhu cầu riêng của Quý khách.
-    </p>
-  </div>
-</section>
 
-<!-- Điểm nổi bật / lợi thế -->
+  <!-- Hero Banner -->
+  <header class="hero-banner">
+    <div class="container">
+      <h1>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
+      <p>Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.</p>
+      <a href="lien-he.html" class="btn btn-custom">Liên hệ ngay</a>
+    </div>
+  </header>
+
+  <!-- Giới thiệu ngắn -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title text-center">Chúng tôi là ai?</h2>
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p class="text-center">
+            Chào mừng Quý khách đến với <strong>Tuvanphongsach.com</strong> – đơn vị <strong>chuyên gia về phòng sạch</strong> với hơn <strong>15 năm kinh nghiệm</strong>. Chúng tôi tự hào đã hỗ trợ hàng trăm doanh nghiệp trong lĩnh vực dược phẩm, thực phẩm, điện tử… xây dựng phòng sạch <strong>đạt tiêu chuẩn quốc tế</strong>, vận hành hiệu quả và tiết kiệm chi phí.
+          </p>
+          <p class="text-center">
+            Hệ thống phòng sạch <strong>đạt chuẩn GMP/ISO</strong> không chỉ giúp doanh nghiệp tuân thủ quy định mà còn <strong>nâng tầm uy tín sản phẩm, bảo đảm an toàn</strong> cho quá trình sản xuất. Với đội ngũ kỹ sư tận tâm và am hiểu sâu, chúng tôi mang đến <strong>giải pháp phòng sạch toàn diện nhất</strong> phù hợp nhu cầu riêng của Quý khách.
+          </p>
+        </div>
+        <div class="col-md-6 text-center">
+          
+<picture>
+  <source srcset="/image/about-us.webp" type="image/webp">
+  <img src="/image/about-us.jpg" alt="Đội ngũ Tuvanphongsach.com" class="img-fluid" width="2944" height="1664">
+</picture>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Điểm nổi bật / lợi thế -->
   <section class="py-5 bg-light">
     <div class="container">
-      <h2 class="text-center mb-4">Tại sao chọn Dịch vụ Tư Vấn Phòng Sạch?</h2>
+      <h2 class="section-title text-center">Tại sao chọn Dịch vụ Tư Vấn Phòng Sạch?</h2>
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
+          <div class="card border-0 shadow h-100 text-center highlight-card">
             <div class="card-body">
+              
+<picture>
+  <source srcset="/image/icons/experience.webp" type="image/webp">
+  <img src="/image/icons/experience.png" alt="15+ năm kinh nghiệm" class="img-fluid" width="2048" height="2048">
+</picture>
               <h5 class="card-title fw-bold">15+ năm kinh nghiệm</h5>
               <p class="card-text mt-3">
-                Đội ngũ chuyên gia đã <strong>thực hiện hàng trăm dự án</strong> phòng sạch trên toàn quốc, tích lũy kiến thức thực tiễn vững chắc. Quý khách có thể an tâm giao dự án cho những người hiểu rõ ngành của mình.
+                Đội ngũ chuyên gia đã <strong>thực hiện hàng trăm dự án</strong> phòng sạch trên toàn quốc, tích lũy kiến thức thực tiễn vững chắc.
               </p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
+          <div class="card border-0 shadow h-100 text-center highlight-card">
             <div class="card-body">
+              
+<picture>
+  <source srcset="/image/icons/solution.webp" type="image/webp">
+  <img src="/image/icons/solution.png" alt="Giải pháp trọn gói" class="img-fluid" width="2048" height="2048">
+</picture>
               <h5 class="card-title fw-bold">Giải pháp trọn gói &amp; tối ưu</h5>
               <p class="card-text mt-3">
-                Chúng tôi cung cấp dịch vụ <strong>“chìa khóa trao tay”</strong> – từ tư vấn, thiết kế, cung cấp thiết bị (AHU, FCU, Chiller…), thi công cho đến bảo trì. Mọi khâu đều được tối ưu để tiết kiệm chi phí và thời gian cho Quý khách.
+                Chúng tôi cung cấp dịch vụ <strong>“chìa khóa trao tay”</strong> – từ tư vấn, thiết kế, thi công đến bảo trì, tiết kiệm chi phí và thời gian.
               </p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border-0 shadow h-100 text-center">
+          <div class="card border-0 shadow h-100 text-center highlight-card">
             <div class="card-body">
+              
+<picture>
+  <source srcset="/image/icons/quality.webp" type="image/webp">
+  <img src="/image/icons/quality.png" alt="Cam kết chất lượng" class="img-fluid" width="2048" height="2048">
+</picture>
               <h5 class="card-title fw-bold">Cam kết chất lượng</h5>
               <p class="card-text mt-3">
-                Mỗi công trình đều được <strong>đảm bảo đạt chuẩn GMP/ISO</strong>, vận hành ổn định lâu dài. Chúng tôi sẵn sàng <strong>bảo hành, bảo trì</strong> định kỳ, đồng hành cùng Quý khách sau bàn giao.
+                Mỗi công trình đều <strong>đạt chuẩn GMP/ISO</strong>, vận hành ổn định lâu dài, với dịch vụ bảo hành và bảo trì định kỳ.
               </p>
             </div>
           </div>
@@ -126,17 +214,17 @@
     </div>
   </section>
 
-  <!-- Dịch vụ chính (demo) -->
+  <!-- Dịch vụ chính -->
   <section class="py-5">
     <div class="container">
-      <h2 class="text-center mb-4">Dịch vụ phòng sạch</h2>
+      <h2 class="section-title text-center">Dịch vụ phòng sạch</h2>
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card border-0 shadow-sm h-100 service-card">
             
 <picture>
-  <source srcset="/image/tu-van-phong-sach.webp" type="image/webp">
-  <img src="image/tu-van-phong-sach.jpg" alt="thi-cong-phong-sach" class="img-fluid" width="2752" height="1536">
+  <source srcset="/image/thiet-ke-phong-sach.webp" type="image/webp">
+  <img src="/image/thiet-ke-phong-sach.jpg" alt="Thiết kế phòng sạch" class="img-fluid" width="2368" height="1792">
 </picture>
             <div class="card-body">
               <h5 class="card-title fw-bold">Tư vấn &amp; Thiết kế phòng sạch</h5>
@@ -145,11 +233,11 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card border-0 shadow-sm h-100 service-card">
             
 <picture>
-  <source srcset="/image/tu-van-phong-sach.webp" type="image/webp">
-  <img src="image/tu-van-phong-sach.jpg" alt="tu-van-phong-sach" class="img-fluid" width="2752" height="1536">
+  <source srcset="/image/thi-cong-phong-sach.webp" type="image/webp">
+  <img src="/image/thi-cong-phong-sach.jpg" alt="Thi công phòng sạch" class="img-fluid" width="2368" height="1792">
 </picture>
             <div class="card-body">
               <h5 class="card-title fw-bold">Thi công &amp; Lắp đặt thiết bị</h5>
@@ -158,33 +246,35 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card border-0 shadow-sm h-100 service-card">
             
 <picture>
-  <source srcset="/image/tu-van-phong-sach.webp" type="image/webp">
-  <img src="image/tu-van-phong-sach.jpg" alt="bao-tri-phong-sach" class="img-fluid" width="2752" height="1536">
+  <source srcset="/image/bao-tri-phong-sach.webp" type="image/webp">
+  <img src="/image/bao-tri-phong-sach.jpg" alt="Bảo trì phòng sạch" class="img-fluid" width="2368" height="1792">
 </picture>
             <div class="card-body">
               <h5 class="card-title fw-bold">Bảo trì &amp; Nâng cấp phòng sạch</h5>
-              <p class="card-text">Dịch vụ hậu mãi chu đáo, giúp phòng sạch của Quý khách luôn <strong>vận hành tối ưu</strong>, nâng cấp dễ dàng khi cần.</p>
+              <p class="card-text">Dịch vụ hậu mãi chu đáo, giúp phòng sạch của Quý khách luôn <strong>vận hành tối ưu</strong>.</p>
             </div>
           </div>
         </div>
       </div>
-      <div class="text-center mt-4">
-        <a href="dich-vu.html" class="btn btn-primary btn-lg">Xem tất cả dịch vụ</a>
+      <div class="text-center mt-5">
+        <a href="dich-vu.html" class="btn btn-custom btn-lg">Xem tất cả dịch vụ</a>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="py-5 bg-light text-center">
+  <section class="cta-section text-center">
     <div class="container">
       <h2 class="mb-4">Sẵn sàng cho phòng sạch hoàn hảo?</h2>
-      <p class="mb-4">Liên hệ ngay với chúng tôi để nhận <strong>tư vấn miễn phí</strong>. Đội ngũ <strong>Tuvanphongsach.com</strong> luôn sẵn sàng lắng nghe và giải đáp mọi thắc mắc, đồng hành cùng sự phát triển bền vững của doanh nghiệp bạn.</p>
+      <p class="mb-4">Liên hệ ngay với chúng tôi để nhận <strong>tư vấn miễn phí</strong>. Đội ngũ <strong>Tuvanphongsach.com</strong> luôn sẵn sàng đồng hành cùng bạn.</p>
       <a href="lien-he.html" class="btn btn-success btn-lg">Liên hệ tư vấn</a>
     </div>
   </section>
+
+
    <!-- end .container -->
 
 <!-- Nút cuộn top -->
