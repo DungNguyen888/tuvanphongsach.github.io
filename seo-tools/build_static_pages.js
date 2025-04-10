@@ -15,6 +15,14 @@ const STATIC_FILES = ['home.html', 'gioi-thieu.html', 'lien-he.html', 'dich-vu.h
 const BASE_URL = 'https://tuvanphongsach.com';
 const defaultImage = '/image/default.jpg';
 
+// Định nghĩa meta description cho từng trang
+const metaDescriptions = {
+  'home.html': 'Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.',
+  'gioi-thieu.html': 'Tuvanphongsach.com - Chuyên gia tư vấn phòng sạch với 15+ năm kinh nghiệm. Đội ngũ kỹ sư tận tâm, giải pháp tối ưu cho doanh nghiệp.',
+  'lien-he.html': 'Liên hệ Tuvanphongsach.com để được tư vấn phòng sạch miễn phí. Hỗ trợ thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO.',
+  'dich-vu.html': 'Dịch vụ phòng sạch trọn gói: tư vấn, thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO. Giải pháp tối ưu từ Tuvanphongsach.com.'
+};
+
 // Load partials
 function loadPartials() {
   const header = fs.readFileSync(headerFile, 'utf8');
@@ -33,20 +41,17 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
     const webpPath = path.join(dir, `${name}.webp`);
     const avifPath = path.join(dir, `${name}.avif`);
 
-    // Resize ảnh nếu cần
     let sharpInstance = sharp(inputPath).withMetadata();
     if (maxWidth && maxHeight) {
       sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
     }
 
-    // Tạo WebP
     await sharpInstance
-      .webp({ quality: 50 }) // Giảm chất lượng để tối ưu hơn
+      .webp({ quality: 50 })
       .toFile(webpPath);
 
-    // Tạo AVIF
     await sharpInstance
-      .avif({ quality: 40 }) // Giảm chất lượng để tối ưu hơn
+      .avif({ quality: 40 })
       .toFile(avifPath);
 
     return {
@@ -59,7 +64,7 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
   }
 }
 
-// Convert <img> to <picture> với WebP và AVIF
+// Convert <img> to <picture>
 async function convertImages(html, pageName) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const imgs = $('img');
@@ -72,7 +77,6 @@ async function convertImages(html, pageName) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Xác định kích thước tối đa dựa trên trang và vị trí
     let maxWidth, maxHeight;
     if (src.includes('icons/')) {
       maxWidth = 50;
@@ -122,7 +126,7 @@ async function convertBackgroundImages(html, pageName) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const elementsWithBg = $('[style*="background"], [style*="background-image"]');
 
-  let preloadTags = ''; // Để thêm thẻ preload vào <head>
+  let preloadTags = '';
 
   for (let i = 0; i < elementsWithBg.length; i++) {
     const el = elementsWithBg[i];
@@ -134,10 +138,9 @@ async function convertBackgroundImages(html, pageName) {
     const imageUrl = match[1];
     const realPath = path.join(rootDir, imageUrl);
 
-    // Resize ảnh nền dựa trên trang
     let maxWidth, maxHeight;
     if (pageName === 'home.html') {
-      maxWidth = 1280; // Giảm kích thước để tối ưu hơn
+      maxWidth = 1280;
       maxHeight = 720;
     } else {
       maxWidth = 1200;
@@ -149,7 +152,6 @@ async function convertBackgroundImages(html, pageName) {
       const newStyle = style.replace(imageUrl, webp);
       $(el).attr('style', newStyle);
 
-      // Thêm thẻ preload cho ảnh nền
       if (pageName === 'home.html' && imageUrl.includes('tu-van-phong-sach')) {
         preloadTags += `
 <link rel="preload" href="${avif}" as="image" type="image/avif">
@@ -166,7 +168,6 @@ async function convertBackgroundImages(html, pageName) {
     }
   }
 
-  // Thêm preload tags vào <head>
   if (preloadTags) {
     $('head').append(preloadTags);
   }
@@ -184,12 +185,15 @@ function injectMeta() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    if (!$('meta[name="viewport"]').length) {
-      $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-    }
-    if (!$('meta[name="description"]').length) {
-      $('head').append('<meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">');
-    }
+    // Đảm bảo thẻ viewport và description được thêm vào
+    $('meta[name="viewport"]').remove();
+    $('meta[name="description"]').remove(); // Xóa thẻ description cũ nếu có
+
+    $('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+
+    // Thêm meta description tùy chỉnh cho từng trang
+    const description = metaDescriptions[file] || 'Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO.';
+    $('head').append(`<meta name="description" content="${description}">`);
 
     html = $.html();
     fs.writeFileSync(filePath, html, 'utf8');
@@ -211,7 +215,7 @@ function injectOpenGraph() {
       const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
       const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
       const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
-      const description = descMatch ? descMatch[1] : '';
+      const description = descMatch ? descMatch[1] : metaDescriptions[file] || 'Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch.';
       const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
       const img = matchImg ? matchImg[1] : defaultImage;
       const ogUrl = BASE_URL + '/' + outName;
@@ -320,7 +324,7 @@ async function buildStaticPages() {
     let raw = fs.readFileSync(filePath, 'utf8');
     const $raw = cheerio.load(raw, { decodeEntities: false });
     const h1Text = $raw('h1').first().text().trim() || 'Untitled';
-    $raw('title, meta, script[type="application/ld+json"]').remove();
+    $raw('title, meta:not([name="charset"]), script[type="application/ld+json"]').remove();
     raw = $raw.html();
 
     let { header, footer } = loadPartials();
