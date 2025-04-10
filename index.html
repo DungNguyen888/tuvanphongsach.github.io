@@ -51,12 +51,6 @@
     </div>
   </nav>
 </header>
-  
-  
-  
-  
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
   <style>
     /* Chỉ giữ CSS dành riêng cho trang chủ */
     .hero-banner {
@@ -68,6 +62,7 @@
       justify-content: center;
       color: var(--text-light);
       text-align: center;
+      margin-top: -80px; /* Bù đắp padding-top của body */
     }
     .hero-banner h1 {
       font-size: 3rem;
@@ -78,6 +73,15 @@
       font-size: 1.5rem;
       font-weight: 500;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner .btn-custom {
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    .hero-banner .btn-custom:hover {
+      background-color: #218838;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     .highlight-card {
       transition: transform 0.3s, box-shadow 0.3s;
@@ -131,18 +135,17 @@
   </style>
 
 
-  <!-- Nội dung trang chủ -->
-  <header class="hero-banner">
-    <div class="container">
-      <h1>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
-      <p>Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.</p>
-      <a href="lien-he.html" class="btn btn-custom">Liên hệ ngay</a>
-    </div>
-  </header>
+<header class="hero-banner">
+  <div class="container">
+    <h1>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
+    <p>Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.</p>
+    <a href="lien-he.html" class="btn btn-custom">Liên hệ ngay</a>
+  </div>
+</header>
 
-  <section class="py-5">
-    <div class="container">
-      <h2 class="section-title text-center">Chúng tôi là ai?</h2>
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title text-center">Chúng tôi là ai?</h2>
       <div class="row align-items-center">
         <div class="col-md-6">
           <p class="text-center">
