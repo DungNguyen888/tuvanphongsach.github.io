@@ -295,12 +295,58 @@ p, h1, h2, h3 {
     color: var(--primary-color);
 }
 
-/* Category Index (danh mục bài viết) */
+/* Category Hero */
 .category-hero {
-    background-color: var(--primary-color);
-    color: var(--text-light);
-    padding: 40px 0;
-    text-align: center;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 40px 0;
+  text-align: center;
+  min-height: 200px; /* Giữ chỗ cho hero */
+}
+
+/* Category Content */
+.category-content {
+  background-color: #fff;
+  padding: 20px 0;
+}
+
+.category-card {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.category-card .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%; /* Đảm bảo card đồng đều */
+}
+
+.category-card .card-img-top {
+  height: 200px; /* Chiều cao cố định */
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
+  display: block;
+}
+
+.category-card .card-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.category-card .card-text {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .category-card .card-img-top {
+    height: 150px; /* Giảm chiều cao trên mobile */
+    aspect-ratio: 4 / 3;
+  }
 }
 
 .category-title {
@@ -308,42 +354,12 @@ p, h1, h2, h3 {
     font-weight: bold;
 }
 
-.category-content {
-    background-color: #fff;
-    padding: 20px 0;
-}
-
-.category-card {
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-.category-card .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .category-card .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.category-card .card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
 
-.category-card .card-title {
-    font-size: 1.3rem;
-    margin-bottom: 10px;
-    color: var(--primary-color);
-}
-
-.category-card .card-text {
-    font-size: 0.95rem;
-    color: #666;
-}
 
 /* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 768px) {

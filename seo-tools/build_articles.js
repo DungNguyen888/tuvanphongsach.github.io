@@ -266,7 +266,7 @@ async function buildSubCategoryIndexes() {
           <div class="row">`;
 
     const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html') && f !== 'index.html');
-    files.forEach(file => {
+    for (const file of files) {
       const filePath = path.join(dirPath, file);
       const rawHtml = fs.readFileSync(filePath, 'utf8');
       const $ = cheerio.load(rawHtml, { decodeEntities: false });
@@ -275,11 +275,27 @@ async function buildSubCategoryIndexes() {
       const d = $('p').first().text().trim() || '';
       const img = rawData[file]?.image || defaultImage;
 
+      // Tạo phiên bản nhỏ hơn cho ảnh
+      const imgPath = path.join(rootDir, img);
+      const imgBase = img.replace(/\.[^/.]+$/, ''); // Bỏ đuôi file
+      const smallAvif = `${imgBase}-small.avif`;
+      const smallWebp = `${imgBase}-small.webp`;
+      if (fs.existsSync(imgPath)) {
+        await sharp(imgPath).resize({ width: 400, height: 300 }).avif({ quality: 60 }).toFile(path.join(rootDir, smallAvif));
+        await sharp(imgPath).resize({ width: 400, height: 300 }).webp({ quality: 80 }).toFile(path.join(rootDir, smallWebp));
+      }
+
       content += `
         <div class="col-lg-4 col-md-6 mb-4">
           <a href="./${file}" class="category-card">
             <div class="card h-100">
-              <img src="${img}" class="card-img-top" alt="${t}">
+              <picture>
+                <source media="(max-width: 768px)" srcset="${smallAvif}" type="image/avif">
+                <source media="(max-width: 768px)" srcset="${smallWebp}" type="image/webp">
+                <source srcset="${imgBase}.avif" type="image/avif">
+                <source srcset="${imgBase}.webp" type="image/webp">
+                <img src="${img}" class="card-img-top" alt="${t}" loading="lazy">
+              </picture>
               <div class="card-body">
                 <h2 class="card-title">${t}</h2>
                 <p class="card-text">${d.slice(0, 100)}...</p>
@@ -287,7 +303,7 @@ async function buildSubCategoryIndexes() {
             </div>
           </a>
         </div>`;
-    });
+    }
 
     content += `
           </div>
