@@ -22,7 +22,7 @@
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
     <title>Untitled</title><meta name="description" content="Dịch vụ phòng sạch trọn gói: tư vấn, thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO. Giải pháp tối ưu từ Tuvanphongsach.com."></head><body><header>
-  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0056D2;">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: var(--primary-color);">
     <div class="container">
       <a class="navbar-brand" href="/">
         <img src="/image/logo.webp" alt="Logo" class="logo-fixed" width="102" height="102">
@@ -32,20 +32,20 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarTuvan">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/" style="color: #FFFFFF;">Trang chủ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html" style="color: #FFFFFF;">Giới thiệu</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dich-vu.html" style="color: #FFFFFF;">Dịch vụ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/lien-he.html" style="color: #FFFFFF;">Liên hệ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/" style="color: var(--text-light);">Trang chủ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html" style="color: var(--text-light);">Giới thiệu</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dich-vu.html" style="color: var(--text-light);">Dịch vụ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/lien-he.html" style="color: var(--text-light);">Liên hệ</a></li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--text-light);">
               Danh mục
             </a>
-            <ul class="dropdown-menu" style="background-color: #FFFFFF; border: 1px solid #007BFF;">
-              <li><a class="dropdown-item" href="/ahu/" style="color: #0056D2;">AHU - Phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/fcu/" style="color: #0056D2;">FCU - Thiết bị phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/chillers/" style="color: #0056D2;">Chillers - Giải pháp làm lạnh</a></li>
-              <li><a class="dropdown-item" href="/air-cooled/" style="color: #0056D2;">Air Cooled - Hệ thống lạnh</a></li>
-              <li><a class="dropdown-item" href="/tu-van-phong-sach/" style="color: #0056D2;">Tư vấn phòng sạch</a></li>
+            <ul class="dropdown-menu" style="background-color: #fff; border: 1px solid var(--primary-color);">
+              <li><a class="dropdown-item" href="/ahu/" style="color: var(--primary-color);">AHU - Phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/fcu/" style="color: var(--primary-color);">FCU - Thiết bị phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/chillers/" style="color: var(--primary-color);">Chillers - Giải pháp làm lạnh</a></li>
+              <li><a class="dropdown-item" href="/air-cooled/" style="color: var(--primary-color);">Air Cooled - Hệ thống lạnh</a></li>
+              <li><a class="dropdown-item" href="/tu-van-phong-sach/" style="color: var(--primary-color);">Tư vấn phòng sạch</a></li>
             </ul>
           </li>
         </ul>
@@ -55,8 +55,8 @@
 </header>
 
 <style>
-  .nav-link:hover { color: #FFD700 !important; } /* Vàng nhạt khi hover */
-  .dropdown-item:hover { background-color: #007BFF; color: #FFFFFF !important; }
+  .nav-link:hover { color: var(--secondary-color) !important; } /* Cam khi hover */
+  .dropdown-item:hover { background-color: var(--primary-color); color: var(--text-light) !important; }
 </style>
 
 
@@ -88,14 +88,14 @@
       z-index: 99;
       border: none;
       outline: none;
-      background-color: #007BFF;
-      color: white;
+      background-color: var(--secondary-color);
+      color: var(--text-light);
       cursor: pointer;
       padding: 10px 15px;
       border-radius: 50%;
       font-size: 18px;
     }
-    #scrollToTopBtn:hover { background-color: #0056D2; }
+    #scrollToTopBtn:hover { background-color: #e55a00; }
     #hotline {
       position: fixed;
       bottom: 70px;
@@ -103,15 +103,19 @@
       z-index: 99;
     }
     #hotline a {
-      background-color: #007BFF;
-      color: #FFFFFF;
+      background-color: var(--secondary-color);
+      color: var(--text-light);
       padding: 8px 15px;
       border-radius: 20px;
       text-decoration: none;
       font-weight: bold;
     }
-    #hotline a:hover { background-color: #0056D2; }
-    footer { border-top: 2px solid #007BFF; }
+    #hotline a:hover { background-color: #e55a00; }
+    footer { 
+      background-color: var(--background-light); 
+      border-top: 2px solid var(--primary-color); 
+    }
+    footer p { color: var(--primary-color); }
   </style>
 
 
@@ -135,9 +139,9 @@
     };
   </script>
 
-  <footer class="py-4 mt-5" style="background-color: #F8F9FA;">
+  <footer class="py-4 mt-5">
     <div class="container text-center">
-      <p class="mb-0" style="color: #0056D2;">© 2025 Tuvanphongsach.com</p>
+      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
     </div>
   </footer>
 

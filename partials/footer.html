@@ -15,14 +15,14 @@
       z-index: 99;
       border: none;
       outline: none;
-      background-color: #007BFF;
-      color: white;
+      background-color: var(--secondary-color);
+      color: var(--text-light);
       cursor: pointer;
       padding: 10px 15px;
       border-radius: 50%;
       font-size: 18px;
     }
-    #scrollToTopBtn:hover { background-color: #0056D2; }
+    #scrollToTopBtn:hover { background-color: #e55a00; }
     #hotline {
       position: fixed;
       bottom: 70px;
@@ -30,15 +30,19 @@
       z-index: 99;
     }
     #hotline a {
-      background-color: #007BFF;
-      color: #FFFFFF;
+      background-color: var(--secondary-color);
+      color: var(--text-light);
       padding: 8px 15px;
       border-radius: 20px;
       text-decoration: none;
       font-weight: bold;
     }
-    #hotline a:hover { background-color: #0056D2; }
-    footer { border-top: 2px solid #007BFF; }
+    #hotline a:hover { background-color: #e55a00; }
+    footer { 
+      background-color: var(--background-light); 
+      border-top: 2px solid var(--primary-color); 
+    }
+    footer p { color: var(--primary-color); }
   </style>
 </head>
 <body>
@@ -62,9 +66,9 @@
     };
   </script>
 
-  <footer class="py-4 mt-5" style="background-color: #F8F9FA;">
+  <footer class="py-4 mt-5">
     <div class="container text-center">
-      <p class="mb-0" style="color: #0056D2;">© 2025 Tuvanphongsach.com</p>
+      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
     </div>
   </footer>
 </body>
