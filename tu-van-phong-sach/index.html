@@ -28,30 +28,30 @@
   <meta property="og:description" content="Tuvanphongsach.com - Giải pháp phòng sạch">
   <meta property="og:image" content="/image/logo.webp">
   <meta property="og:url" content="https://tuvanphongsach.com/tu-van-phong-sach/index.html"></head><body><header>
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #0056b3;">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: var(--primary-color);">
     <div class="container">
       <a class="navbar-brand" href="/">
-        <img src="/image/logo.webp" alt="Logo" style="max-height: 50px; width: auto;" class="logo-fixed" width="102" height="102">
+        <img src="/image/logo.webp" alt="Logo" class="logo-fixed" width="102" height="102">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTuvan" aria-controls="navbarTuvan" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarTuvan">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/" style="color: #fff;">Trang chủ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html" style="color: #fff;">Giới thiệu</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dich-vu.html" style="color: #fff;">Dịch vụ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/lien-he.html" style="color: #fff;">Liên hệ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/" style="color: var(--text-light);">Trang chủ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html" style="color: var(--text-light);">Giới thiệu</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dich-vu.html" style="color: var(--text-light);">Dịch vụ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/lien-he.html" style="color: var(--text-light);">Liên hệ</a></li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #fff;">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--text-light);">
               Danh mục
             </a>
-            <ul class="dropdown-menu" style="background-color: #fff; border: 1px solid #0056b3;">
-              <li><a class="dropdown-item" href="/ahu/" style="color: #0056b3;">AHU - Phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/fcu/" style="color: #0056b3;">FCU - Thiết bị phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/chillers/" style="color: #0056b3;">Chillers - Giải pháp làm lạnh</a></li>
-              <li><a class="dropdown-item" href="/air-cooled/" style="color: #0056b3;">Air Cooled - Hệ thống lạnh</a></li>
-              <li><a class="dropdown-item" href="/tu-van-phong-sach/" style="color: #0056b3;">Tư vấn phòng sạch</a></li>
+            <ul class="dropdown-menu" style="background-color: #fff; border: 1px solid var(--primary-color);">
+              <li><a class="dropdown-item" href="/ahu/" style="color: var(--primary-color);">AHU - Phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/fcu/" style="color: var(--primary-color);">FCU - Thiết bị phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/chillers/" style="color: var(--primary-color);">Chillers - Giải pháp làm lạnh</a></li>
+              <li><a class="dropdown-item" href="/air-cooled/" style="color: var(--primary-color);">Air Cooled - Hệ thống lạnh</a></li>
+              <li><a class="dropdown-item" href="/tu-van-phong-sach/" style="color: var(--primary-color);">Tư vấn phòng sạch</a></li>
             </ul>
           </li>
         </ul>
@@ -69,89 +69,77 @@
           <div class="row">
           </div>
         </div>
-      </section>
+      </section><button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+<div id="hotline">
+  <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
+</div>
 
-  
-  
-  
-  
-  
-  
-  <style>
-    #scrollToTopBtn {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-      border: none;
-      outline: none;
-      background-color: #28A745;
-      color: #fff;
-      cursor: pointer;
-      padding: 10px 15px;
-      border-radius: 50%;
-      font-size: 18px;
-    }
-    #scrollToTopBtn:hover { background-color: #218838; }
-    #hotline {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      z-index: 9999;
-      background-color: #28A745 !important;
-      border-radius: 20px !important;
-      padding: 8px 12px !important;
-      transition: opacity 0.3s;
-    }
-    #hotline a {
-      color: #fff !important;
-      text-decoration: none !important;
-      font-weight: bold;
-      display: block;
-      text-align: center;
-      line-height: 1.5;
-      border: none !important;
-      outline: none !important;
-    }
-    #hotline a:hover { opacity: 0.9; }
-    #hotline a:focus, #hotline a:active {
-      outline: none !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
-    footer {
-      background-color: #f8f9fa;
-      border-top: 2px solid #0056b3;
-    }
-    footer p { color: #0056b3; }
-  </style>
-
-
-  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
-  <div id="hotline">
-    <a href="tel:0937953493">HOTLINE: 0937  trato493</a>
+<footer class="py-4 mt-5" style="background-color: var(--background-light); border-top: 2px solid var(--primary-color);">
+  <div class="container text-center">
+    <p class="mb-0" style="color: var(--primary-color);">© 2025 Tuvanphongsach.com</p>
   </div>
+</footer>
 
-  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
-  <script>
-    const scrollBtn = document.getElementById('scrollToTopBtn');
-    window.onscroll = function() {
-      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        scrollBtn.style.display = 'block';
-      } else {
-        scrollBtn.style.display = 'none';
-      }
-    };
-    scrollBtn.onclick = function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-  </script>
+<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+<script>
+  const scrollBtn = document.getElementById('scrollToTopBtn');
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      scrollBtn.style.display = 'block';
+    } else {
+      scrollBtn.style.display = 'none';
+    }
+  };
+  scrollBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
 
-  <footer class="py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
-    </div>
-  </footer>
-
-</body></html>
+<style>
+  #scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    border: none;
+    outline: none;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 18px;
+  }
+  #scrollToTopBtn:hover {
+    background-color: #218838;
+  }
+  #hotline {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 9999;
+    background-color: var(--secondary-color) !important;
+    border-radius: 20px !important;
+    padding: 8px 12px !important;
+    transition: opacity 0.3s;
+  }
+  #hotline a {
+    color: var(--text-light) !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    line-height: 1.5;
+    border: none !important;
+    outline: none !important;
+  }
+  #hotline a:hover {
+    opacity: 0.9;
+  }
+  #hotline a:focus, #hotline a:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+</style></body></html>

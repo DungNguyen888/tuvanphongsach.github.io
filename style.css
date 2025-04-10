@@ -17,37 +17,13 @@ html {
 body {
     font-family: 'Arial', sans-serif;
     font-size: 1rem;
-    line-height: 1.6; /* Dùng 1.6 thay vì 1.5 cho nhất quán với phần cũ */
+    line-height: 1.6;
     color: var(--text-color);
-    padding-top: 70px; /* Đẩy nội dung xuống để tránh bị navbar fixed-top che */
+    padding-top: 80px; /* Tăng từ 70px lên 80px để chắc chắn không bị che */
 }
 
 p, h1, h2, h3 {
     margin-bottom: 1rem;
-}
-
-/* Nút cuộn top */
-#scrollToTopBtn {
-    display: none;
-    position: fixed;
-    bottom: 80px; /* Giữ vị trí cũ */
-    right: 20px;
-    z-index: 9999; /* Đảm bảo luôn trên cùng */
-    border: none;
-    outline: none;
-    background-color: var(--secondary-color); /* Dùng xanh lá thay #0d6efd */
-    color: var(--text-light);
-    cursor: pointer;
-    padding: 10px 14px;
-    border-radius: 4px;
-    font-size: 18px;
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-#scrollToTopBtn:hover {
-    background-color: #218838; /* Xanh lá đậm */
-    opacity: 0.8;
-    transform: scale(1.05);
 }
 
 /* Class dùng chung */
@@ -69,7 +45,7 @@ p, h1, h2, h3 {
     font-weight: 700;
     color: var(--primary-color);
     margin-bottom: 2rem;
-    text-align: center; /* Đồng bộ với phần cũ */
+    text-align: center;
 }
 
 /* Navbar */
@@ -88,7 +64,7 @@ p, h1, h2, h3 {
 }
 
 .nav-link:hover {
-    color: var(--secondary-color) !important; /* Dùng xanh lá thay #046087 */
+    color: var(--secondary-color) !important;
 }
 
 .dropdown-menu {
@@ -98,7 +74,7 @@ p, h1, h2, h3 {
 
 .dropdown-item:hover {
     background-color: var(--primary-color);
-    color: var(--text-light);
+    color: var(--text-light) !important; /* Thêm !important để ghi đè Bootstrap */
 }
 
 /* Logo cố định kích thước */
@@ -132,7 +108,7 @@ p, h1, h2, h3 {
 .hero-title {
     font-size: 2.5rem;
     font-weight: bold;
-    color: var(--primary-color); /* Đồng bộ với --primary-color */
+    color: var(--primary-color);
     margin-bottom: 20px;
 }
 
@@ -155,7 +131,7 @@ p, h1, h2, h3 {
 
 .article-content h2 {
     font-size: 1.8rem;
-    color: var(--primary-color); /* Đồng bộ với --primary-color */
+    color: var(--primary-color);
     margin-top: 40px;
     margin-bottom: 20px;
     border-bottom: 2px solid var(--primary-color);
@@ -216,7 +192,7 @@ p, h1, h2, h3 {
 /* Related Posts/Articles */
 .related-posts h2,
 .related-articles .section-title {
-    font-size: 1.8rem; /* Gộp với .section-title nếu cần */
+    font-size: 1.8rem;
     color: var(--primary-color);
     margin-bottom: 30px;
 }

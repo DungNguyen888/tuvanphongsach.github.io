@@ -1,86 +1,74 @@
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-  <meta property="og:title" content="Tuvanphongsach.com">
-  <meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-  <meta property="og:image" content="/image/default.jpg">
-  <meta property="og:url" content="https://tuvanphongsach.com/partials/footer.html">
-  <style>
-    #scrollToTopBtn {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
-      border: none;
-      outline: none;
-      background-color: #28A745;
-      color: #fff;
-      cursor: pointer;
-      padding: 10px 15px;
-      border-radius: 50%;
-      font-size: 18px;
-    }
-    #scrollToTopBtn:hover { background-color: #218838; }
-    #hotline {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      z-index: 9999;
-      background-color: #28A745 !important;
-      border-radius: 20px !important;
-      padding: 8px 12px !important;
-      transition: opacity 0.3s;
-    }
-    #hotline a {
-      color: #fff !important;
-      text-decoration: none !important;
-      font-weight: bold;
-      display: block;
-      text-align: center;
-      line-height: 1.5;
-      border: none !important;
-      outline: none !important;
-    }
-    #hotline a:hover { opacity: 0.9; }
-    #hotline a:focus, #hotline a:active {
-      outline: none !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
-    footer {
-      background-color: #f8f9fa;
-      border-top: 2px solid #0056b3;
-    }
-    footer p { color: #0056b3; }
-  </style>
-</head>
-<body>
-  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
-  <div id="hotline">
-    <a href="tel:0937953493">HOTLINE: 0937  trato493</a>
+<button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+<div id="hotline">
+  <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
+</div>
+
+<footer class="py-4 mt-5" style="background-color: var(--background-light); border-top: 2px solid var(--primary-color);">
+  <div class="container text-center">
+    <p class="mb-0" style="color: var(--primary-color);">© 2025 Tuvanphongsach.com</p>
   </div>
+</footer>
 
-  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
-  <script>
-    const scrollBtn = document.getElementById('scrollToTopBtn');
-    window.onscroll = function() {
-      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-        scrollBtn.style.display = 'block';
-      } else {
-        scrollBtn.style.display = 'none';
-      }
-    };
-    scrollBtn.onclick = function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-  </script>
+<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+<script>
+  const scrollBtn = document.getElementById('scrollToTopBtn');
+  window.onscroll = function() {
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+      scrollBtn.style.display = 'block';
+    } else {
+      scrollBtn.style.display = 'none';
+    }
+  };
+  scrollBtn.onclick = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
 
-  <footer class="py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-0">© 2025 Tuvanphongsach.com</p>
-    </div>
-  </footer>
-</body>
-</html>
+<style>
+  #scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    border: none;
+    outline: none;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 18px;
+  }
+  #scrollToTopBtn:hover {
+    background-color: #218838;
+  }
+  #hotline {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    z-index: 9999;
+    background-color: var(--secondary-color) !important;
+    border-radius: 20px !important;
+    padding: 8px 12px !important;
+    transition: opacity 0.3s;
+  }
+  #hotline a {
+    color: var(--text-light) !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    line-height: 1.5;
+    border: none !important;
+    outline: none !important;
+  }
+  #hotline a:hover {
+    opacity: 0.9;
+  }
+  #hotline a:focus, #hotline a:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+</style>
