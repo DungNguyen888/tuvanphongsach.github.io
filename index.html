@@ -15,7 +15,92 @@
 </script><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta charset="UTF-8">
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
-    <title>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</title><meta name="description" content="Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.">
+    <style>
+    .hero-banner {
+      position: relative;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/image/tu-van-phong-sach.jpg') no-repeat center center/cover;
+      height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: -80px;
+    }
+    .hero-banner h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner p {
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    .hero-banner .btn-custom {
+      margin-top: 20px;
+      background-color: #218838;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    .hero-banner .btn-custom:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .highlight-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .highlight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .highlight-card h3 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+    .highlight-card p {
+      font-size: 1rem;
+    }
+    .highlight-card img.icon {
+      width: 64px;
+      height: 64px;
+    }
+    .service-card img {
+      transition: transform 0.3s;
+    }
+    .service-card:hover img {
+      transform: scale(1.05);
+    }
+    .service-card h3 {
+      font-size: 1.25rem;
+      color: var(--primary-color);
+    }
+    .service-card p {
+      font-size: 1rem;
+    }
+    .cta-section {
+      background: linear-gradient(135deg, var(--primary-color), #00aaff);
+      color: var(--text-light);
+      padding: 3rem 0;
+    }
+    .cta-section p {
+      font-size: 1.2rem;
+    }
+    .cta-section .btn {
+      background-color: #1e7e34; /* Đạt 4.6:1 với #fff */
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
+      transition: background-color 0.3s ease;
+    }
+    .cta-section .btn:hover {
+      background-color: #155724; /* Đậm hơn khi hover */
+    }
+  </style><title>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</title><meta name="description" content="Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.">
 <meta property="og:title" content="Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO">
 <meta property="og:description" content="Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.">
 <meta property="og:image" content="/image/logo.webp">
@@ -164,7 +249,7 @@
 <picture>
   <source srcset="/image/about-us.avif" type="image/avif">
   <source srcset="/image/about-us.webp" type="image/webp">
-  <img src="/image/about-us.jpg" alt="Đội ngũ Tuvanphongsach.com" class="img-fluid" width="2944" height="1664" loading="lazy" fetchpriority="auto">
+  <img src="/image/about-us-opt.jpg" alt="Đội ngũ Tuvanphongsach.com" class="img-fluid" width="2944" height="1664" loading="lazy" fetchpriority="auto">
 </picture>
         </div>
       </div>
@@ -182,7 +267,7 @@
 <picture>
   <source srcset="/image/icons/experience.avif" type="image/avif">
   <source srcset="/image/icons/experience.webp" type="image/webp">
-  <img src="/image/icons/experience.png" alt="15+ năm kinh nghiệm" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/experience-opt.png" alt="15+ năm kinh nghiệm" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">15+ năm kinh nghiệm</h3>
               <p class="card-text mt-3">
@@ -198,7 +283,7 @@
 <picture>
   <source srcset="/image/icons/solution.avif" type="image/avif">
   <source srcset="/image/icons/solution.webp" type="image/webp">
-  <img src="/image/icons/solution.png" alt="Giải pháp trọn gói" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/solution-opt.png" alt="Giải pháp trọn gói" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">Giải pháp trọn gói &amp; tối ưu</h3>
               <p class="card-text mt-3">
@@ -214,7 +299,7 @@
 <picture>
   <source srcset="/image/icons/quality.avif" type="image/avif">
   <source srcset="/image/icons/quality.webp" type="image/webp">
-  <img src="/image/icons/quality.png" alt="Cam kết chất lượng" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/quality-opt.png" alt="Cam kết chất lượng" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">Cam kết chất lượng</h3>
               <p class="card-text mt-3">
@@ -237,7 +322,7 @@
 <picture>
   <source srcset="/image/thiet-ke-phong-sach.avif" type="image/avif">
   <source srcset="/image/thiet-ke-phong-sach.webp" type="image/webp">
-  <img src="/image/thiet-ke-phong-sach.jpg" alt="Thiết kế phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
+  <img src="/image/thiet-ke-phong-sach-opt.jpg" alt="Thiết kế phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Tư vấn &amp; Thiết kế phòng sạch</h3>
@@ -251,7 +336,7 @@
 <picture>
   <source srcset="/image/thi-cong-phong-sach.avif" type="image/avif">
   <source srcset="/image/thi-cong-phong-sach.webp" type="image/webp">
-  <img src="/image/thi-cong-phong-sach.jpg" alt="Thi công phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
+  <img src="/image/thi-cong-phong-sach-opt.jpg" alt="Thi công phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Thi công &amp; Lắp đặt thiết bị</h3>
@@ -265,7 +350,7 @@
 <picture>
   <source srcset="/image/bao-tri-phong-sach.avif" type="image/avif">
   <source srcset="/image/bao-tri-phong-sach.webp" type="image/webp">
-  <img src="/image/bao-tri-phong-sach.jpg" alt="Bảo trì phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
+  <img src="/image/bao-tri-phong-sach-opt.jpg" alt="Bảo trì phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Bảo trì &amp; Nâng cấp phòng sạch</h3>
