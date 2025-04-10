@@ -309,7 +309,7 @@ async function buildSubCategoryIndexes() {
     $doc('body').append(header);
     $doc('body').append(content);
     $doc('body').append(footer);
-    $doc('body').append(`<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>`); // Chèn script ở cuối body
+    
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
