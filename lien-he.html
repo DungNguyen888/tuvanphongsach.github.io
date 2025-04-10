@@ -154,7 +154,11 @@
     });
   });
 </script>
-<button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+<button id="scrollToTopBtn" title="Lên đầu trang">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5M5 12l7-7 7 7"></path>
+  </svg>
+</button>
 <div id="hotline">
   <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
 </div>
@@ -170,7 +174,7 @@
   const scrollBtn = document.getElementById('scrollToTopBtn');
   window.onscroll = function() {
     if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-      scrollBtn.style.display = 'block';
+      scrollBtn.style.display = 'flex';
     } else {
       scrollBtn.style.display = 'none';
     }
@@ -184,30 +188,44 @@
   #scrollToTopBtn {
     display: none;
     position: fixed;
-    bottom: 20px;
+    bottom: 20px; /* Nút dưới cùng */
     right: 20px;
-    z-index: 9999;
+    z-index: 10000; /* Cao hơn hotline */
     border: none;
     outline: none;
     background-color: #1e7e34;
     color: #fff;
     cursor: pointer;
-    padding: 10px 15px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
   #scrollToTopBtn:hover {
     background-color: #155724;
+    transform: translateY(-5px); /* Hiệu ứng nhấc lên khi hover */
+  }
+  #scrollToTopBtn svg {
+    width: 24px;
+    height: 24px;
   }
   #hotline {
     position: fixed;
-    bottom: 70px;
+    bottom: 80px; /* Đặt trên nút scrollToTopBtn */
     right: 20px;
     z-index: 9999;
     background-color: #1e7e34 !important;
-    border-radius: 20px !important;
-    padding: 8px 12px !important;
-    transition: opacity 0.3s;
+    border-radius: 25px !important;
+    padding: 10px 15px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #hotline:hover {
+    opacity: 0.9;
+    transform: translateY(-3px); /* Hiệu ứng nhấc nhẹ khi hover */
   }
   #hotline a {
     color: #fff !important;
@@ -216,15 +234,32 @@
     display: block;
     text-align: center;
     line-height: 1.5;
+    font-size: 1.1rem;
     border: none !important;
     outline: none !important;
   }
   #hotline a:hover {
-    opacity: 0.9;
+    opacity: 1; /* Giữ màu chữ trắng khi hover */
   }
   #hotline a:focus, #hotline a:active {
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
+  }
+  /* Responsive cho màn hình nhỏ */
+  @media (max-width: 768px) {
+    #scrollToTopBtn {
+      width: 40px;
+      height: 40px;
+    }
+    #scrollToTopBtn svg {
+      width: 20px;
+      height: 20px;
+    }
+    #hotline {
+      bottom: 70px;
+      padding: 8px 12px !important;
+      font-size: 1rem;
+    }
   }
 </style></body></html>
