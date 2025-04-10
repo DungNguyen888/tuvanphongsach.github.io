@@ -41,12 +41,12 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
 
     // Tạo WebP
     await sharpInstance
-      .webp({ quality: 60 }) // Giảm chất lượng để tối ưu hơn
+      .webp({ quality: 50 }) // Giảm chất lượng để tối ưu hơn
       .toFile(webpPath);
 
     // Tạo AVIF
     await sharpInstance
-      .avif({ quality: 50 }) // AVIF nén tốt hơn
+      .avif({ quality: 40 }) // Giảm chất lượng để tối ưu hơn
       .toFile(avifPath);
 
     return {
@@ -60,7 +60,7 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
 }
 
 // Convert <img> to <picture> với WebP và AVIF
-async function convertImages(html) {
+async function convertImages(html, pageName) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const imgs = $('img');
   if (imgs.length === 0) return html;
@@ -72,7 +72,7 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Xác định kích thước tối đa dựa trên class hoặc vị trí
+    // Xác định kích thước tối đa dựa trên trang và vị trí
     let maxWidth, maxHeight;
     if (src.includes('icons/')) {
       maxWidth = 50;
@@ -83,6 +83,12 @@ async function convertImages(html) {
     } else if (src.includes('thiet-ke-phong-sach') || src.includes('thi-cong-phong-sach') || src.includes('bao-tri-phong-sach')) {
       maxWidth = 400;
       maxHeight = 300;
+    } else if (pageName === 'gioi-thieu.html') {
+      maxWidth = 800;
+      maxHeight = 600;
+    } else {
+      maxWidth = 1200;
+      maxHeight = 800;
     }
 
     try {
@@ -112,9 +118,11 @@ async function convertImages(html) {
 }
 
 // Convert background images
-async function convertBackgroundImages(html) {
+async function convertBackgroundImages(html, pageName) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const elementsWithBg = $('[style*="background"], [style*="background-image"]');
+
+  let preloadTags = ''; // Để thêm thẻ preload vào <head>
 
   for (let i = 0; i < elementsWithBg.length; i++) {
     const el = elementsWithBg[i];
@@ -126,26 +134,47 @@ async function convertBackgroundImages(html) {
     const imageUrl = match[1];
     const realPath = path.join(rootDir, imageUrl);
 
-    // Resize ảnh nền (hero banner) về 1920x1080
-    const { webp, avif } = await makeWebpAndAvif(realPath, 1920, 1080);
+    // Resize ảnh nền dựa trên trang
+    let maxWidth, maxHeight;
+    if (pageName === 'home.html') {
+      maxWidth = 1280; // Giảm kích thước để tối ưu hơn
+      maxHeight = 720;
+    } else {
+      maxWidth = 1200;
+      maxHeight = 800;
+    }
+
+    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
     if (webp && avif) {
-      const newStyle = style.replace(imageUrl, webp); // Sử dụng WebP làm mặc định
+      const newStyle = style.replace(imageUrl, webp);
       $(el).attr('style', newStyle);
 
-      // Thêm thẻ <picture> cho ảnh nền (nếu cần hỗ trợ AVIF)
+      // Thêm thẻ preload cho ảnh nền
+      if (pageName === 'home.html' && imageUrl.includes('tu-van-phong-sach')) {
+        preloadTags += `
+<link rel="preload" href="${avif}" as="image" type="image/avif">
+<link rel="preload" href="${webp}" as="image" type="image/webp">`;
+      }
+
       const pictureHtml = `
 <picture>
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${imageUrl}" alt="Hero Banner Background" style="display: none;">
+  <img src="${imageUrl}" alt="Background Image" style="display: none;">
 </picture>`;
       $(el).prepend(pictureHtml);
     }
   }
+
+  // Thêm preload tags vào <head>
+  if (preloadTags) {
+    $('head').append(preloadTags);
+  }
+
   return $.html();
 }
 
-// Inject Meta (chỉ áp dụng cho STATIC_FILES)
+// Inject Meta
 function injectMeta() {
   STATIC_FILES.forEach(file => {
     const outName = file === 'home.html' ? 'index.html' : file;
@@ -155,12 +184,12 @@ function injectMeta() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    $('meta[name="viewport"], meta[name="description"]').remove();
-
-    const metaInsert = `
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">`;
-    $('head').append(metaInsert);
+    if (!$('meta[name="viewport"]').length) {
+      $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+    }
+    if (!$('meta[name="description"]').length) {
+      $('head').append('<meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">');
+    }
 
     html = $.html();
     fs.writeFileSync(filePath, html, 'utf8');
@@ -168,7 +197,7 @@ function injectMeta() {
   });
 }
 
-// Inject Open Graph (chỉ áp dụng cho STATIC_FILES)
+// Inject Open Graph
 function injectOpenGraph() {
   STATIC_FILES.forEach(file => {
     const outName = file === 'home.html' ? 'index.html' : file;
@@ -178,22 +207,22 @@ function injectOpenGraph() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    $('meta[property^="og:"]').remove();
+    if ($('meta[property^="og:"]').length === 0) {
+      const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+      const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
+      const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
+      const description = descMatch ? descMatch[1] : '';
+      const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
+      const img = matchImg ? matchImg[1] : defaultImage;
+      const ogUrl = BASE_URL + '/' + outName;
 
-    const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
-    const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
-    const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
-    const description = descMatch ? descMatch[1] : '';
-    const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
-    const img = matchImg ? matchImg[1] : defaultImage;
-    const ogUrl = BASE_URL + '/' + outName;
-
-    const ogTags = `
+      const ogTags = `
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
 <meta property="og:image" content="${img}">
 <meta property="og:url" content="${ogUrl}">`;
-    $('head').append(ogTags);
+      $('head').append(ogTags);
+    }
 
     html = $.html();
     fs.writeFileSync(filePath, html, 'utf8');
@@ -201,7 +230,7 @@ function injectOpenGraph() {
   });
 }
 
-// Inject Schema (chỉ áp dụng cho STATIC_FILES)
+// Inject Schema
 function injectSchema() {
   STATIC_FILES.forEach(file => {
     const outName = file === 'home.html' ? 'index.html' : file;
@@ -211,22 +240,23 @@ function injectSchema() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    $('script[type="application/ld+json"]').remove();
-
-    const schemaFileName = `schema-${outName.replace('.html', '')}.json`;
-    const schemaFilePath = path.join(rootDir, 'seo-tools', 'generated', schemaFileName);
-    if (fs.existsSync(schemaFilePath)) {
-      const schemaContent = fs.readFileSync(schemaFilePath, 'utf8');
-      const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
-      $('head').append(snippet);
-      html = $.html();
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [Schema] => ${outName}`);
+    if ($('script[type="application/ld+json"]').length === 0) {
+      const schemaFileName = `schema-${outName.replace('.html', '')}.json`;
+      const schemaFilePath = path.join(rootDir, 'seo-tools', 'generated', schemaFileName);
+      if (fs.existsSync(schemaFilePath)) {
+        const schemaContent = fs.readFileSync(schemaFilePath, 'utf8');
+        const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
+        $('head').append(snippet);
+      }
     }
+
+    html = $.html();
+    fs.writeFileSync(filePath, html, 'utf8');
+    console.log(`✅ [Schema] => ${outName}`);
   });
 }
 
-// Inject Breadcrumb (chỉ áp dụng cho STATIC_FILES)
+// Inject Breadcrumb
 function injectBreadcrumbAuto() {
   STATIC_FILES.forEach(file => {
     const outName = file === 'home.html' ? 'index.html' : file;
@@ -301,13 +331,17 @@ async function buildStaticPages() {
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
     `);
     $doc('head').append(`<title>${h1Text}</title>`);
-    $doc('body').append(header);
+    if (!$doc('header').length) {
+      $doc('body').prepend(header);
+    }
     $doc('body').append(raw);
-    $doc('body').append(footer);
+    if (!$doc('footer').length) {
+      $doc('body').append(footer);
+    }
 
     let finalHtml = $doc.html();
-    finalHtml = await convertImages(finalHtml);
-    finalHtml = await convertBackgroundImages(finalHtml);
+    finalHtml = await convertImages(finalHtml, file);
+    finalHtml = await convertBackgroundImages(finalHtml, file);
 
     const outName = file === 'home.html' ? 'index.html' : file;
     const outPath = path.join(rootDir, outName);
