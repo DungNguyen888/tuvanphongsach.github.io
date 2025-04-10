@@ -56,21 +56,34 @@ function loadPartials() {
   return { header, footer };
 }
 
-async function makeWebp(inputPath) {
-  if (!fs.existsSync(inputPath)) return null;
+async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
+  if (!fs.existsSync(inputPath)) {
+    console.error(`[makeWebpAndAvif] File not found: ${inputPath}`);
+    return { webp: null, avif: null };
+  }
   const ext = path.extname(inputPath).toLowerCase();
-  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return null;
+  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return { webp: null, avif: null };
+
   try {
     const { dir, name } = path.parse(inputPath);
     const webpPath = path.join(dir, `${name}.webp`);
-    await sharp(inputPath)
-      .withMetadata()
-      .webp({ quality: 80 })
-      .toFile(webpPath);
-    return webpPath.replace(rootDir, '').replace(/\\/g, '/');
+    const avifPath = path.join(dir, `${name}.avif`);
+
+    let sharpInstance = sharp(inputPath).withMetadata();
+    if (maxWidth && maxHeight) {
+      sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
+    }
+
+    await sharpInstance.webp({ quality: 80 }).toFile(webpPath);
+    await sharpInstance.avif({ quality: 60 }).toFile(avifPath);
+    console.log(`[makeWebpAndAvif] Success: ${webpPath}, ${avifPath}`);
+    return {
+      webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
+      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/')
+    };
   } catch (err) {
-    console.error('[makeWebp error]:', err);
-    return null;
+    console.error('[makeWebpAndAvif] Error:', err);
+    return { webp: null, avif: null };
   }
 }
 
@@ -84,26 +97,20 @@ async function convertImages(html) {
     const src = $(el).attr('src');
     if (!src) continue;
     const alt = $(el).attr('alt') || '';
-
     const realPath = path.join(rootDir, src);
-    try {
-      const metadata = await sharp(realPath).metadata();
-      if (metadata.width && metadata.height) {
-        if (!$(el).attr('width')) $(el).attr('width', metadata.width);
-        if (!$(el).attr('height')) $(el).attr('height', metadata.height);
-      }
-    } catch (err) {
-      console.error('Error reading image metadata:', err);
-    }
 
-    const webpRel = await makeWebp(realPath);
-    if (webpRel) {
-      const width = $(el).attr('width') || '';
-      const height = $(el).attr('height') || '';
+    const maxWidth = src.includes('logo') ? null : 800;
+    const maxHeight = src.includes('logo') ? null : 600;
+
+    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
+    if (webp && avif) {
+      const width = $(el).attr('width') || maxWidth || '';
+      const height = $(el).attr('height') || maxHeight || '';
       const pictureHtml = `
 <picture>
-  <source srcset="${webpRel}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>
+  <source srcset="${avif}" type="image/avif">
+  <source srcset="${webp}" type="image/webp">
+  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy">
 </picture>`;
       $(el).replaceWith(pictureHtml);
     }
@@ -368,24 +375,33 @@ async function buildIndexPage(items, outputFile, pageTitle) {
   $doc('head').append(`<title>${pageTitle}</title>`);
 
   let html = `
-    <div class="category-grid">`;
+    <section class="py-5">
+      <div class="container">
+        <h1 class="section-title">${pageTitle}</h1>
+        <div class="category-grid">`;
 
   Object.entries(items).forEach(([key, posts]) => {
     html += `<section class="category-block">
       <h2>${key}</h2>
-      <div class="post-list">`;
+      <div class="row">`;
     posts.forEach(p => {
       html += `
-        <a href="${p.url}" class="post-item">
-          <img src="${p.image}" alt="${p.title}">
-          <h3>${p.title}</h3>
-          <p>${p.description}</p>
-        </a>`;
+        <div class="col-md-4 mb-4">
+          <a href="${p.url}" class="category-card">
+            <div class="card h-100">
+              <img src="${p.image}" class="card-img-top" alt="${p.title}">
+              <div class="card-body">
+                <h3 class="card-title">${p.title}</h3>
+                <p class="card-text">${p.description.slice(0, 100)}...</p>
+              </div>
+            </div>
+          </a>
+        </div>`;
     });
     html += `</div></section>`;
   });
 
-  html += `</div>`;
+  html += `</div></div></section>`;
 
   $doc('body').append(header);
   $doc('body').append(html);

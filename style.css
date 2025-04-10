@@ -88,7 +88,7 @@ p, h1, h2, h3 {
     max-width: none;
 }
 
-/* Hero Banner */
+/* Hero Banner (trang tĩnh) */
 .hero-banner {
     position: relative;
     width: 100%;
@@ -137,7 +137,7 @@ p, h1, h2, h3 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Các section khác */
+/* Các section khác (trang tĩnh) */
 .highlight-card {
     transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -188,6 +188,144 @@ p, h1, h2, h3 {
     font-size: 1.2rem;
 }
 
+/* Hero Section (bài viết) */
+.hero-section {
+    background-color: var(--background-light);
+    padding: 50px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.hero-section img,
+.hero-image-wrapper img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hero-image-wrapper {
+    max-width: 100%;
+    display: inline-block;
+}
+
+/* Article Content (bài viết) */
+.article-content {
+    padding: 20px 0;
+}
+
+.article-content h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.article-content h3 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.article-content p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.article-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+/* Related Articles (bài viết) */
+.related-articles {
+    margin-top: 50px;
+    padding: 30px 0;
+    background-color: var(--background-light);
+    border-top: 1px solid #ddd;
+}
+
+.related-card {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.related-card .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.related-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.related-card .card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+/* Category Index (danh mục bài viết) */
+.category-hero {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 40px 0;
+    text-align: center;
+}
+
+.category-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.category-content {
+    background-color: #fff;
+    padding: 20px 0;
+}
+
+.category-card {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.category-card .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.category-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.category-card .card-title {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.category-card .card-text {
+    font-size: 0.95rem;
+    color: #666;
+}
+
 /* Điều chỉnh cho màn hình nhỏ */
 @media (max-width: 768px) {
     .logo-fixed {
@@ -199,5 +337,17 @@ p, h1, h2, h3 {
     }
     .hero-banner p {
         font-size: 1.2rem;
+    }
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    .article-content h2 {
+        font-size: 1.5rem;
+    }
+    .article-content h3 {
+        font-size: 1.3rem;
+    }
+    .related-card .card-title {
+        font-size: 1rem;
     }
 }
