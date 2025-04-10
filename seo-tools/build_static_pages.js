@@ -32,18 +32,13 @@ function loadPartials() {
 async function optimizeJpeg(inputPath) {
   const { dir, name, ext } = path.parse(inputPath);
   const outputPath = path.join(dir, `${name}-opt${ext}`);
-  console.log(`[optimizeJpeg] Attempting: ${inputPath} -> ${outputPath}`);
   if (!fs.existsSync(inputPath)) {
     console.error(`[optimizeJpeg] File not found: ${inputPath}`);
     return null;
   }
-  if (inputPath === outputPath) {
-    console.log(`[optimizeJpeg] Skipping: Input is already optimized (${inputPath})`);
-    return null;
-  }
   try {
     await sharp(inputPath)
-      .jpeg({ quality: 70, mozjpeg: true }) // Chất lượng 70 để đạt ~499 KiB
+      .jpeg({ quality: 70, mozjpeg: true })
       .toFile(outputPath);
     console.log(`[optimizeJpeg] Success: ${outputPath} created`);
     return outputPath.replace(rootDir, '').replace(/\\/g, '/');
@@ -55,7 +50,6 @@ async function optimizeJpeg(inputPath) {
 
 // Resize và chuyển ảnh sang WebP/AVIF
 async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
-  console.log(`[makeWebpAndAvif] Attempting: ${inputPath}`);
   if (!fs.existsSync(inputPath)) {
     console.error(`[makeWebpAndAvif] File not found: ${inputPath}`);
     return { webp: null, avif: null };
@@ -76,8 +70,8 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
       sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
     }
 
-    const webpQuality = isIcon ? 80 : 50; // Chất lượng 50 để đạt ~246 KiB
-    const avifQuality = isIcon ? 80 : 40; // Chất lượng 40 để nhỏ hơn WebP
+    const webpQuality = isIcon ? 80 : 50;
+    const avifQuality = isIcon ? 80 : 40;
 
     await sharpInstance.webp({ quality: webpQuality }).toFile(webpPath);
     await sharpInstance.avif({ quality: avifQuality }).toFile(avifPath);
@@ -91,8 +85,6 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
     return { webp: null, avif: null };
   }
 }
-
-
 
 // Convert <img> to <picture>
 async function convertImages(html, pageName) {
@@ -138,14 +130,14 @@ async function convertImages(html, pageName) {
     const optimizedJpeg = await optimizeJpeg(realPath);
 
     if (webp && avif) {
-      // Cập nhật width và height dựa trên maxWidth/maxHeight
       const width = maxWidth || $(el).attr('width') || '';
       const height = maxHeight || $(el).attr('height') || '';
+      const isBanner = src.includes('tu-van-phong-sach');
       const pictureHtml = `
 <picture>
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${optimizedJpeg || src}" alt="${alt}" class="img-fluid banner-img" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${src.includes('tu-van-phong-sach') ? 'high' : 'auto'}">
+  <img src="${optimizedJpeg || src}" alt="${alt}" class="img-fluid${isBanner ? ' banner-img' : ''}" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${isBanner ? 'high' : 'auto'}">
 </picture>`;
       $(el).replaceWith(pictureHtml);
       console.log(`[convertImages] Converted ${src} to <picture> in ${pageName}`);
@@ -154,62 +146,56 @@ async function convertImages(html, pageName) {
   return $.html();
 }
 
-
-
-// Convert background images
-async function convertBackgroundImages(html, pageName) {
-  const $ = cheerio.load(html, { decodeEntities: false });
-  const elementsWithBg = $('[style*="background"], [style*="background-image"]');
-  console.log(`[convertBackgroundImages] Found ${elementsWithBg.length} background images in ${pageName}`);
-  let preloadTags = '';
-
-  for (let i = 0; i < elementsWithBg.length; i++) {
-    const el = elementsWithBg[i];
-    let style = $(el).attr('style') || '';
-    const regex = /background(?:-image)?:\s*url\(['"]?([^'")]+)['"]?\)/;
-    const match = style.match(regex);
-    if (!match) continue;
-
-    const imageUrl = match[1];
-    console.log(`[convertBackgroundImages] Processing: ${imageUrl} in ${pageName}`);
-    const realPath = path.join(rootDir, imageUrl);
-
-    let maxWidth, maxHeight;
-    if (pageName === 'home.html') {
-      maxWidth = 1200;
-      maxHeight = 675;
-    } else {
-      maxWidth = 1200;
-      maxHeight = 800;
-    }
-
-    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
-    if (webp && avif) {
-      const newStyle = style.replace(imageUrl, webp);
-      $(el).attr('style', newStyle);
-
-      if (pageName === 'home.html' && imageUrl.includes('tu-van-phong-sach')) {
-        preloadTags += `
-<link rel="preload" href="${avif}" as="image" type="image/avif">
-<link rel="preload" href="${webp}" as="image" type="image/webp">`;
-      }
-
-      const pictureHtml = `
-<picture>
-  <source srcset="${avif}" type="image/avif">
-  <source srcset="${webp}" type="image/webp">
-  <img src="${imageUrl}" alt="Background Image" style="display: none;">
-</picture>`;
-      $(el).prepend(pictureHtml);
-      console.log(`[convertBackgroundImages] Converted ${imageUrl} to <picture> in ${pageName}`);
-    }
+// Build Static Pages
+async function buildStaticPages() {
+  if (!fs.existsSync(pagesDir)) {
+    console.log('❌ Thư mục pages/ không tồn tại');
+    return;
   }
 
-  if (preloadTags) {
-    $('head').append(preloadTags);
+  for (const file of STATIC_FILES) {
+    const filePath = path.join(pagesDir, file);
+    if (!fs.existsSync(filePath)) {
+      console.log(`❌ Không tìm thấy ${file}`);
+      continue;
+    }
+    let raw = fs.readFileSync(filePath, 'utf8');
+    const $raw = cheerio.load(raw, { decodeEntities: false });
+    const h1Text = $raw('h1').first().text().trim() || 'Untitled';
+    const styles = $raw('head style').html() || '';
+    $raw('title, meta:not([name="charset"]), script[type="application/ld+json"]').remove();
+    raw = $raw.html();
+
+    let { header, footer } = loadPartials();
+
+    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
+    $doc('head').append(`
+      <link rel="stylesheet" href="/style.css">
+      <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
+    `);
+    if (styles) {
+      $doc('head').append(`<style>${styles}</style>`);
+    }
+    $doc('head').append(`<title>${h1Text}</title>`);
+
+    $doc('body').prepend(header);
+    $doc('body').append(raw);
+    $doc('body').append(footer);
+
+    let finalHtml = $doc.html();
+    finalHtml = await convertImages(finalHtml, file);
+
+    const outName = file === 'home.html' ? 'index.html' : file;
+    const outPath = path.join(rootDir, outName);
+    fs.writeFileSync(outPath, finalHtml, 'utf8');
+    console.log(`✅ Build [${file}] => /${outName}`);
   }
 
-  return $.html();
+  injectMeta();
+  injectOpenGraph();
+  injectBreadcrumbAuto();
+
+  console.log('\n🎯 Hoàn tất build trang tĩnh!\n');
 }
 
 // Inject Meta
@@ -226,12 +212,10 @@ function injectMeta() {
     $('meta[name="description"]').remove();
 
     $('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-
     const description = metaDescriptions[file] || 'Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO.';
     $('head').append(`<meta name="description" content="${description}">`);
 
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
+    fs.writeFileSync(filePath, $.html(), 'utf8');
     console.log(`✅ [Meta] => ${outName}`);
   });
 }
@@ -263,35 +247,8 @@ function injectOpenGraph() {
       $('head').append(ogTags);
     }
 
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
+    fs.writeFileSync(filePath, $.html(), 'utf8');
     console.log(`✅ [OG] => ${outName}`);
-  });
-}
-
-// Inject Schema
-function injectSchema() {
-  STATIC_FILES.forEach(file => {
-    const outName = file === 'home.html' ? 'index.html' : file;
-    const filePath = path.join(rootDir, outName);
-    if (!fs.existsSync(filePath)) return;
-
-    let html = fs.readFileSync(filePath, 'utf8');
-    const $ = cheerio.load(html, { decodeEntities: false });
-
-    if ($('script[type="application/ld+json"]').length === 0) {
-      const schemaFileName = `schema-${outName.replace('.html', '')}.json`;
-      const schemaFilePath = path.join(rootDir, 'seo-tools', 'generated', schemaFileName);
-      if (fs.existsSync(schemaFilePath)) {
-        const schemaContent = fs.readFileSync(schemaFilePath, 'utf8');
-        const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
-        $('head').append(snippet);
-      }
-    }
-
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
-    console.log(`✅ [Schema] => ${outName}`);
   });
 }
 
@@ -337,72 +294,9 @@ ${JSON.stringify(breadcrumbJSON, null, 2)}
 </script>`;
 
     $('head').prepend(snippet);
-    html = $.html();
-    fs.writeFileSync(filePath, html, 'utf8');
+    fs.writeFileSync(filePath, $.html(), 'utf8');
     console.log(`✅ [Breadcrumb Auto] => ${outName}`);
   });
-}
-
-// Build Static Pages
-async function buildStaticPages() {
-  if (!fs.existsSync(pagesDir)) {
-    console.log('❌ Thư mục pages/ không tồn tại');
-    return;
-  }
-
-  for (const file of STATIC_FILES) {
-    const filePath = path.join(pagesDir, file);
-    if (!fs.existsSync(filePath)) {
-      console.log(`❌ Không tìm thấy ${file}`);
-      continue;
-    }
-    let raw = fs.readFileSync(filePath, 'utf8');
-    const $raw = cheerio.load(raw, { decodeEntities: false });
-    const h1Text = $raw('h1').first().text().trim() || 'Untitled';
-
-    // Trích xuất <style> từ file nguồn nếu có
-    const styles = $raw('head style').html() || '';
-    
-    // Xóa các thẻ không cần thiết trong $raw
-    $raw('title, meta:not([name="charset"]), script[type="application/ld+json"]').remove();
-    raw = $raw.html();
-
-    let { header, footer } = loadPartials();
-
-    const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
-    $doc('head').append(`
-      <link rel="stylesheet" href="/style.css">
-      <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
-    `);
-    if (styles) {
-      $doc('head').append(`<style>${styles}</style>`); // Thêm lại <style> từ file nguồn
-    }
-    $doc('head').append(`<title>${h1Text}</title>`);
-
-    if (!$doc('header').length) {
-      $doc('body').prepend(header);
-    }
-    $doc('body').append(raw);
-    if (!$doc('footer').length) {
-      $doc('body').append(footer);
-    }
-
-    let finalHtml = $doc.html();
-    finalHtml = await convertImages(finalHtml, file);
-    finalHtml = await convertBackgroundImages(finalHtml, file);
-
-    const outName = file === 'home.html' ? 'index.html' : file;
-    const outPath = path.join(rootDir, outName);
-    fs.writeFileSync(outPath, finalHtml, 'utf8');
-    console.log(`✅ Build [${file}] => /${outName}`);
-  }
-
-  injectMeta();
-  injectOpenGraph();
-  injectSchema();
-  injectBreadcrumbAuto();
-
-  console.log('\n🎯 Hoàn tất build trang tĩnh + SEO + Breadcrumb!\n');
 }
 
 buildStaticPages().catch(err => console.error('❌ Lỗi build trang:', err));

@@ -2,11 +2,11 @@
 
 /* Biến CSS chung */
 :root {
-    --primary-color: #0056b3; /* Xanh dương đậm */
-    --secondary-color: #28A745; /* Xanh lá */
-    --background-light: #f8f9fa; /* Xám nhạt */
-    --text-color: #333; /* Chữ chính */
-    --text-light: #fff; /* Chữ trên nền tối */
+    --primary-color: #0056b3;
+    --secondary-color: #28A745;
+    --background-light: #f8f9fa;
+    --text-color: #333;
+    --text-light: #fff;
 }
 
 /* Reset và cơ bản */
@@ -19,7 +19,7 @@ body {
     font-size: 1rem;
     line-height: 1.6;
     color: var(--text-color);
-    padding-top: 80px; /* Tăng từ 70px lên 80px để chắc chắn không bị che */
+    padding-top: 80px;
 }
 
 p, h1, h2, h3 {
@@ -32,12 +32,15 @@ p, h1, h2, h3 {
     border: none;
     padding: 12px 30px;
     font-size: 1.2rem;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
     color: var(--text-light);
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-custom:hover {
-    background-color: #218838; /* Xanh lá đậm */
+    background-color: #218838;
+    color: var(--text-light);
 }
 
 .section-title {
@@ -74,7 +77,7 @@ p, h1, h2, h3 {
 
 .dropdown-item:hover {
     background-color: var(--primary-color);
-    color: var(--text-light) !important; /* Thêm !important để ghi đè Bootstrap */
+    color: var(--text-light) !important;
 }
 
 /* Logo cố định kích thước */
@@ -85,189 +88,104 @@ p, h1, h2, h3 {
     max-width: none;
 }
 
-/* Banner */
-.banner {
-    background-size: cover;
-    background-position: center;
-    min-height: 500px;
+/* Hero Banner */
+.hero-banner {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
 }
 
-/* Hình ảnh linh hoạt */
-.img-fluid {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Hero Section */
-.hero-section {
-    background-color: var(--background-light);
-    padding: 50px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.hero-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-}
-
-.hero-section img,
-.hero-image-wrapper img {
-    max-width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.hero-image-wrapper {
-    max-width: 100%;
-    display: inline-block;
-}
-
-/* Article Content */
-.article-content {
-    padding: 20px 0;
-}
-
-.article-content h2 {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin-top: 40px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 10px;
-}
-
-.article-content h3 {
-    font-size: 1.5rem;
-    color: var(--text-color);
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
-
-.article-content p {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-}
-
-.article-content img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 20px 0;
-}
-
-/* Mục lục */
-.bang-noi-dung {
-    background-color: #f1f3f5;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-}
-
-.bang-noi-dung summary {
-    font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: var(--primary-color);
-}
-
-.bang-noi-dung ul {
-    margin-top: 10px;
-    padding-left: 20px;
-}
-
-.bang-noi-dung ul li {
-    margin-bottom: 8px;
-}
-
-.bang-noi-dung a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.bang-noi-dung a:hover {
-    text-decoration: underline;
-}
-
-/* Related Posts/Articles */
-.related-posts h2,
-.related-articles .section-title {
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin-bottom: 30px;
-}
-
-.related-articles {
-    margin-top: 50px;
-    padding: 30px 0;
-    background-color: var(--background-light);
-    border-top: 1px solid #ddd;
-}
-
-.related-card {
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-.related-card .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.related-card .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.related-card .card-title {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-/* Category Hero */
-.category-hero {
-    background-color: var(--primary-color);
-    color: var(--text-light);
-    padding: 40px 0;
-    text-align: center;
-}
-
-.category-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-
-/* Category Content */
-.category-content {
-    background-color: #fff;
-}
-
-.category-card {
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-.category-card .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.category-card .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.category-card .card-img-top {
-    height: 200px;
+.banner-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    z-index: 0;
 }
 
-.category-card .card-title {
-    font-size: 1.3rem;
-    margin-bottom: 10px;
+.hero-banner .container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 1;
 }
 
-.category-card .card-text {
-    font-size: 0.95rem;
-    color: #666;
+.hero-banner h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner .btn-custom {
+    margin-top: 20px;
+}
+
+.hero-banner .btn-custom:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Các section khác */
+.highlight-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.highlight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.highlight-card h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.highlight-card p {
+    font-size: 1rem;
+}
+
+.highlight-card img.icon {
+    width: 64px;
+    height: 64px;
+}
+
+.service-card img {
+    transition: transform 0.3s;
+}
+
+.service-card:hover img {
+    transform: scale(1.05);
+}
+
+.service-card h3 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+}
+
+.service-card p {
+    font-size: 1rem;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, var(--primary-color), #00aaff);
+    color: var(--text-light);
+    padding: 3rem 0;
+}
+
+.cta-section p {
+    font-size: 1.2rem;
 }
 
 /* Điều chỉnh cho màn hình nhỏ */
@@ -276,30 +194,10 @@ p, h1, h2, h3 {
         width: 40px;
         height: 40px;
     }
-}
-.hero-banner {
-  position: relative;
-  width: 100%;
-  height: 500px; /* Điều chỉnh chiều cao banner */
-  overflow: hidden;
-}
-
-.banner-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Đảm bảo ảnh phủ kín khu vực */
-  z-index: 0;
-}
-
-.hero-banner .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white; /* Nếu nền tối */
-  z-index: 1;
+    .hero-banner h1 {
+        font-size: 2rem;
+    }
+    .hero-banner p {
+        font-size: 1.2rem;
+    }
 }

@@ -16,32 +16,30 @@
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
     <style>
- .hero-banner {
-  position: relative;
-  width: 100%;
-  height: 500px; /* Điều chỉnh chiều cao banner */
-  overflow: hidden;
-}
-
-.banner-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Đảm bảo ảnh phủ kín khu vực */
-  z-index: 0;
-}
-
-.hero-banner .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white; /* Nếu nền tối */
-  z-index: 1;
-}
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 500px; /* Chiều cao banner */
+      overflow: hidden;
+    }
+    .banner-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ảnh phủ kín */
+      z-index: 0;
+    }
+    .hero-banner .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 1;
+    }
     .hero-banner h1 {
       font-size: 3rem;
       font-weight: 700;
@@ -60,11 +58,15 @@
       font-size: 1.2rem;
       color: #fff;
       transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
     }
     .hero-banner .btn-custom:hover {
       transform: scale(1.1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
+    /* Các style khác giữ nguyên */
     .highlight-card {
       transition: transform 0.3s, box-shadow 0.3s;
     }
@@ -105,15 +107,17 @@
       font-size: 1.2rem;
     }
     .cta-section .btn {
-      background-color: #1e7e34; /* Đạt 4.6:1 với #fff */
+      background-color: #1e7e34;
       border: none;
       padding: 12px 30px;
       font-size: 1.2rem;
       color: #fff;
       transition: background-color 0.3s ease;
+      text-decoration: none;
     }
     .cta-section .btn:hover {
-      background-color: #155724; /* Đậm hơn khi hover */
+      background-color: #155724;
+      color: #fff;
     }
   </style><title>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</title><meta name="description" content="Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.">
 <meta property="og:title" content="Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO">
@@ -151,33 +155,33 @@
     </div>
   </nav>
 </header>
+  
+  
   <style>
- .hero-banner {
-  position: relative;
-  width: 100%;
-  height: 500px; /* Điều chỉnh chiều cao banner */
-  overflow: hidden;
-}
-
-.banner-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Đảm bảo ảnh phủ kín khu vực */
-  z-index: 0;
-}
-
-.hero-banner .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white; /* Nếu nền tối */
-  z-index: 1;
-}
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 500px; /* Chiều cao banner */
+      overflow: hidden;
+    }
+    .banner-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ảnh phủ kín */
+      z-index: 0;
+    }
+    .hero-banner .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 1;
+    }
     .hero-banner h1 {
       font-size: 3rem;
       font-weight: 700;
@@ -196,11 +200,15 @@
       font-size: 1.2rem;
       color: #fff;
       transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
     }
     .hero-banner .btn-custom:hover {
       transform: scale(1.1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
+    /* Các style khác giữ nguyên */
     .highlight-card {
       transition: transform 0.3s, box-shadow 0.3s;
     }
@@ -241,37 +249,38 @@
       font-size: 1.2rem;
     }
     .cta-section .btn {
-      background-color: #1e7e34; /* Đạt 4.6:1 với #fff */
+      background-color: #1e7e34;
       border: none;
       padding: 12px 30px;
       font-size: 1.2rem;
       color: #fff;
       transition: background-color 0.3s ease;
+      text-decoration: none;
     }
     .cta-section .btn:hover {
-      background-color: #155724; /* Đậm hơn khi hover */
+      background-color: #155724;
+      color: #fff;
     }
   </style>
 
 
-<header class="hero-banner">
-  
+  <header class="hero-banner">
+    
 <picture>
   <source srcset="/image/tu-van-phong-sach.avif" type="image/avif">
   <source srcset="/image/tu-van-phong-sach.webp" type="image/webp">
   <img src="/image/tu-van-phong-sach-opt.jpg" alt="Tư vấn phòng sạch" class="img-fluid banner-img" width="1200" height="675" loading="lazy" fetchpriority="high">
 </picture>
-  <div class="container">
-    <h1>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
-    <p>Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.</p>
-    <a href="lien-he.html" class="btn btn-custom">Liên hệ ngay</a>
-  </div>
-</header>
+    <div class="container">
+      <h1>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</h1>
+      <p>Thiết kế – Thi công – Bảo trì trọn gói, giải pháp tối ưu cho doanh nghiệp.</p>
+      <a href="lien-he.html" class="btn btn-custom">Liên hệ ngay</a>
+    </div>
+  </header>
 
-
-<section class="py-5">
-  <div class="container">
-    <h2 class="section-title text-center">Chúng tôi là ai?</h2>
+  <section class="py-5">
+    <div class="container">
+      <h2 class="section-title text-center">Chúng tôi là ai?</h2>
       <div class="row align-items-center">
         <div class="col-md-6">
           <p class="text-center">
@@ -286,7 +295,7 @@
 <picture>
   <source srcset="/image/about-us.avif" type="image/avif">
   <source srcset="/image/about-us.webp" type="image/webp">
-  <img src="/image/about-us-opt.jpg" alt="Đội ngũ Tuvanphongsach.com" class="img-fluid banner-img" width="600" height="400" loading="lazy" fetchpriority="auto">
+  <img src="/image/about-us-opt.jpg" alt="Đội ngũ Tuvanphongsach.com" class="img-fluid" width="600" height="400" loading="lazy" fetchpriority="auto">
 </picture>
         </div>
       </div>
@@ -304,7 +313,7 @@
 <picture>
   <source srcset="/image/icons/experience.avif" type="image/avif">
   <source srcset="/image/icons/experience.webp" type="image/webp">
-  <img src="/image/icons/experience-opt.png" alt="15+ năm kinh nghiệm" class="img-fluid banner-img" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/experience-opt.png" alt="15+ năm kinh nghiệm" class="img-fluid" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">15+ năm kinh nghiệm</h3>
               <p class="card-text mt-3">
@@ -320,7 +329,7 @@
 <picture>
   <source srcset="/image/icons/solution.avif" type="image/avif">
   <source srcset="/image/icons/solution.webp" type="image/webp">
-  <img src="/image/icons/solution-opt.png" alt="Giải pháp trọn gói" class="img-fluid banner-img" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/solution-opt.png" alt="Giải pháp trọn gói" class="img-fluid" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">Giải pháp trọn gói &amp; tối ưu</h3>
               <p class="card-text mt-3">
@@ -336,7 +345,7 @@
 <picture>
   <source srcset="/image/icons/quality.avif" type="image/avif">
   <source srcset="/image/icons/quality.webp" type="image/webp">
-  <img src="/image/icons/quality-opt.png" alt="Cam kết chất lượng" class="img-fluid banner-img" loading="lazy" fetchpriority="auto">
+  <img src="/image/icons/quality-opt.png" alt="Cam kết chất lượng" class="img-fluid" loading="lazy" fetchpriority="auto">
 </picture>
               <h3 class="card-title fw-bold">Cam kết chất lượng</h3>
               <p class="card-text mt-3">
@@ -359,7 +368,7 @@
 <picture>
   <source srcset="/image/thiet-ke-phong-sach.avif" type="image/avif">
   <source srcset="/image/thiet-ke-phong-sach.webp" type="image/webp">
-  <img src="/image/thiet-ke-phong-sach-opt.jpg" alt="Thiết kế phòng sạch" class="img-fluid banner-img" width="400" height="300" loading="lazy" fetchpriority="auto">
+  <img src="/image/thiet-ke-phong-sach-opt.jpg" alt="Thiết kế phòng sạch" class="img-fluid" width="400" height="300" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Tư vấn &amp; Thiết kế phòng sạch</h3>
@@ -373,7 +382,7 @@
 <picture>
   <source srcset="/image/thi-cong-phong-sach.avif" type="image/avif">
   <source srcset="/image/thi-cong-phong-sach.webp" type="image/webp">
-  <img src="/image/thi-cong-phong-sach-opt.jpg" alt="Thi công phòng sạch" class="img-fluid banner-img" width="400" height="300" loading="lazy" fetchpriority="auto">
+  <img src="/image/thi-cong-phong-sach-opt.jpg" alt="Thi công phòng sạch" class="img-fluid" width="400" height="300" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Thi công &amp; Lắp đặt thiết bị</h3>
@@ -387,7 +396,7 @@
 <picture>
   <source srcset="/image/bao-tri-phong-sach.avif" type="image/avif">
   <source srcset="/image/bao-tri-phong-sach.webp" type="image/webp">
-  <img src="/image/bao-tri-phong-sach-opt.jpg" alt="Bảo trì phòng sạch" class="img-fluid banner-img" width="400" height="300" loading="lazy" fetchpriority="auto">
+  <img src="/image/bao-tri-phong-sach-opt.jpg" alt="Bảo trì phòng sạch" class="img-fluid" width="400" height="300" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
               <h3 class="card-title fw-bold">Bảo trì &amp; Nâng cấp phòng sạch</h3>
@@ -445,7 +454,7 @@
     z-index: 9999;
     border: none;
     outline: none;
-    background-color: #1e7e34; /* Đạt 4.6:1 với #fff */
+    background-color: #1e7e34;
     color: #fff;
     cursor: pointer;
     padding: 10px 15px;
@@ -460,7 +469,7 @@
     bottom: 70px;
     right: 20px;
     z-index: 9999;
-    background-color: #1e7e34 !important; /* Đạt 4.6:1 với #fff */
+    background-color: #1e7e34 !important;
     border-radius: 20px !important;
     padding: 8px 12px !important;
     transition: opacity 0.3s;
