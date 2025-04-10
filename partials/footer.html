@@ -12,46 +12,54 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 99;
+      z-index: 9999; /* Đảm bảo luôn nằm trên cùng */
       border: none;
       outline: none;
       background-color: #28A745;
-      color: var(--text-light);
+      color: #fff;
       cursor: pointer;
       padding: 10px 15px;
       border-radius: 50%;
       font-size: 18px;
     }
-    #scrollToTopBtn:hover { background-color: #218838; }
+    #scrollToTopBtn:hover {
+      background-color: #218838;
+    }
     #hotline {
       position: fixed;
-      bottom: 70px;
+      bottom: 70px; /* Dùng 70px theo yêu cầu trước đó */
       right: 20px;
-      z-index: 99;
+      z-index: 9999;
+      background-color: #28A745 !important; /* Xanh lá, ưu tiên cao */
+      border-radius: 20px !important; /* Bo tròn */
+      padding: 8px 12px !important;
+      transition: opacity 0.3s;
     }
     #hotline a {
-      background-color: #28A745;
-      color: var(--text-light);
-      padding: 8px 15px;
-      border-radius: 20px;
-      text-decoration: none;
+      color: #fff !important;
+      text-decoration: none !important;
       font-weight: bold;
-      border: none; /* Loại bỏ viền */
-      outline: none; /* Loại bỏ outline đỏ khi focus */
+      display: block;
+      text-align: center;
+      line-height: 1.5;
+      border: none !important;
+      outline: none !important;
     }
-    #hotline a:hover { 
-      background-color: #218838; 
-      text-decoration: none; /* Đảm bảo không gạch chân */
+    #hotline a:hover {
+      opacity: 0.9;
     }
-    #hotline a:focus { 
-      outline: none; /* Loại bỏ khung đỏ khi click */
-      box-shadow: none; /* Loại bỏ hiệu ứng shadow mặc định */
+    #hotline a:focus, #hotline a:active {
+      outline: none !important; /* Loại bỏ viền đỏ */
+      box-shadow: none !important; /* Loại bỏ shadow mặc định */
+      border: none !important;
     }
-    footer { 
-      background-color: var(--background-light); 
-      border-top: 2px solid var(--primary-color); 
+    footer {
+      background-color: #f8f9fa;
+      border-top: 2px solid #0056b3;
     }
-    footer p { color: var(--primary-color); }
+    footer p {
+      color: #0056b3;
+    }
   </style>
 </head>
 <body>

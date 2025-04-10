@@ -21,29 +21,6 @@
   transform: scale(1.05);
 }
 
-/* Hotline góc dưới phải */
-#hotline {
-  position: fixed;
-  bottom: 25px; /* Giữ vị trí như cũ */
-  right: 20px;
-  z-index: 9999;
-  background-color: #28A745; /* Đổi từ đỏ sang xanh lá */
-  border-radius: 20px; /* Bo tròn hơn để đồng bộ với nút khác */
-  padding: 8px 12px;
-  transition: opacity 0.3s;
-}
-#hotline a {
-  color: #fff; /* Giữ chữ trắng */
-  text-decoration: none;
-  font-weight: bold;
-  display: block;
-  text-align: center;
-  line-height: 1.5;
-}
-#hotline a:hover {
-  opacity: 0.9; /* Giữ hiệu ứng mờ khi hover */
-}
-
 /* Bài viết liên quan */
 .related-posts h2 {
   font-size: 1.5rem;
