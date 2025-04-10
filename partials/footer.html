@@ -1,45 +1,71 @@
-<html><head>
-   <!-- end .container -->
-
-<!-- Nút cuộn top -->
-
-
-
-
-
+<html>
+<head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-<meta property="og:title" content="Tuvanphongsach.com">
-<meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-<meta property="og:image" content="/image/default.jpg">
-<meta property="og:url" content="https://tuvanphongsach.com/partials/footer.html"></head><body><button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
-<!-- Hotline -->
-<div id="hotline">
-  <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
-</div>
-
-<!-- Bootstrap local -->
-<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
-
-<!-- Script cuộn lên -->
-<script>
-  const scrollBtn = document.getElementById('scrollToTopBtn');
-  window.onscroll = function() {
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-      scrollBtn.style.display = 'block';
-    } else {
-      scrollBtn.style.display = 'none';
+  <meta property="og:title" content="Tuvanphongsach.com">
+  <meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
+  <meta property="og:image" content="/image/default.jpg">
+  <meta property="og:url" content="https://tuvanphongsach.com/partials/footer.html">
+  <style>
+    #scrollToTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 18px;
     }
-  };
-  scrollBtn.onclick = function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-</script>
-<footer class="bg-light py-4 mt-5">
-  <div class="container text-center">
-    <p class="mb-0">© 2025 Tuvanphongsach.com</p>
+    #scrollToTopBtn:hover { background-color: #0056D2; }
+    #hotline {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      z-index: 99;
+    }
+    #hotline a {
+      background-color: #007BFF;
+      color: #FFFFFF;
+      padding: 8px 15px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    #hotline a:hover { background-color: #0056D2; }
+    footer { border-top: 2px solid #007BFF; }
+  </style>
+</head>
+<body>
+  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+  <div id="hotline">
+    <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
   </div>
-</footer>
 
+  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+  <script>
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    window.onscroll = function() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        scrollBtn.style.display = 'block';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    };
+    scrollBtn.onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  </script>
 
-</body></html>
+  <footer class="py-4 mt-5" style="background-color: #F8F9FA;">
+    <div class="container text-center">
+      <p class="mb-0" style="color: #0056D2;">© 2025 Tuvanphongsach.com</p>
+    </div>
+  </footer>
+</body>
+</html>

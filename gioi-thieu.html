@@ -22,7 +22,7 @@
       <link rel="stylesheet" href="/style.css">
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
     <title>Untitled</title><meta name="description" content="Tuvanphongsach.com - Chuyên gia tư vấn phòng sạch với 15+ năm kinh nghiệm. Đội ngũ kỹ sư tận tâm, giải pháp tối ưu cho doanh nghiệp."></head><body><header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0056D2;">
     <div class="container">
       <a class="navbar-brand" href="/">
         <img src="/image/logo.webp" alt="Logo" class="logo-fixed" width="102" height="102">
@@ -32,20 +32,20 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarTuvan">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html">Giới thiệu</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dich-vu.html">Dịch vụ</a></li>
-          <li class="nav-item"><a class="nav-link" href="/lien-he.html">Liên hệ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/" style="color: #FFFFFF;">Trang chủ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/gioi-thieu.html" style="color: #FFFFFF;">Giới thiệu</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dich-vu.html" style="color: #FFFFFF;">Dịch vụ</a></li>
+          <li class="nav-item"><a class="nav-link" href="/lien-he.html" style="color: #FFFFFF;">Liên hệ</a></li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDanhMuc" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FFFFFF;">
               Danh mục
             </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdownDanhMuc">
-              <li><a class="dropdown-item" href="/ahu/">AHU - Phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/fcu/">FCU - Thiết bị phòng sạch</a></li>
-              <li><a class="dropdown-item" href="/chillers/">Chillers - Giải pháp làm lạnh</a></li>
-              <li><a class="dropdown-item" href="/air-cooled/">Air Cooled - Hệ thống lạnh</a></li>
-              <li><a class="dropdown-item" href="/tu-van-phong-sach/">Tư vấn phòng sạch</a></li>
+            <ul class="dropdown-menu" style="background-color: #FFFFFF; border: 1px solid #007BFF;">
+              <li><a class="dropdown-item" href="/ahu/" style="color: #0056D2;">AHU - Phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/fcu/" style="color: #0056D2;">FCU - Thiết bị phòng sạch</a></li>
+              <li><a class="dropdown-item" href="/chillers/" style="color: #0056D2;">Chillers - Giải pháp làm lạnh</a></li>
+              <li><a class="dropdown-item" href="/air-cooled/" style="color: #0056D2;">Air Cooled - Hệ thống lạnh</a></li>
+              <li><a class="dropdown-item" href="/tu-van-phong-sach/" style="color: #0056D2;">Tư vấn phòng sạch</a></li>
             </ul>
           </li>
         </ul>
@@ -54,22 +54,13 @@
   </nav>
 </header>
 
-  
-
-
-
-
-
+<style>
+  .nav-link:hover { color: #FFD700 !important; } /* Vàng nhạt khi hover */
+  .dropdown-item:hover { background-color: #007BFF; color: #FFFFFF !important; }
+</style>
 
   
-  
 
-
-
-
-   <!-- end .container -->
-
-<!-- Nút cuộn top -->
 
 
 
@@ -77,37 +68,77 @@
 
   
   
-<meta property="og:title" content="Tuvanphongsach.com">
-<meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
-<meta property="og:image" content="/image/default.jpg">
-<meta property="og:url" content="https://tuvanphongsach.com/partials/footer.html"><button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
-<!-- Hotline -->
-<div id="hotline">
-  <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
-</div>
 
-<!-- Bootstrap local -->
-<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
 
-<!-- Script cuộn lên -->
-<script>
-  const scrollBtn = document.getElementById('scrollToTopBtn');
-  window.onscroll = function() {
-    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-      scrollBtn.style.display = 'block';
-    } else {
-      scrollBtn.style.display = 'none';
+
+
+
+  
+  
+  <meta property="og:title" content="Tuvanphongsach.com">
+  <meta property="og:description" content="Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch">
+  <meta property="og:image" content="/image/default.jpg">
+  <meta property="og:url" content="https://tuvanphongsach.com/partials/footer.html">
+  <style>
+    #scrollToTopBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 18px;
     }
-  };
-  scrollBtn.onclick = function() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-</script>
-<footer class="bg-light py-4 mt-5">
-  <div class="container text-center">
-    <p class="mb-0">© 2025 Tuvanphongsach.com</p>
-  </div>
-</footer>
+    #scrollToTopBtn:hover { background-color: #0056D2; }
+    #hotline {
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      z-index: 99;
+    }
+    #hotline a {
+      background-color: #007BFF;
+      color: #FFFFFF;
+      padding: 8px 15px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    #hotline a:hover { background-color: #0056D2; }
+    footer { border-top: 2px solid #007BFF; }
+  </style>
 
+
+  <button id="scrollToTopBtn" title="Lên đầu trang">↑</button>
+  <div id="hotline">
+    <a href="tel:0937953493">HOTLINE: 0937 953 493</a>
+  </div>
+
+  <script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>
+  <script>
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    window.onscroll = function() {
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        scrollBtn.style.display = 'block';
+      } else {
+        scrollBtn.style.display = 'none';
+      }
+    };
+    scrollBtn.onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  </script>
+
+  <footer class="py-4 mt-5" style="background-color: #F8F9FA;">
+    <div class="container text-center">
+      <p class="mb-0" style="color: #0056D2;">© 2025 Tuvanphongsach.com</p>
+    </div>
+  </footer>
 
 </body></html>
