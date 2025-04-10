@@ -15,7 +15,6 @@ const STATIC_FILES = ['home.html', 'gioi-thieu.html', 'lien-he.html', 'dich-vu.h
 const BASE_URL = 'https://tuvanphongsach.com';
 const defaultImage = '/image/default.jpg';
 
-// Định nghĩa meta description cho từng trang
 const metaDescriptions = {
   'home.html': 'Tư vấn phòng sạch đạt chuẩn GMP, ISO. Thiết kế, thi công, bảo trì trọn gói bởi Tuvanphongsach.com - hơn 15 năm kinh nghiệm.',
   'gioi-thieu.html': 'Tuvanphongsach.com - Chuyên gia tư vấn phòng sạch với 15+ năm kinh nghiệm. Đội ngũ kỹ sư tận tâm, giải pháp tối ưu cho doanh nghiệp.',
@@ -31,7 +30,7 @@ function loadPartials() {
 }
 
 // Resize và chuyển ảnh sang WebP/AVIF
-async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
+async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
   if (!fs.existsSync(inputPath)) return { webp: null, avif: null };
   const ext = path.extname(inputPath).toLowerCase();
   if (!['.jpg', '.jpeg', '.png'].includes(ext)) return { webp: null, avif: null };
@@ -42,16 +41,20 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
     const avifPath = path.join(dir, `${name}.avif`);
 
     let sharpInstance = sharp(inputPath).withMetadata();
-    if (maxWidth && maxHeight) {
+    if (maxWidth && maxHeight && !isIcon) { // Không resize icon
       sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
     }
 
+    // Tăng chất lượng cho icon
+    const webpQuality = isIcon ? 80 : 40;
+    const avifQuality = isIcon ? 80 : 30;
+
     await sharpInstance
-      .webp({ quality: 50 })
+      .webp({ quality: webpQuality })
       .toFile(webpPath);
 
     await sharpInstance
-      .avif({ quality: 40 })
+      .avif({ quality: avifQuality })
       .toFile(avifPath);
 
     return {
@@ -78,9 +81,10 @@ async function convertImages(html, pageName) {
     const realPath = path.join(rootDir, src);
 
     let maxWidth, maxHeight;
-    if (src.includes('icons/')) {
-      maxWidth = 50;
-      maxHeight = 50;
+    const isIcon = src.includes('icons/');
+    if (isIcon) {
+      maxWidth = null; // Không resize icon
+      maxHeight = null;
     } else if (src.includes('about-us')) {
       maxWidth = 600;
       maxHeight = 400;
@@ -105,7 +109,7 @@ async function convertImages(html, pageName) {
       console.error('Error reading image metadata:', err);
     }
 
-    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
+    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight, isIcon);
     if (webp && avif) {
       const width = $(el).attr('width') || '';
       const height = $(el).attr('height') || '';
@@ -185,13 +189,11 @@ function injectMeta() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Đảm bảo thẻ viewport và description được thêm vào
     $('meta[name="viewport"]').remove();
-    $('meta[name="description"]').remove(); // Xóa thẻ description cũ nếu có
+    $('meta[name="description"]').remove();
 
     $('head').prepend('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
 
-    // Thêm meta description tùy chỉnh cho từng trang
     const description = metaDescriptions[file] || 'Tuvanphongsach.com - Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO.';
     $('head').append(`<meta name="description" content="${description}">`);
 

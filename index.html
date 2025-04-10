@@ -50,21 +50,20 @@
   
   
   
+  
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
   <style>
-    /* Đặt cỡ chữ tối thiểu cho toàn bộ trang */
     html {
-      font-size: 16px; /* Đặt font-size gốc là 16px */
+      font-size: 16px;
     }
     body {
-      font-size: 1rem; /* Tương đương 16px */
+      font-size: 1rem;
       line-height: 1.5;
     }
-    p, h1, h2, h5 {
+    p, h1, h2, h3 {
       margin-bottom: 1rem;
     }
-    /* Hero Banner */
     .hero-banner {
       position: relative;
       background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/image/tu-van-phong-sach.jpg') no-repeat center center/cover;
@@ -76,12 +75,12 @@
       text-align: center;
     }
     .hero-banner h1 {
-      font-size: 3rem; /* 48px */
+      font-size: 3rem;
       font-weight: 700;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
     .hero-banner p {
-      font-size: 1.5rem; /* 24px */
+      font-size: 1.5rem;
       font-weight: 500;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
@@ -89,14 +88,14 @@
       background-color: #ff6200;
       border: none;
       padding: 12px 30px;
-      font-size: 1.2rem; /* 19.2px */
+      font-size: 1.2rem;
       transition: background-color 0.3s;
     }
     .btn-custom:hover {
       background-color: #e55a00;
     }
     .section-title {
-      font-size: 2.5rem; /* 40px */
+      font-size: 2.5rem;
       font-weight: 700;
       color: #0056b3;
       margin-bottom: 2rem;
@@ -108,8 +107,15 @@
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
+    .highlight-card h3 {
+      font-size: 1.5rem;
+    }
     .highlight-card p {
-      font-size: 1rem; /* 16px */
+      font-size: 1rem;
+    }
+    .highlight-card img.icon {
+      width: 64px; /* Điều chỉnh kích thước hiển thị theo kích thước gốc của icon */
+      height: 64px;
     }
     .service-card img {
       transition: transform 0.3s;
@@ -117,8 +123,11 @@
     .service-card:hover img {
       transform: scale(1.05);
     }
+    .service-card h3 {
+      font-size: 1.25rem;
+    }
     .service-card p {
-      font-size: 1rem; /* 16px */
+      font-size: 1rem;
     }
     .cta-section {
       background: linear-gradient(135deg, #0056b3, #00aaff);
@@ -126,16 +135,17 @@
       padding: 3rem 0;
     }
     .cta-section p {
-      font-size: 1.2rem; /* 19.2px */
+      font-size: 1.2rem;
     }
     .cta-section .btn {
-      background-color: #28a745;
+      background-color: #218838;
       border: none;
       padding: 12px 30px;
-      font-size: 1.2rem; /* 19.2px */
+      font-size: 1.2rem;
+      color: #fff;
     }
     .cta-section .btn:hover {
-      background-color: #218838;
+      background-color: #1e7e34;
     }
   </style>
 
@@ -188,7 +198,7 @@
   <source srcset="/image/icons/experience.webp" type="image/webp">
   <img src="/image/icons/experience.png" alt="15+ năm kinh nghiệm" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
-              <h5 class="card-title fw-bold">15+ năm kinh nghiệm</h5>
+              <h3 class="card-title fw-bold">15+ năm kinh nghiệm</h3>
               <p class="card-text mt-3">
                 Đội ngũ chuyên gia đã <strong>thực hiện hàng trăm dự án</strong> phòng sạch trên toàn quốc, tích lũy kiến thức thực tiễn vững chắc.
               </p>
@@ -204,7 +214,7 @@
   <source srcset="/image/icons/solution.webp" type="image/webp">
   <img src="/image/icons/solution.png" alt="Giải pháp trọn gói" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
-              <h5 class="card-title fw-bold">Giải pháp trọn gói &amp; tối ưu</h5>
+              <h3 class="card-title fw-bold">Giải pháp trọn gói &amp; tối ưu</h3>
               <p class="card-text mt-3">
                 Chúng tôi cung cấp dịch vụ <strong>“chìa khóa trao tay”</strong> – từ tư vấn, thiết kế, thi công đến bảo trì, tiết kiệm chi phí và thời gian.
               </p>
@@ -220,7 +230,7 @@
   <source srcset="/image/icons/quality.webp" type="image/webp">
   <img src="/image/icons/quality.png" alt="Cam kết chất lượng" class="img-fluid" width="2048" height="2048" loading="lazy" fetchpriority="auto">
 </picture>
-              <h5 class="card-title fw-bold">Cam kết chất lượng</h5>
+              <h3 class="card-title fw-bold">Cam kết chất lượng</h3>
               <p class="card-text mt-3">
                 Mỗi công trình đều <strong>đạt chuẩn GMP/ISO</strong>, vận hành ổn định lâu dài, với dịch vụ bảo hành và bảo trì định kỳ.
               </p>
@@ -245,7 +255,7 @@
   <img src="/image/thiet-ke-phong-sach.jpg" alt="Thiết kế phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
-              <h5 class="card-title fw-bold">Tư vấn &amp; Thiết kế phòng sạch</h5>
+              <h3 class="card-title fw-bold">Tư vấn &amp; Thiết kế phòng sạch</h3>
               <p class="card-text">Đưa ra giải pháp <strong>phù hợp nhất</strong> với nhu cầu và ngân sách, đảm bảo tiêu chuẩn chất lượng.</p>
             </div>
           </div>
@@ -259,7 +269,7 @@
   <img src="/image/thi-cong-phong-sach.jpg" alt="Thi công phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
-              <h5 class="card-title fw-bold">Thi công &amp; Lắp đặt thiết bị</h5>
+              <h3 class="card-title fw-bold">Thi công &amp; Lắp đặt thiết bị</h3>
               <p class="card-text">Đội ngũ thi công chuyên nghiệp, lắp đặt nhanh gọn, <strong>đúng tiến độ</strong>, hỗ trợ vận hành thử nghiệm.</p>
             </div>
           </div>
@@ -273,7 +283,7 @@
   <img src="/image/bao-tri-phong-sach.jpg" alt="Bảo trì phòng sạch" class="img-fluid" width="2368" height="1792" loading="lazy" fetchpriority="auto">
 </picture>
             <div class="card-body">
-              <h5 class="card-title fw-bold">Bảo trì &amp; Nâng cấp phòng sạch</h5>
+              <h3 class="card-title fw-bold">Bảo trì &amp; Nâng cấp phòng sạch</h3>
               <p class="card-text">Dịch vụ hậu mãi chu đáo, giúp phòng sạch của Quý khách luôn <strong>vận hành tối ưu</strong>.</p>
             </div>
           </div>
