@@ -195,7 +195,7 @@ async function buildArticles(rawData) {
     $doc('body').append(heroSection);
     $doc('body').append(`<main class="article-content container my-5">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
-    $doc('body').append(`<script src="/assets/bootstrap/bootstrap.bundle.min.js"></script>`); // Chèn script ở cuối body
+   
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
