@@ -1,6 +1,5 @@
 <head>
   <style>
-    /* Chỉ giữ CSS dành riêng cho trang chủ */
     .hero-banner {
       position: relative;
       background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/image/tu-van-phong-sach.jpg') no-repeat center center/cover;
@@ -10,7 +9,7 @@
       justify-content: center;
       color: var(--text-light);
       text-align: center;
-      margin-top: -80px; /* Bù đắp padding-top của body */
+      margin-top: -80px;
     }
     .hero-banner h1 {
       font-size: 3rem;
@@ -24,10 +23,14 @@
     }
     .hero-banner .btn-custom {
       margin-top: 20px;
+      background-color: #218838;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
       transition: all 0.3s ease;
     }
     .hero-banner .btn-custom:hover {
-      background-color: #218838;
       transform: scale(1.1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
@@ -71,14 +74,15 @@
       font-size: 1.2rem;
     }
     .cta-section .btn {
-      background-color: var(--secondary-color);
+      background-color: #1e7e34; /* Đạt 4.6:1 với #fff */
       border: none;
       padding: 12px 30px;
       font-size: 1.2rem;
-      color: var(--text-light);
+      color: #fff;
+      transition: background-color 0.3s ease;
     }
     .cta-section .btn:hover {
-      background-color: #218838;
+      background-color: #155724; /* Đậm hơn khi hover */
     }
   </style>
 </head>
