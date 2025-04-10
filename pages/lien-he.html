@@ -6,30 +6,53 @@
   <meta name="description" content="Liên hệ Tuvanphongsach.com để được tư vấn phòng sạch miễn phí. Hỗ trợ thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO.">
   <meta property="og:title" content="Liên hệ - Tuvanphongsach.com">
   <meta property="og:description" content="Liên hệ Tuvanphongsach.com để được tư vấn phòng sạch miễn phí. Hỗ trợ thiết kế, thi công, bảo trì đạt chuẩn GMP, ISO.">
-  <meta property="og:image" content="/image/contact.jpg">
+  <meta property="og:image" content="/image/contact-opt.jpg">
   <meta property="og:url" content="https://tuvanphongsach.com/lien-he.html">
   <title>Liên hệ - Tuvanphongsach.com</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
   <style>
     /* Style bổ sung cho trang liên hệ */
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 500px; /* Giữ chiều cao cố định như trang chủ */
+      overflow: hidden;
+    }
+    .hero-banner picture,
+    .hero-banner img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Đảm bảo ảnh phủ toàn banner */
+      z-index: 0;
+    }
     .hero-banner .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
       align-items: center; /* Căn giữa ngang */
       justify-content: center; /* Căn giữa dọc */
-      height: 100%; /* Chiếm toàn bộ chiều cao banner */
+      z-index: 1;
+      color: white;
     }
     .hero-banner h1 {
       font-size: 3rem;
       font-weight: 700;
-      text-align: center; /* Đảm bảo tiêu đề căn giữa */
+      text-align: center;
       margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Đảm bảo chữ rõ trên ảnh */
     }
     .hero-banner p {
       font-size: 1.5rem;
-      text-align: center; /* Đảm bảo đoạn văn căn giữa */
+      text-align: center;
       margin-bottom: 30px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
     .contact-info {
       background-color: var(--background-light);
@@ -80,9 +103,13 @@
   </style>
 </head>
 <body>
-  <!-- Header từ partials -->
+  <!-- Header với picture -->
   <header class="hero-banner">
-    <img src="/image/contact.jpg" alt="Liên hệ Tuvanphongsach.com" class="banner-img">
+    <picture>
+      <source srcset="/image/contact.avif" type="image/avif">
+      <source srcset="/image/contact.webp" type="image/webp">
+      <img src="/image/contact-opt.jpg" alt="Liên hệ Tuvanphongsach.com" class="img-fluid" width="1200" height="500" loading="lazy" fetchpriority="high">
+    </picture>
     <div class="container">
       <h1>Liên hệ</h1>
       <p>Gửi yêu cầu tư vấn để nhận giải pháp phòng sạch tối ưu từ chúng tôi.</p>
@@ -95,7 +122,6 @@
     <div class="container">
       <h2 class="section-title text-center">Gửi yêu cầu tư vấn</h2>
       <div class="row g-4">
-        <!-- Khối thông tin liên hệ -->
         <div class="col-md-5 mb-4">
           <div class="contact-info">
             <h3>Thông tin liên hệ</h3>
@@ -104,10 +130,9 @@
               <li><strong>Email:</strong> <a href="mailto:info@tuvanphongsach.com">info@tuvanphongsach.com</a></li>
               <li><strong>Địa chỉ:</strong> 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</li>
             </ul>
-            <img src="/image/contact.jpg" alt="Liên hệ Anh Khang Cleanroom" class="img-fluid">
+            <img src="/image/contact-opt.jpg" alt="Liên hệ Anh Khang Cleanroom" class="img-fluid">
           </div>
         </div>
-        <!-- Khối form liên hệ -->
         <div class="col-md-7">
           <form id="contact-form" novalidate>
             <div class="mb-3">
