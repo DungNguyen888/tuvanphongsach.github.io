@@ -13,12 +13,30 @@
   <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
   <style>
     /* Style bổ sung cho trang liên hệ */
+    .hero-banner .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Căn giữa ngang */
+      justify-content: center; /* Căn giữa dọc */
+      height: 100%; /* Chiếm toàn bộ chiều cao banner */
+    }
+    .hero-banner h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center; /* Đảm bảo tiêu đề căn giữa */
+      margin-bottom: 20px;
+    }
+    .hero-banner p {
+      font-size: 1.5rem;
+      text-align: center; /* Đảm bảo đoạn văn căn giữa */
+      margin-bottom: 30px;
+    }
     .contact-info {
       background-color: var(--background-light);
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      height: 100%; /* Đảm bảo chiều cao đồng đều với form */
+      height: 100%;
     }
     .contact-info h3 {
       font-size: 1.5rem;
@@ -32,7 +50,7 @@
     .contact-info img {
       margin-top: 20px;
       border-radius: 8px;
-      aspect-ratio: 4 / 3; /* Giữ tỷ lệ ảnh */
+      aspect-ratio: 4 / 3;
     }
     #contact-form {
       background-color: var(--background-light);
@@ -108,7 +126,6 @@
               <label for="message" class="form-label">Nội dung yêu cầu</label>
               <textarea id="message" class="form-control" name="message" rows="4" required></textarea>
             </div>
-            <!-- Honeypot chống spam -->
             <div style="display:none;">
               <input type="text" name="botcheck">
             </div>
