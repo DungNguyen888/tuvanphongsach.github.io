@@ -193,6 +193,7 @@ p, h1, h2, h3 {
     background-color: var(--background-light);
     padding: 50px 0;
     border-bottom: 1px solid #ddd;
+    min-height: 400px; /* Đảm bảo chiều cao tối thiểu để tránh dịch chuyển */
 }
 
 .hero-title {
@@ -207,11 +208,24 @@ p, h1, h2, h3 {
     max-width: 100%;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: block; /* Ngăn ảnh gây dịch chuyển */
 }
 
 .hero-image-wrapper {
     max-width: 100%;
     display: inline-block;
+    position: relative;
+    width: 800px; /* Kích thước mặc định */
+    height: 600px; /* Tỷ lệ 4:3 */
+    overflow: hidden; /* Tránh tràn nội dung */
+}
+/* Giữ chỗ cho ảnh trong hero */
+.hero-image-wrapper picture,
+.hero-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
 }
 
 /* Article Content (bài viết) */
@@ -244,6 +258,11 @@ p, h1, h2, h3 {
     max-width: 100%;
     border-radius: 8px;
     margin: 20px 0;
+    display: block;
+    width: 800px; /* Kích thước mặc định */
+    height: 600px; /* Tỷ lệ 4:3 */
+    object-fit: cover;
+    aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
 }
 
 /* Related Articles (bài viết) */
@@ -350,4 +369,16 @@ p, h1, h2, h3 {
     .related-card .card-title {
         font-size: 1rem;
     }
+    .hero-image-wrapper {
+        width: 100%;
+        height: auto; /* Để ảnh responsive */
+    }
+    .article-content img {
+        width: 100%;
+        height: auto;
+    }
+}
+/* Footer */
+footer {
+    position: relative; /* Giữ footer ổn định */
 }

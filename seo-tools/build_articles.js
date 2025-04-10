@@ -99,20 +99,25 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
+    // Mặc định kích thước ảnh bài viết là 800x600, trừ logo
     const maxWidth = src.includes('logo') ? null : 800;
     const maxHeight = src.includes('logo') ? null : 600;
 
     const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
     if (webp && avif) {
-      const width = $(el).attr('width') || maxWidth || '';
-      const height = $(el).attr('height') || maxHeight || '';
+      const width = $(el).attr('width') || maxWidth || '800';
+      const height = $(el).attr('height') || maxHeight || '600';
       const pictureHtml = `
 <picture>
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy">
+  <img src="${src}" alt="${alt}" class="img-fluid" width="${width}" height="${height}" loading="lazy">
 </picture>`;
       $(el).replaceWith(pictureHtml);
+    } else {
+      // Nếu không tạo được webp/avif, vẫn thêm kích thước
+      if (!$(el).attr('width') && maxWidth) $(el).attr('width', maxWidth);
+      if (!$(el).attr('height') && maxHeight) $(el).attr('height', maxHeight);
     }
   }
   return $.html();
