@@ -92,7 +92,9 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
   }
 }
 
-// Convert <img> to <picture> với WebP, AVIF và JPEG tối ưu
+
+
+// Convert <img> to <picture>
 async function convertImages(html, pageName) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const imgs = $('img');
@@ -132,27 +134,18 @@ async function convertImages(html, pageName) {
       maxHeight = 800;
     }
 
-    try {
-      const metadata = await sharp(realPath).metadata();
-      if (metadata.width && metadata.height) {
-        if (!$(el).attr('width')) $(el).attr('width', metadata.width);
-        if (!$(el).attr('height')) $(el).attr('height', metadata.height);
-      }
-    } catch (err) {
-      console.error(`[convertImages] Error reading metadata for ${src}:`, err);
-    }
-
     const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight, isIcon);
     const optimizedJpeg = await optimizeJpeg(realPath);
 
     if (webp && avif) {
-      const width = $(el).attr('width') || '';
-      const height = $(el).attr('height') || '';
+      // Cập nhật width và height dựa trên maxWidth/maxHeight
+      const width = maxWidth || $(el).attr('width') || '';
+      const height = maxHeight || $(el).attr('height') || '';
       const pictureHtml = `
 <picture>
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${optimizedJpeg || src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${src.includes('tu-van-phong-sach') ? 'high' : 'auto'}">
+  <img src="${optimizedJpeg || src}" alt="${alt}" class="img-fluid banner-img" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${src.includes('tu-van-phong-sach') ? 'high' : 'auto'}">
 </picture>`;
       $(el).replaceWith(pictureHtml);
       console.log(`[convertImages] Converted ${src} to <picture> in ${pageName}`);
@@ -160,6 +153,8 @@ async function convertImages(html, pageName) {
   }
   return $.html();
 }
+
+
 
 // Convert background images
 async function convertBackgroundImages(html, pageName) {
