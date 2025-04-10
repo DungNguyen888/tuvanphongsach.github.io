@@ -7,10 +7,8 @@ const rootDir = path.resolve(__dirname, '../');
 const pagesDir = path.join(rootDir, 'pages');
 const partialsDir = path.join(rootDir, 'partials');
 
-// File tĩnh để skip
 const STATIC_FILES = ['home.html', 'gioi-thieu.html', 'lien-he.html', 'dich-vu.html'];
 
-// Cấu hình danh mục
 const categoryConfigs = [
   { dir: 'ahu', title: 'AHU - Phòng sạch' },
   { dir: 'fcu', title: 'FCU - Thiết bị phòng sạch' },
@@ -24,7 +22,6 @@ const tagDir = path.join(rootDir, 'tags');
 const categoryIndexFile = path.join(categoryDir, 'index.html');
 const tagIndexFile = path.join(tagDir, 'index.html');
 const mainCategoryFile = path.join(rootDir, 'danh-muc.html');
-const generatedSchemaDir = path.join(rootDir, 'seo-tools/generated');
 
 let categoriesData = {};
 let tagsData = {};
@@ -32,12 +29,8 @@ let tagsData = {};
 const defaultImage = '/image/default.jpg';
 const BASE_URL = 'https://tuvanphongsach.com';
 
-// Danh sách các file cần xử lý SEO
 const ARTICLE_RELATED_FILES = [];
 
-//-----------------------------------------
-// 0) Thu thập metadata từ /pages trước khi build
-//-----------------------------------------
 function gatherRawArticles() {
   const rawData = {};
   if (!fs.existsSync(pagesDir)) return rawData;
@@ -51,25 +44,18 @@ function gatherRawArticles() {
       .split(',').map(t => t.trim()).filter(Boolean);
     const category = $('meta[name="category"]').attr('content') || 'misc';
     const url = `/${category}/${file}`;
-    // Lấy hình ảnh đầu tiên
     const image = $('img').first().attr('src') || defaultImage;
     rawData[file] = { title, tags, url, category, image };
   });
   return rawData;
 }
 
-//-----------------------------------------
-// 1) load partials
-//-----------------------------------------
 function loadPartials() {
   const header = fs.readFileSync(path.join(partialsDir, 'header.html'), 'utf8');
   const footer = fs.readFileSync(path.join(partialsDir, 'footer.html'), 'utf8');
   return { header, footer };
 }
 
-//-----------------------------------------
-// 2) Tạo webp + convertImages
-//-----------------------------------------
 async function makeWebp(inputPath) {
   if (!fs.existsSync(inputPath)) return null;
   const ext = path.extname(inputPath).toLowerCase();
@@ -125,9 +111,6 @@ async function convertImages(html) {
   return $.html();
 }
 
-//-----------------------------------------
-// 3) buildArticles => ghép header/footer, thêm Related, skip file tĩnh
-//-----------------------------------------
 async function buildArticles(rawData) {
   let { header, footer } = loadPartials();
   if (!fs.existsSync(pagesDir)) {
@@ -195,7 +178,6 @@ async function buildArticles(rawData) {
     $doc('body').append(heroSection);
     $doc('body').append(`<main class="article-content container my-5">\n${$.html()}\n${relatedHtml}\n</main>`);
     $doc('body').append(footer);
-   
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
@@ -210,9 +192,6 @@ async function buildArticles(rawData) {
   }
 }
 
-//-----------------------------------------
-// 4) gatherCategoryAndTags => quét data => categoriesData, tagsData
-//-----------------------------------------
 function gatherCategoryAndTags() {
   categoriesData = {};
   tagsData = {};
@@ -248,9 +227,6 @@ function gatherCategoryAndTags() {
   });
 }
 
-//-----------------------------------------
-// 5) buildSubCategoryIndexes, buildCategoryTagsIndex, buildMainCategoryFile
-//-----------------------------------------
 async function buildSubCategoryIndexes() {
   let { header, footer } = loadPartials();
   const rawData = gatherRawArticles();
@@ -309,7 +285,6 @@ async function buildSubCategoryIndexes() {
     $doc('body').append(header);
     $doc('body').append(content);
     $doc('body').append(footer);
-    
 
     let finalHtml = $doc.html();
     finalHtml = await convertImages(finalHtml);
@@ -370,7 +345,7 @@ async function buildMainCategoryFile() {
       </div>
     </section>`;
 
-  $doc('body').append(header); // Menu
+  $doc('body').append(header);
   $doc('body').append(content);
   $doc('body').append(footer);
 
@@ -382,7 +357,7 @@ async function buildMainCategoryFile() {
   console.log('✅ Tạo trang danh mục chính: danh-muc.html');
 }
 
-async function buildIndexPage(items, outputFile, pageTitle, schemaType) {
+async function buildIndexPage(items, outputFile, pageTitle) {
   const $doc = cheerio.load('<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"></head><body></body></html>', { decodeEntities: false });
   let { header, footer } = loadPartials();
   
@@ -412,7 +387,7 @@ async function buildIndexPage(items, outputFile, pageTitle, schemaType) {
 
   html += `</div>`;
 
-  $doc('body').append(header); // Menu
+  $doc('body').append(header);
   $doc('body').append(html);
   $doc('body').append(footer);
 
@@ -425,176 +400,129 @@ async function buildIndexPage(items, outputFile, pageTitle, schemaType) {
 }
 
 async function buildCategoryTagsIndex() {
-    if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir);
-    if (!fs.existsSync(tagDir)) fs.mkdirSync(tagDir);
+  if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir);
+  if (!fs.existsSync(tagDir)) fs.mkdirSync(tagDir);
 
-    await buildIndexPage(categoriesData, categoryIndexFile, 'Danh mục bài viết', 'CollectionPage');
-    await buildIndexPage(tagsData, tagIndexFile, 'Thẻ bài viết', 'CollectionPage');
+  await buildIndexPage(categoriesData, categoryIndexFile, 'Danh mục bài viết');
+  await buildIndexPage(tagsData, tagIndexFile, 'Thẻ bài viết');
 }
 
-//-----------------------------------------
-// 6) Chèn Meta, OG, Schema
-//-----------------------------------------
 function injectMeta() {
-    ARTICLE_RELATED_FILES.forEach(filePath => {
-      let html = fs.readFileSync(filePath, 'utf8');
-      const $ = cheerio.load(html, { decodeEntities: false });
+  ARTICLE_RELATED_FILES.forEach(filePath => {
+    let html = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(html, { decodeEntities: false });
 
-      // Xóa meta cũ nếu có
-      $('meta[name="viewport"], meta[name="description"]').remove();
+    $('meta[name="viewport"], meta[name="description"]').remove();
 
-      const metaInsert = `
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tuvanphongsach.com - Giải pháp phòng sạch">`;
-      $('head').prepend(metaInsert);
+    const metaInsert = `
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Tuvanphongsach.com - Giải pháp phòng sạch">`;
+    $('head').prepend(metaInsert);
 
-      html = $.html();
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [Meta] => ${filePath.replace(rootDir, '')}`);
-    });
+    fs.writeFileSync(filePath, $.html(), 'utf8');
+    console.log(`✅ [Meta] => ${filePath.replace(rootDir, '')}`);
+  });
 }
 
 function injectOpenGraph() {
-    ARTICLE_RELATED_FILES.forEach(filePath => {
-      let html = fs.readFileSync(filePath, 'utf8');
-      const $ = cheerio.load(html, { decodeEntities: false });
+  ARTICLE_RELATED_FILES.forEach(filePath => {
+    let html = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(html, { decodeEntities: false });
 
-      // Xóa OG cũ nếu có
-      $('meta[property^="og:"]').remove();
+    $('meta[property^="og:"]').remove();
 
-      const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
-      const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
-      const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
-      const desc = descMatch ? descMatch[1] : '';
-      const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
-      const img = matchImg ? matchImg[1] : defaultImage;
-      const rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
-      const ogUrl = BASE_URL + rel;
+    const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
+    const title = titleMatch ? titleMatch[1].trim() : 'Tuvanphongsach.com';
+    const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
+    const desc = descMatch ? descMatch[1] : '';
+    const matchImg = html.match(/<img[^>]*src="([^"]*)"/);
+    const img = matchImg ? matchImg[1] : defaultImage;
+    const rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
+    const ogUrl = BASE_URL + rel;
 
-      const ogTags = `
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${img}">
-  <meta property="og:url" content="${ogUrl}">`;
-      $('head').append(ogTags);
+    const ogTags = `
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${desc}">
+<meta property="og:image" content="${img}">
+<meta property="og:url" content="${ogUrl}">`;
+    $('head').append(ogTags);
 
-      html = $.html();
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [OG] => ${rel}`);
-    });
+    fs.writeFileSync(filePath, $.html(), 'utf8');
+    console.log(`✅ [OG] => ${rel}`);
+  });
 }
 
-function injectSchema() {
-    ARTICLE_RELATED_FILES.forEach(filePath => {
-      let html = fs.readFileSync(filePath, 'utf8');
-      const $ = cheerio.load(html, { decodeEntities: false });
-
-      // Xóa schema cũ nếu có (trừ breadcrumb)
-      $('script[type="application/ld+json"]').filter((i, el) => {
-        return !$(el).html().includes('"BreadcrumbList"');
-      }).remove();
-
-      const schemaFileName = `schema-${filePath.replace(rootDir, '').replace(/\\/g, '-').replace('.html', '')}.json`;
-      const schemaPath = path.join(generatedSchemaDir, schemaFileName);
-      if (fs.existsSync(schemaPath)) {
-        const schemaContent = fs.readFileSync(schemaPath, 'utf8');
-        const snippet = `<script type="application/ld+json">${schemaContent}</script>`;
-        $('head').append(snippet);
-        html = $.html();
-        fs.writeFileSync(filePath, html, 'utf8');
-        console.log(`✅ [Schema] => ${filePath.replace(rootDir, '')}`);
-      }
-    });
-}
-
-//-----------------------------------------
-// 7) injectBreadcrumbAuto
-//-----------------------------------------
 function injectBreadcrumbAuto() {
-    ARTICLE_RELATED_FILES.forEach(filePath => {
-      let html = fs.readFileSync(filePath, 'utf8');
-      const $ = cheerio.load(html, { decodeEntities: false });
+  ARTICLE_RELATED_FILES.forEach(filePath => {
+    let html = fs.readFileSync(filePath, 'utf8');
+    const $ = cheerio.load(html, { decodeEntities: false });
 
-      // Xóa breadcrumb cũ nếu có
-      $('script[type="application/ld+json"]').filter((i, el) => {
-        return $(el).html().includes('"BreadcrumbList"');
-      }).remove();
+    $('script[type="application/ld+json"]').filter((i, el) => {
+      return $(el).html().includes('"BreadcrumbList"');
+    }).remove();
 
-      const itemList = [{
+    const itemList = [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": BASE_URL + "/"
+    }];
+
+    let rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
+    if (rel.startsWith('/')) rel = rel.slice(1);
+    const parts = rel.split('/');
+
+    parts.forEach((slug, i) => {
+      if (slug === 'index.html' && parts.length === 2) return;
+      const currentUrl = BASE_URL + '/' + parts.slice(0, i + 1).join('/');
+      const isLast = (i === parts.length - 1 && slug.endsWith('.html'));
+      let name;
+      if (isLast) {
+        const match = html.match(/<title>([\s\S]*?)<\/title>/);
+        name = match ? match[1].trim() : slug.replace('.html', '');
+      } else {
+        const found = categoryConfigs.find(c => c.dir === slug);
+        name = found ? found.title : slug;
+      }
+      itemList.push({
         "@type": "ListItem",
-        "position": 1,
-        "name": "Trang chủ",
-        "item": BASE_URL + "/"
-      }];
-
-      let rel = filePath.replace(rootDir, '').replace(/\\/g, '/');
-      if (rel.startsWith('/')) rel = rel.slice(1);
-      const parts = rel.split('/');
-
-      parts.forEach((slug, i) => {
-        if (slug === 'index.html' && parts.length === 2) return;
-        const currentUrl = BASE_URL + '/' + parts.slice(0, i + 1).join('/');
-        const isLast = (i === parts.length - 1 && slug.endsWith('.html'));
-        let name;
-        if (isLast) {
-          const match = html.match(/<title>([\s\S]*?)<\/title>/);
-          name = match ? match[1].trim() : slug.replace('.html', '');
-        } else {
-          const found = categoryConfigs.find(c => c.dir === slug);
-          name = found ? found.title : slug;
-        }
-        itemList.push({
-          "@type": "ListItem",
-          "position": itemList.length + 1,
-          "name": name,
-          "item": isLast ? currentUrl : currentUrl + '/'
-        });
+        "position": itemList.length + 1,
+        "name": name,
+        "item": isLast ? currentUrl : currentUrl + '/'
       });
-
-      const breadcrumbJSON = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": itemList
-      };
-      const snippet = `
-  <script type="application/ld+json">
-  ${JSON.stringify(breadcrumbJSON, null, 2)}
-  </script>`;
-
-      $('head').prepend(snippet);
-      html = $.html();
-      fs.writeFileSync(filePath, html, 'utf8');
-      console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir, '')}`);
     });
+
+    const breadcrumbJSON = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": itemList
+    };
+    const snippet = `
+<script type="application/ld+json">
+${JSON.stringify(breadcrumbJSON, null, 2)}
+</script>`;
+
+    $('head').prepend(snippet);
+    fs.writeFileSync(filePath, $.html(), 'utf8');
+    console.log(`✅ [Breadcrumb Auto] => ${filePath.replace(rootDir, '')}`);
+  });
 }
 
-//-----------------------------------------
-// 8) buildAllArticles
-//-----------------------------------------
 async function buildAllArticles() {
-    // Reset danh sách file mỗi lần chạy
-    ARTICLE_RELATED_FILES.length = 0;
+  ARTICLE_RELATED_FILES.length = 0;
 
-    // 0) Thu thập metadata
-    const rawData = gatherRawArticles();
+  const rawData = gatherRawArticles();
+  await buildArticles(rawData);
+  gatherCategoryAndTags();
+  await buildSubCategoryIndexes();
+  await buildCategoryTagsIndex();
+  await buildMainCategoryFile();
 
-    // 1) build articles (có Related)
-    await buildArticles(rawData);
+  injectMeta();
+  injectOpenGraph();
+  injectBreadcrumbAuto();
 
-    // 2) gather => build subcat => build cat/tags => build main
-    gatherCategoryAndTags();
-    await buildSubCategoryIndexes();
-    await buildCategoryTagsIndex();
-    await buildMainCategoryFile();
-
-    // 3) chèn meta, OG, schema, breadcrumb sau khi build
-    injectMeta();
-    injectOpenGraph();
-    injectSchema();
-    injectBreadcrumbAuto();
-
-    console.log('\n🎯 Hoàn tất build bài viết + SEO + breadcrumb!\n');
+  console.log('\n🎯 Hoàn tất build bài viết!\n');
 }
 
-// RUN
 buildAllArticles().catch(err => console.error(err));
