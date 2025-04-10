@@ -22,27 +22,44 @@ function loadPartials() {
   return { header, footer };
 }
 
-// Xử lý ảnh WebP
-async function makeWebp(inputPath) {
-  if (!fs.existsSync(inputPath)) return null;
+// Resize và chuyển ảnh sang WebP/AVIF
+async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
+  if (!fs.existsSync(inputPath)) return { webp: null, avif: null };
   const ext = path.extname(inputPath).toLowerCase();
-  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return null;
+  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return { webp: null, avif: null };
 
   try {
     const { dir, name } = path.parse(inputPath);
     const webpPath = path.join(dir, `${name}.webp`);
-    await sharp(inputPath)
-      .withMetadata()
-      .webp({ quality: 80 })
+    const avifPath = path.join(dir, `${name}.avif`);
+
+    // Resize ảnh nếu cần
+    let sharpInstance = sharp(inputPath).withMetadata();
+    if (maxWidth && maxHeight) {
+      sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
+    }
+
+    // Tạo WebP
+    await sharpInstance
+      .webp({ quality: 60 }) // Giảm chất lượng để tối ưu hơn
       .toFile(webpPath);
-    return webpPath.replace(rootDir, '').replace(/\\/g, '/');
+
+    // Tạo AVIF
+    await sharpInstance
+      .avif({ quality: 50 }) // AVIF nén tốt hơn
+      .toFile(avifPath);
+
+    return {
+      webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
+      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/')
+    };
   } catch (err) {
-    console.error('[makeWebp] error:', err);
-    return null;
+    console.error('[makeWebpAndAvif] error:', err);
+    return { webp: null, avif: null };
   }
 }
 
-// Convert <img> to <picture>
+// Convert <img> to <picture> với WebP và AVIF
 async function convertImages(html) {
   const $ = cheerio.load(html, { decodeEntities: false });
   const imgs = $('img');
@@ -55,6 +72,19 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
+    // Xác định kích thước tối đa dựa trên class hoặc vị trí
+    let maxWidth, maxHeight;
+    if (src.includes('icons/')) {
+      maxWidth = 50;
+      maxHeight = 50;
+    } else if (src.includes('about-us')) {
+      maxWidth = 600;
+      maxHeight = 400;
+    } else if (src.includes('thiet-ke-phong-sach') || src.includes('thi-cong-phong-sach') || src.includes('bao-tri-phong-sach')) {
+      maxWidth = 400;
+      maxHeight = 300;
+    }
+
     try {
       const metadata = await sharp(realPath).metadata();
       if (metadata.width && metadata.height) {
@@ -65,14 +95,15 @@ async function convertImages(html) {
       console.error('Error reading image metadata:', err);
     }
 
-    const webpRel = await makeWebp(realPath);
-    if (webpRel) {
+    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
+    if (webp && avif) {
       const width = $(el).attr('width') || '';
       const height = $(el).attr('height') || '';
       const pictureHtml = `
 <picture>
-  <source srcset="${webpRel}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}>
+  <source srcset="${avif}" type="image/avif">
+  <source srcset="${webp}" type="image/webp">
+  <img src="${src}" alt="${alt}" class="img-fluid" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${src.includes('tu-van-phong-sach') ? 'high' : 'auto'}">
 </picture>`;
       $(el).replaceWith(pictureHtml);
     }
@@ -94,10 +125,21 @@ async function convertBackgroundImages(html) {
 
     const imageUrl = match[1];
     const realPath = path.join(rootDir, imageUrl);
-    const webpRel = await makeWebp(realPath);
-    if (webpRel) {
-      const newStyle = style.replace(imageUrl, webpRel);
+
+    // Resize ảnh nền (hero banner) về 1920x1080
+    const { webp, avif } = await makeWebpAndAvif(realPath, 1920, 1080);
+    if (webp && avif) {
+      const newStyle = style.replace(imageUrl, webp); // Sử dụng WebP làm mặc định
       $(el).attr('style', newStyle);
+
+      // Thêm thẻ <picture> cho ảnh nền (nếu cần hỗ trợ AVIF)
+      const pictureHtml = `
+<picture>
+  <source srcset="${avif}" type="image/avif">
+  <source srcset="${webp}" type="image/webp">
+  <img src="${imageUrl}" alt="Hero Banner Background" style="display: none;">
+</picture>`;
+      $(el).prepend(pictureHtml);
     }
   }
   return $.html();
@@ -113,7 +155,6 @@ function injectMeta() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa các meta cũ nếu có
     $('meta[name="viewport"], meta[name="description"]').remove();
 
     const metaInsert = `
@@ -137,7 +178,6 @@ function injectOpenGraph() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa OG cũ nếu có
     $('meta[property^="og:"]').remove();
 
     const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/);
@@ -171,7 +211,6 @@ function injectSchema() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa schema cũ nếu có
     $('script[type="application/ld+json"]').remove();
 
     const schemaFileName = `schema-${outName.replace('.html', '')}.json`;
@@ -197,7 +236,6 @@ function injectBreadcrumbAuto() {
     let html = fs.readFileSync(filePath, 'utf8');
     const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Xóa breadcrumb cũ nếu có
     $('script[type="application/ld+json"]').filter((i, el) => {
       return $(el).html().includes('"BreadcrumbList"');
     }).remove();
@@ -263,7 +301,7 @@ async function buildStaticPages() {
       <link rel="stylesheet" href="/assets/bootstrap/bootstrap.min.css">
     `);
     $doc('head').append(`<title>${h1Text}</title>`);
-    $doc('body').append(header); // Menu từ header.html
+    $doc('body').append(header);
     $doc('body').append(raw);
     $doc('body').append(footer);
 
