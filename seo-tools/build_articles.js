@@ -56,9 +56,9 @@ function loadPartials() {
   return { header, footer };
 }
 
-async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
+async function makeWebpAndAvif(inputPath, maxWidth) {
   if (!fs.existsSync(inputPath)) {
-    console.error(`[makeWebpAndAvif] File not found: ${inputPath}`);
+    console.error(`[makeWebpAndAvif] File không tồn tại: ${inputPath}`);
     return { webp: null, avif: null };
   }
   const ext = path.extname(inputPath).toLowerCase();
@@ -70,19 +70,24 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight) {
     const avifPath = path.join(dir, `${name}.avif`);
 
     let sharpInstance = sharp(inputPath).withMetadata();
-    if (maxWidth && maxHeight) {
-      sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
+    if (maxWidth) {
+      sharpInstance = sharpInstance.resize({ width: maxWidth, fit: 'inside', withoutEnlargement: true });
     }
 
-    await sharpInstance.webp({ quality: 80 }).toFile(webpPath);
-    await sharpInstance.avif({ quality: 60 }).toFile(avifPath);
-    console.log(`[makeWebpAndAvif] Success: ${webpPath}, ${avifPath}`);
+    await sharpInstance.webp({ quality: 90 }).toFile(webpPath);
+    await sharpInstance.avif({ quality: 70 }).toFile(avifPath);
+    console.log(`[makeWebpAndAvif] Thành công: ${webpPath}, ${avifPath}`);
+
+    // Lấy kích thước của ảnh đã thu nhỏ
+    const { width, height } = await sharp(webpPath).metadata();
     return {
       webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
-      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/')
+      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/'),
+      width,
+      height
     };
   } catch (err) {
-    console.error('[makeWebpAndAvif] Error:', err);
+    console.error('[makeWebpAndAvif] Lỗi:', err);
     return { webp: null, avif: null };
   }
 }
@@ -99,35 +104,28 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Default dimensions for article images (except logos)
-    const maxWidth = src.includes('logo') ? null : 800;
-    const maxHeight = src.includes('logo') ? null : 600;
+    // Chiều rộng tối đa cho ảnh bài viết (trừ logo)
+    const maxWidth = src.includes('logo') ? null : src.includes('AHU-la-gi.jpg') ? 1000 : 800;
 
-    // Adjust dimensions for specific image if needed
-    const isSpecificImage = src.includes('AHU-la-gi.jpg');
-    const finalMaxWidth = isSpecificImage ? 1000 : maxWidth; // Example: wider for this image
-    const finalMaxHeight = isSpecificImage ? 667 : maxHeight; // Maintain aspect ratio
-
-    const { webp, avif } = await makeWebpAndAvif(realPath, finalMaxWidth, finalMaxHeight);
-    if (webp && avif) {
-      const width = $(el).attr('width') || finalMaxWidth || '800';
-      const height = $(el).attr('height') || finalMaxHeight || '600';
+    const { webp, avif, width, height } = await makeWebpAndAvif(realPath, maxWidth);
+    if (webp && avif && width && height) {
       const pictureHtml = `
 <picture class="article-image">
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
   <img src="${src}" alt="${alt}" class="img-fluid rounded" width="${width}" height="${height}" loading="lazy" style="max-width: 100%; height: auto;">
 </picture>`;
-      // Wrap in image-container if not already present
+      // Bọc trong image-container nếu chưa có
       $(el).parent().hasClass('image-container') 
         ? $(el).replaceWith(pictureHtml) 
         : $(el).wrap('<div class="image-container text-center my-4"></div>').replaceWith(pictureHtml);
     } else {
-      // Fallback if WebP/AVIF conversion fails
-      if (!$(el).attr('width') && finalMaxWidth) $(el).attr('width', finalMaxWidth);
-      if (!$(el).attr('height') && finalMaxHeight) $(el).attr('height', finalMaxHeight);
-      $(el).addClass('img-fluid rounded');
+      // Dự phòng nếu chuyển đổi WebP/AVIF thất bại
+      const fallbackWidth = maxWidth || 800;
+      const fallbackHeight = 'auto';
+      $(el).attr('width', fallbackWidth);
       $(el).attr('style', 'max-width: 100%; height: auto;');
+      $(el).addClass('img-fluid rounded');
       if (!$(el).parent().hasClass('image-container')) {
         $(el).wrap('<div class="image-container text-center my-4"></div>');
       }
@@ -135,7 +133,6 @@ async function convertImages(html) {
   }
   return $.html();
 }
-
 
 async function buildArticles(rawData) {
   let { header, footer } = loadPartials();
