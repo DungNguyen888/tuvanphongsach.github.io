@@ -99,29 +99,43 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Mặc định kích thước ảnh bài viết là 800x600, trừ logo
+    // Default dimensions for article images (except logos)
     const maxWidth = src.includes('logo') ? null : 800;
     const maxHeight = src.includes('logo') ? null : 600;
 
-    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight);
+    // Adjust dimensions for specific image if needed
+    const isSpecificImage = src.includes('AHU-la-gi.jpg');
+    const finalMaxWidth = isSpecificImage ? 1000 : maxWidth; // Example: wider for this image
+    const finalMaxHeight = isSpecificImage ? 667 : maxHeight; // Maintain aspect ratio
+
+    const { webp, avif } = await makeWebpAndAvif(realPath, finalMaxWidth, finalMaxHeight);
     if (webp && avif) {
-      const width = $(el).attr('width') || maxWidth || '800';
-      const height = $(el).attr('height') || maxHeight || '600';
+      const width = $(el).attr('width') || finalMaxWidth || '800';
+      const height = $(el).attr('height') || finalMaxHeight || '600';
       const pictureHtml = `
-<picture>
+<picture class="article-image">
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid" width="${width}" height="${height}" loading="lazy">
+  <img src="${src}" alt="${alt}" class="img-fluid rounded" width="${width}" height="${height}" loading="lazy" style="max-width: 100%; height: auto;">
 </picture>`;
-      $(el).replaceWith(pictureHtml);
+      // Wrap in image-container if not already present
+      $(el).parent().hasClass('image-container') 
+        ? $(el).replaceWith(pictureHtml) 
+        : $(el).wrap('<div class="image-container text-center my-4"></div>').replaceWith(pictureHtml);
     } else {
-      // Nếu không tạo được webp/avif, vẫn thêm kích thước
-      if (!$(el).attr('width') && maxWidth) $(el).attr('width', maxWidth);
-      if (!$(el).attr('height') && maxHeight) $(el).attr('height', maxHeight);
+      // Fallback if WebP/AVIF conversion fails
+      if (!$(el).attr('width') && finalMaxWidth) $(el).attr('width', finalMaxWidth);
+      if (!$(el).attr('height') && finalMaxHeight) $(el).attr('height', finalMaxHeight);
+      $(el).addClass('img-fluid rounded');
+      $(el).attr('style', 'max-width: 100%; height: auto;');
+      if (!$(el).parent().hasClass('image-container')) {
+        $(el).wrap('<div class="image-container text-center my-4"></div>');
+      }
     }
   }
   return $.html();
 }
+
 
 async function buildArticles(rawData) {
   let { header, footer } = loadPartials();

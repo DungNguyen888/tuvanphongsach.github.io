@@ -398,3 +398,26 @@ p, h1, h2, h3 {
 footer {
     position: relative; /* Giữ footer ổn định */
 }
+.image-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.article-image img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    padding: 0 10px;
+  }
+  .article-image img {
+    width: 100%;
+  }
+}
