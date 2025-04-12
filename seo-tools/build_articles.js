@@ -78,8 +78,9 @@ async function makeWebpAndAvif(inputPath, maxWidth) {
     await sharpInstance.avif({ quality: 70 }).toFile(avifPath);
     console.log(`[makeWebpAndAvif] Thành công: ${webpPath}, ${avifPath}`);
 
-    // Lấy kích thước của ảnh đã thu nhỏ
+    // Lấy kích thước ảnh đã thu nhỏ
     const { width, height } = await sharp(webpPath).metadata();
+    console.log(`[makeWebpAndAvif] Kích thước: ${width}x${height}`);
     return {
       webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
       avif: avifPath.replace(rootDir, '').replace(/\\/g, '/'),
@@ -91,6 +92,7 @@ async function makeWebpAndAvif(inputPath, maxWidth) {
     return { webp: null, avif: null };
   }
 }
+
 
 async function convertImages(html) {
   const $ = cheerio.load(html, { decodeEntities: false });
@@ -104,7 +106,7 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Chiều rộng tối đa cho ảnh bài viết (trừ logo)
+    // Chiều rộng tối đa, ưu tiên cho AHU-la-gi.jpg
     const maxWidth = src.includes('logo') ? null : src.includes('AHU-la-gi.jpg') ? 1000 : 800;
 
     const { webp, avif, width, height } = await makeWebpAndAvif(realPath, maxWidth);
@@ -115,17 +117,14 @@ async function convertImages(html) {
   <source srcset="${webp}" type="image/webp">
   <img src="${src}" alt="${alt}" class="img-fluid rounded" width="${width}" height="${height}" loading="lazy" style="max-width: 100%; height: auto;">
 </picture>`;
-      // Bọc trong image-container nếu chưa có
       $(el).parent().hasClass('image-container') 
         ? $(el).replaceWith(pictureHtml) 
         : $(el).wrap('<div class="image-container text-center my-4"></div>').replaceWith(pictureHtml);
     } else {
-      // Dự phòng nếu chuyển đổi WebP/AVIF thất bại
-      const fallbackWidth = maxWidth || 800;
-      const fallbackHeight = 'auto';
-      $(el).attr('width', fallbackWidth);
-      $(el).attr('style', 'max-width: 100%; height: auto;');
+      // Dự phòng nếu chuyển đổi thất bại
+      console.warn(`[convertImages] Không tạo được WebP/AVIF cho: ${src}`);
       $(el).addClass('img-fluid rounded');
+      $(el).attr('style', 'max-width: 100%; height: auto;');
       if (!$(el).parent().hasClass('image-container')) {
         $(el).wrap('<div class="image-container text-center my-4"></div>');
       }
