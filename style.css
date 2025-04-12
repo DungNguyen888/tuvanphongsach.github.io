@@ -195,6 +195,8 @@ p, h1, h2, h3 {
 
 .article-image {
     display: inline-block;
+    width: 100%;
+    position: relative;
 }
 
 .article-image img,
@@ -232,6 +234,7 @@ p, h1, h2, h3 {
 /* Article Content (bài viết) */
 .article-content {
     padding: 20px 0;
+     min-height: 400px; /* Dự phòng chiều cao tránh dịch chuyển */
 }
 
 .article-content h2 {
@@ -404,4 +407,32 @@ footer {
     .image-container {
         padding: 0 10px;
     }
+}
+/* Dự phòng tỷ lệ ảnh để tránh CLS */
+.article-image picture,
+.hero-image-wrapper picture {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Tỷ lệ mặc định 16:9, sẽ bị ghi đè bởi inline width/height */
+}
+
+.article-image picture img,
+.hero-image-wrapper picture img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.article-content img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 20px 0;
+    display: block;
+    object-fit: contain;
 }

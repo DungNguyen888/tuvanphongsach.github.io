@@ -80,6 +80,14 @@ async function makeWebpAndAvif(inputPath, maxWidth) {
       return { webp: null, avif: null, width: null, height: null };
     }
 
+    // Xóa file cũ nếu tồn tại để tránh xung đột
+    try {
+      if (fs.existsSync(webpPath)) fs.unlinkSync(webpPath);
+      if (fs.existsSync(avifPath)) fs.unlinkSync(avifPath);
+    } catch (err) {
+      console.warn(`[makeWebpAndAvif] Không xóa được file cũ ${webpPath}: ${err.message}`);
+    }
+
     let sharpInstance = sharp(inputPath).withMetadata();
     let width, height;
     const metadata = await sharp(inputPath).metadata();
@@ -87,11 +95,12 @@ async function makeWebpAndAvif(inputPath, maxWidth) {
     if (maxWidth) {
       sharpInstance = sharpInstance.resize({ width: maxWidth, fit: 'inside', withoutEnlargement: true });
     }
+
+    // Thử ghi file
     await sharpInstance.webp({ quality: 90 }).toFile(webpPath);
     await sharpInstance.avif({ quality: 70 }).toFile(avifPath);
     console.log(`[makeWebpAndAvif] Thành công: ${webpPath}, ${avifPath}`);
 
-    // Lấy kích thước sau resize
     const resizedMetadata = await sharp(webpPath).metadata();
     width = resizedMetadata.width;
     height = resizedMetadata.height;
@@ -390,7 +399,9 @@ async function buildMainCategoryFile() {
       const firstImg = $('img').filter(function() {
         return !($(this).attr('src') || '').toLowerCase().includes('logo');
       }).first().attr('src');
-      if (firstImg) img = firstImg;
+      if (firstImg && fs.existsSync(path.join(rootDir, firstImg))) {
+    img = firstImg; // Ưu tiên ảnh thực tế
+  }
     }
 
     content += `
