@@ -41,6 +41,8 @@ p, h1, h2, h3 {
 .btn-custom:hover {
     background-color: #218838;
     color: var(--text-light);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .section-title {
@@ -80,12 +82,11 @@ p, h1, h2, h3 {
     color: var(--text-light) !important;
 }
 
-/* Logo cố định kích thước */
+/* Logo */
 .logo-fixed {
     width: 50px;
     height: 50px;
     object-fit: contain;
-    max-width: none;
 }
 
 /* Hero Banner (trang tĩnh) */
@@ -130,11 +131,6 @@ p, h1, h2, h3 {
 
 .hero-banner .btn-custom {
     margin-top: 20px;
-}
-
-.hero-banner .btn-custom:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Các section khác (trang tĩnh) */
@@ -188,12 +184,37 @@ p, h1, h2, h3 {
     font-size: 1.2rem;
 }
 
+/* Hình ảnh chung (bài viết và danh mục) */
+.image-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+    text-align: center;
+    overflow: visible;
+}
+
+.article-image {
+    display: inline-block;
+}
+
+.article-image img,
+.hero-image-wrapper img,
+.card-img-top {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
 /* Hero Section (bài viết) */
 .hero-section {
     background-color: var(--background-light);
     padding: 50px 0;
     border-bottom: 1px solid #ddd;
-    min-height: 400px; /* Đảm bảo chiều cao tối thiểu để tránh dịch chuyển */
 }
 
 .hero-title {
@@ -203,29 +224,9 @@ p, h1, h2, h3 {
     margin-bottom: 20px;
 }
 
-.hero-section img,
-.hero-image-wrapper img {
-    max-width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: block; /* Ngăn ảnh gây dịch chuyển */
-}
-
 .hero-image-wrapper {
     max-width: 100%;
-    display: inline-block;
-    position: relative;
-    width: 800px; /* Kích thước mặc định */
-    height: 600px; /* Tỷ lệ 4:3 */
-    overflow: hidden; /* Tránh tràn nội dung */
-}
-/* Giữ chỗ cho ảnh trong hero */
-.hero-image-wrapper picture,
-.hero-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
+    text-align: center;
 }
 
 /* Article Content (bài viết) */
@@ -256,13 +257,12 @@ p, h1, h2, h3 {
 
 .article-content img {
     max-width: 100%;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
     margin: 20px 0;
     display: block;
-    width: 800px; /* Kích thước mặc định */
-    height: 600px; /* Tỷ lệ 4:3 */
-    object-fit: cover;
-    aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
+    object-fit: contain;
 }
 
 /* Related Articles (bài viết) */
@@ -297,56 +297,10 @@ p, h1, h2, h3 {
 
 /* Category Hero */
 .category-hero {
-  background-color: var(--primary-color);
-  color: var(--text-light);
-  padding: 40px 0;
-  text-align: center;
-  min-height: 200px; /* Giữ chỗ cho hero */
-}
-
-/* Category Content */
-.category-content {
-  background-color: #fff;
-  padding: 20px 0;
-}
-
-.category-card {
-  text-decoration: none;
-  color: var(--text-color);
-}
-
-.category-card .card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 100%; /* Đảm bảo card đồng đều */
-}
-
-.category-card .card-img-top {
-  height: 200px; /* Chiều cao cố định */
-  width: 100%;
-  object-fit: cover;
-  aspect-ratio: 4 / 3; /* Tỷ lệ cố định */
-  display: block;
-}
-
-.category-card .card-title {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  color: var(--primary-color);
-}
-
-.category-card .card-text {
-  font-size: 0.95rem;
-  color: #666;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .category-card .card-img-top {
-    height: 150px; /* Giảm chiều cao trên mobile */
-    aspect-ratio: 4 / 3;
-  }
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 40px 0;
+    text-align: center;
 }
 
 .category-title {
@@ -354,70 +308,100 @@ p, h1, h2, h3 {
     font-weight: bold;
 }
 
+/* Category Content */
+.category-content {
+    background-color: #fff;
+    padding: 20px 0;
+}
+
+.category-card {
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.category-card .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
 .category-card .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.category-card .card-title {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
 
+.category-card .card-text {
+    font-size: 0.95rem;
+    color: #666;
+}
 
-/* Điều chỉnh cho màn hình nhỏ */
+/* Footer */
+footer {
+    position: relative;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
     .logo-fixed {
         width: 40px;
         height: 40px;
     }
+
+    .hero-banner {
+        height: 300px;
+    }
+
     .hero-banner h1 {
         font-size: 2rem;
     }
+
     .hero-banner p {
         font-size: 1.2rem;
     }
+
+    .hero-section {
+        padding: 30px 0;
+    }
+
     .hero-title {
         font-size: 1.8rem;
     }
-    .article-content h2 {
-        font-size: 1.5rem;
-    }
-    .article-content h3 {
-        font-size: 1.3rem;
-    }
-    .related-card .card-title {
-        font-size: 1rem;
-    }
-    .hero-image-wrapper {
-        width: 100%;
-        height: auto; /* Để ảnh responsive */
-    }
-    .article-content img {
+
+    .hero-image-wrapper,
+    .article-content img,
+    .card-img-top {
         width: 100%;
         height: auto;
     }
-}
-/* Footer */
-footer {
-    position: relative; /* Giữ footer ổn định */
-}
-.image-container {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 15px;
-}
 
-.article-image img {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    .article-content h2 {
+        font-size: 1.5rem;
+    }
 
-@media (max-width: 768px) {
-  .image-container {
-    padding: 0 10px;
-  }
-  .article-image img {
-    width: 100%;
-  }
+    .article-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .related-card .card-title {
+        font-size: 1rem;
+    }
+
+    .category-title {
+        font-size: 2rem;
+    }
+
+    .category-card .card-img-top {
+        height: auto;
+    }
+
+    .image-container {
+        padding: 0 10px;
+    }
 }

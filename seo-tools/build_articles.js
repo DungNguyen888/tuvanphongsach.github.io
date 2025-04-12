@@ -59,28 +59,44 @@ function loadPartials() {
 async function makeWebpAndAvif(inputPath, maxWidth) {
   if (!fs.existsSync(inputPath)) {
     console.error(`[makeWebpAndAvif] File không tồn tại: ${inputPath}`);
-    return { webp: null, avif: null };
+    return { webp: null, avif: null, width: null, height: null };
   }
   const ext = path.extname(inputPath).toLowerCase();
-  if (!['.jpg', '.jpeg', '.png'].includes(ext)) return { webp: null, avif: null };
+  if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
+    console.warn(`[makeWebpAndAvif] Định dạng không hỗ trợ: ${inputPath}`);
+    return { webp: null, avif: null, width: null, height: null };
+  }
 
   try {
     const { dir, name } = path.parse(inputPath);
     const webpPath = path.join(dir, `${name}.webp`);
     const avifPath = path.join(dir, `${name}.avif`);
 
+    // Kiểm tra quyền ghi
+    try {
+      fs.accessSync(dir, fs.constants.W_OK);
+    } catch (err) {
+      console.error(`[makeWebpAndAvif] Không có quyền ghi vào: ${dir}`);
+      return { webp: null, avif: null, width: null, height: null };
+    }
+
     let sharpInstance = sharp(inputPath).withMetadata();
+    let width, height;
+    const metadata = await sharp(inputPath).metadata();
+    console.log(`[makeWebpAndAvif] Gốc: ${metadata.width}x${metadata.height}`);
     if (maxWidth) {
       sharpInstance = sharpInstance.resize({ width: maxWidth, fit: 'inside', withoutEnlargement: true });
     }
-
     await sharpInstance.webp({ quality: 90 }).toFile(webpPath);
     await sharpInstance.avif({ quality: 70 }).toFile(avifPath);
     console.log(`[makeWebpAndAvif] Thành công: ${webpPath}, ${avifPath}`);
 
-    // Lấy kích thước ảnh đã thu nhỏ
-    const { width, height } = await sharp(webpPath).metadata();
+    // Lấy kích thước sau resize
+    const resizedMetadata = await sharp(webpPath).metadata();
+    width = resizedMetadata.width;
+    height = resizedMetadata.height;
     console.log(`[makeWebpAndAvif] Kích thước: ${width}x${height}`);
+
     return {
       webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
       avif: avifPath.replace(rootDir, '').replace(/\\/g, '/'),
@@ -88,11 +104,10 @@ async function makeWebpAndAvif(inputPath, maxWidth) {
       height
     };
   } catch (err) {
-    console.error('[makeWebpAndAvif] Lỗi:', err);
-    return { webp: null, avif: null };
+    console.error(`[makeWebpAndAvif] Lỗi xử lý ${inputPath}:`, err.message);
+    return { webp: null, avif: null, width: null, height: null };
   }
 }
-
 
 async function convertImages(html) {
   const $ = cheerio.load(html, { decodeEntities: false });
@@ -103,10 +118,13 @@ async function convertImages(html) {
     const el = imgs[i];
     const src = $(el).attr('src');
     if (!src) continue;
+    if (src.endsWith('.webp') || src.endsWith('.avif')) {
+      console.log(`[convertImages] Bỏ qua file đã tối ưu: ${src}`);
+      continue;
+    }
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    // Chiều rộng tối đa, ưu tiên cho AHU-la-gi.jpg
     const maxWidth = src.includes('logo') ? null : src.includes('AHU-la-gi.jpg') ? 1000 : 800;
 
     const { webp, avif, width, height } = await makeWebpAndAvif(realPath, maxWidth);
@@ -121,7 +139,6 @@ async function convertImages(html) {
         ? $(el).replaceWith(pictureHtml) 
         : $(el).wrap('<div class="image-container text-center my-4"></div>').replaceWith(pictureHtml);
     } else {
-      // Dự phòng nếu chuyển đổi thất bại
       console.warn(`[convertImages] Không tạo được WebP/AVIF cho: ${src}`);
       $(el).addClass('img-fluid rounded');
       $(el).attr('style', 'max-width: 100%; height: auto;');
@@ -132,6 +149,7 @@ async function convertImages(html) {
   }
   return $.html();
 }
+
 
 async function buildArticles(rawData) {
   let { header, footer } = loadPartials();
@@ -285,14 +303,24 @@ async function buildSubCategoryIndexes() {
       const d = $('p').first().text().trim() || '';
       const img = rawData[file]?.image || defaultImage;
 
-      // Tạo phiên bản nhỏ hơn cho ảnh
+      // Tạo thumbnail giữ tỷ lệ
       const imgPath = path.join(rootDir, img);
-      const imgBase = img.replace(/\.[^/.]+$/, ''); // Bỏ đuôi file
+      const imgBase = img.replace(/\.[^/.]+$/, '');
       const smallAvif = `${imgBase}-small.avif`;
       const smallWebp = `${imgBase}-small.webp`;
+      let thumbnailWidth, thumbnailHeight;
       if (fs.existsSync(imgPath)) {
-        await sharp(imgPath).resize({ width: 400, height: 300 }).avif({ quality: 60 }).toFile(path.join(rootDir, smallAvif));
-        await sharp(imgPath).resize({ width: 400, height: 300 }).webp({ quality: 80 }).toFile(path.join(rootDir, smallWebp));
+        const sharpInstance = sharp(imgPath).resize({ width: 400, fit: 'inside', withoutEnlargement: true });
+        await sharpInstance.avif({ quality: 60 }).toFile(path.join(rootDir, smallAvif));
+        await sharpInstance.webp({ quality: 80 }).toFile(path.join(rootDir, smallWebp));
+        const { width, height } = await sharp(path.join(rootDir, smallWebp)).metadata();
+        thumbnailWidth = width;
+        thumbnailHeight = height;
+        console.log(`[buildSubCategoryIndexes] Thumbnail ${smallWebp}: ${width}x${height}`);
+      } else {
+        console.warn(`[buildSubCategoryIndexes] Hình không tồn tại: ${imgPath}`);
+        thumbnailWidth = 400;
+        thumbnailHeight = 'auto';
       }
 
       content += `
@@ -304,7 +332,7 @@ async function buildSubCategoryIndexes() {
                 <source media="(max-width: 768px)" srcset="${smallWebp}" type="image/webp">
                 <source srcset="${imgBase}.avif" type="image/avif">
                 <source srcset="${imgBase}.webp" type="image/webp">
-                <img src="${img}" class="card-img-top" alt="${t}" loading="lazy">
+                <img src="${img}" class="card-img-top" alt="${t}" loading="lazy" width="${thumbnailWidth}" height="${thumbnailHeight}">
               </picture>
               <div class="card-body">
                 <h2 class="card-title">${t}</h2>
