@@ -134,7 +134,8 @@ async function convertImages(html) {
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
-    const maxWidth = src.includes('logo') ? null : src.includes('AHU-la-gi.jpg') ? 1000 : 800;
+    // Chiều rộng mặc định cho hình thu nhỏ hoặc trường hợp cụ thể
+    const maxWidth = src.includes('logo') ? null : src.includes('AHU-la-gi.jpg') ? 1000 : src.includes('tu-van-phong-sach') ? 400 : 800;
 
     const { webp, avif, width, height } = await makeWebpAndAvif(realPath, maxWidth);
     if (webp && avif && width && height) {
@@ -142,7 +143,7 @@ async function convertImages(html) {
 <picture class="article-image">
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${src}" alt="${alt}" class="img-fluid rounded" width="${width}" height="${height}" loading="lazy" style="max-width: 100%; height: auto;">
+  <img src="${src}" alt="${alt}" class="img-fluid rounded" width="${width}" height="${height}" loading="lazy" fetchpriority="${i < 3 ? 'high' : 'auto'}" style="max-width: 100%; height: auto;">
 </picture>`;
       $(el).parent().hasClass('image-container') 
         ? $(el).replaceWith(pictureHtml) 
@@ -158,7 +159,6 @@ async function convertImages(html) {
   }
   return $.html();
 }
-
 
 async function buildArticles(rawData) {
   let { header, footer } = loadPartials();
@@ -312,20 +312,25 @@ async function buildSubCategoryIndexes() {
       const d = $('p').first().text().trim() || '';
       const img = rawData[file]?.image || defaultImage;
 
-      // Tạo thumbnail giữ tỷ lệ
+      // Tạo hình thu nhỏ giữ tỷ lệ
       const imgPath = path.join(rootDir, img);
       const imgBase = img.replace(/\.[^/.]+$/, '');
       const smallAvif = `${imgBase}-small.avif`;
       const smallWebp = `${imgBase}-small.webp`;
+      const optimizedJpeg = `${imgBase}-opt.jpg`;
       let thumbnailWidth, thumbnailHeight;
+
       if (fs.existsSync(imgPath)) {
-        const sharpInstance = sharp(imgPath).resize({ width: 400, fit: 'inside', withoutEnlargement: true });
+        // Thay đổi kích thước và chuyển sang WebP/AVIF
+        let sharpInstance = sharp(imgPath).resize({ width: 400, fit: 'inside', withoutEnlargement: true });
         await sharpInstance.avif({ quality: 60 }).toFile(path.join(rootDir, smallAvif));
         await sharpInstance.webp({ quality: 80 }).toFile(path.join(rootDir, smallWebp));
+        await sharpInstance.jpeg({ quality: 70, mozjpeg: true }).toFile(path.join(rootDir, optimizedJpeg));
+
         const { width, height } = await sharp(path.join(rootDir, smallWebp)).metadata();
         thumbnailWidth = width;
         thumbnailHeight = height;
-        console.log(`[buildSubCategoryIndexes] Thumbnail ${smallWebp}: ${width}x${height}`);
+        console.log(`[buildSubCategoryIndexes] Hình thu nhỏ ${smallWebp}: ${width}x${height}`);
       } else {
         console.warn(`[buildSubCategoryIndexes] Hình không tồn tại: ${imgPath}`);
         thumbnailWidth = 400;
@@ -339,9 +344,9 @@ async function buildSubCategoryIndexes() {
               <picture>
                 <source media="(max-width: 768px)" srcset="${smallAvif}" type="image/avif">
                 <source media="(max-width: 768px)" srcset="${smallWebp}" type="image/webp">
-                <source srcset="${imgBase}.avif" type="image/avif">
-                <source srcset="${imgBase}.webp" type="image/webp">
-                <img src="${img}" class="card-img-top" alt="${t}" loading="lazy" width="${thumbnailWidth}" height="${thumbnailHeight}">
+                <source srcset="${smallAvif}" type="image/avif">
+                <source srcset="${smallWebp}" type="image/webp">
+                <img src="${optimizedJpeg}" class="card-img-top" alt="${t}" loading="lazy" width="${thumbnailWidth}" height="${thumbnailHeight}" fetchpriority="high">
               </picture>
               <div class="card-body">
                 <h2 class="card-title">${t}</h2>
