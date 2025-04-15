@@ -299,4 +299,5 @@ ${JSON.stringify(breadcrumbJSON, null, 2)}
   });
 }
 
-buildStaticPages().catch(err => console.error('❌ Lỗi build trang:', err));
+//buildStaticPages().catch(err => console.error('❌ Lỗi build trang:', err));
+module.exports = { buildStaticPages };

@@ -616,4 +616,5 @@ async function buildAllArticles() {
   console.log('\n🎯 Hoàn tất build bài viết!\n');
 }
 
-buildAllArticles().catch(err => console.error(err));
+//buildAllArticles().catch(err => console.error(err));
+module.exports = { buildAllArticles };
