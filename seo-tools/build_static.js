@@ -100,27 +100,34 @@ async function convertImages(html, pageName) {
       console.log(`[convertImages] Skipping: <img> without src in ${pageName}`);
       continue;
     }
+    if (src.endsWith('.webp') || src.endsWith('.avif')) {
+      console.log(`[convertImages] Skipping: Already optimized ${src} in ${pageName}`);
+      continue;
+    }
     console.log(`[convertImages] Processing: ${src} in ${pageName}`);
     const alt = $(el).attr('alt') || '';
     const realPath = path.join(rootDir, src);
 
+    if (!fs.existsSync(realPath)) {
+      console.warn(`[convertImages] Hình ảnh không tồn tại: ${realPath}`);
+      continue;
+    }
+
+    // Xác định kích thước resize dựa trên ngữ cảnh
     let maxWidth, maxHeight;
     const isIcon = src.includes('icons/');
     if (isIcon) {
       maxWidth = null;
       maxHeight = null;
+    } else if ($(el).closest('.service-card').length > 0) {
+      maxWidth = 400; // Đồng bộ cho hình ảnh trong card
+      maxHeight = 225; // Tỷ lệ 16:9, khớp với CSS (height: 200px)
     } else if (src.includes('about-us')) {
       maxWidth = 600;
       maxHeight = 400;
-    } else if (src.includes('thiet-ke-phong-sach') || src.includes('thi-cong-phong-sach') || src.includes('bao-tri-phong-sach')) {
-      maxWidth = 400;
-      maxHeight = 300;
     } else if (pageName === 'gioi-thieu.html') {
       maxWidth = 800;
       maxHeight = 600;
-    } else if (src.includes('tu-van-phong-sach')) {
-      maxWidth = 1200;
-      maxHeight = 675;
     } else {
       maxWidth = 1200;
       maxHeight = 800;
@@ -132,12 +139,21 @@ async function convertImages(html, pageName) {
     if (webp && avif) {
       const width = maxWidth || $(el).attr('width') || '';
       const height = maxHeight || $(el).attr('height') || '';
-      const isBanner = src.includes('tu-van-phong-sach');
+      // Gán class dựa trên ngữ cảnh
+      let imgClass = 'img-fluid';
+      if ($(el).closest('.service-card').length > 0) {
+        imgClass = 'card-img-top img-fluid'; // Hình ảnh trong card
+      } else if ($(el).hasClass('banner-img')) {
+        imgClass = 'banner-img img-fluid'; // Hình ảnh trong hero banner
+      }
+
       const pictureHtml = `
 <picture>
+  <source media="(max-width: 768px)" srcset="${avif.replace(/\.[^/.]+$/, '-small.avif')}" type="image/avif">
+  <source media="(max-width: 768px)" srcset="${webp.replace(/\.[^/.]+$/, '-small.webp')}" type="image/webp">
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
-  <img src="${optimizedJpeg || src}" alt="${alt}" class="img-fluid${isBanner ? ' banner-img' : ''}" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${isBanner ? 'high' : 'auto'}">
+  <img src="${optimizedJpeg || src}" alt="${alt}" class="${imgClass}" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${i < 3 ? 'high' : 'auto'}">
 </picture>`;
       $(el).replaceWith(pictureHtml);
       console.log(`[convertImages] Converted ${src} to <picture> in ${pageName}`);
@@ -145,7 +161,6 @@ async function convertImages(html, pageName) {
   }
   return $.html();
 }
-
 // Build Static Pages
 async function buildStaticPages() {
   if (!fs.existsSync(pagesDir)) {
