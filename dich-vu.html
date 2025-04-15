@@ -65,7 +65,14 @@
 
 
   <header class="hero-banner">
-    <img src="/image/dich-vu-phong-sach.jpg" alt="Dịch vụ phòng sạch" class="banner-img">
+    
+<picture>
+  <source media="(max-width: 768px)" srcset="/image/dich-vu-phong-sach-small.avif" type="image/avif">
+  <source media="(max-width: 768px)" srcset="/image/dich-vu-phong-sach-small.webp" type="image/webp">
+  <source srcset="/image/dich-vu-phong-sach.avif" type="image/avif">
+  <source srcset="/image/dich-vu-phong-sach.webp" type="image/webp">
+  <img src="/image/dich-vu-phong-sach-opt.jpg" alt="Dịch vụ phòng sạch" class="banner-img img-fluid" width="1200" height="800" loading="lazy" fetchpriority="high">
+</picture>
     <div class="container">
       <h1>Dịch vụ Phòng Sạch Trọn Gói</h1>
       <p>Tư vấn, thiết kế, thi công và bảo trì đạt chuẩn GMP, ISO – Giải pháp tối ưu cho doanh nghiệp</p>
