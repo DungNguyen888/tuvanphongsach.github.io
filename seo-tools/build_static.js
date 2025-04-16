@@ -52,20 +52,24 @@ async function optimizeJpeg(inputPath) {
 async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
   if (!fs.existsSync(inputPath)) {
     console.error(`[makeWebpAndAvif] File not found: ${inputPath}`);
-    return { webp: null, avif: null };
+    return { webp: null, avif: null, webpSmall: null, avifSmall: null };
   }
   const ext = path.extname(inputPath).toLowerCase();
   if (!['.jpg', '.jpeg', '.png'].includes(ext)) {
     console.log(`[makeWebpAndAvif] Skipped: ${inputPath} (unsupported format: ${ext})`);
-    return { webp: null, avif: null };
+    return { webp: null, avif: null, webpSmall: null, avifSmall: null };
   }
 
   try {
     const { dir, name } = path.parse(inputPath);
     const webpPath = path.join(dir, `${name}.webp`);
     const avifPath = path.join(dir, `${name}.avif`);
+    const webpSmallPath = path.join(dir, `${name}-small.webp`);
+    const avifSmallPath = path.join(dir, `${name}-small.avif`);
 
     let sharpInstance = sharp(inputPath).withMetadata();
+
+    // Tạo phiên bản desktop
     if (maxWidth && maxHeight && !isIcon) {
       sharpInstance = sharpInstance.resize({ width: maxWidth, height: maxHeight, fit: 'inside' });
     }
@@ -73,16 +77,34 @@ async function makeWebpAndAvif(inputPath, maxWidth, maxHeight, isIcon = false) {
     const webpQuality = isIcon ? 80 : 50;
     const avifQuality = isIcon ? 80 : 40;
 
-    await sharpInstance.webp({ quality: webpQuality }).toFile(webpPath);
-    await sharpInstance.avif({ quality: avifQuality }).toFile(avifPath);
-    console.log(`[makeWebpAndAvif] Success: ${webpPath}, ${avifPath} created`);
+    // Tạo tệp .webp và .avif cho desktop
+    await sharpInstance.clone().webp({ quality: webpQuality }).toFile(webpPath);
+    await sharpInstance.clone().avif({ quality: avifQuality }).toFile(avifPath);
+
+    // Tạo phiên bản mobile (resize nhỏ hơn)
+    let sharpInstanceSmall = sharp(inputPath).withMetadata();
+    if (isIcon) {
+      // Giữ nguyên kích thước cho icons
+      sharpInstanceSmall = sharpInstanceSmall.resize({ width: 64, height: 64, fit: 'inside' });
+    } else {
+      // Resize nhỏ hơn cho mobile
+      sharpInstanceSmall = sharpInstanceSmall.resize({ width: Math.round(maxWidth * 0.6), height: Math.round(maxHeight * 0.6), fit: 'inside' });
+    }
+
+    // Tạo tệp -small.webp và -small.avif cho mobile
+    await sharpInstanceSmall.clone().webp({ quality: webpQuality }).toFile(webpSmallPath);
+    await sharpInstanceSmall.clone().avif({ quality: avifQuality }).toFile(avifSmallPath);
+
+    console.log(`[makeWebpAndAvif] Success: ${webpPath}, ${avifPath}, ${webpSmallPath}, ${avifSmallPath} created`);
     return {
       webp: webpPath.replace(rootDir, '').replace(/\\/g, '/'),
-      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/')
+      avif: avifPath.replace(rootDir, '').replace(/\\/g, '/'),
+      webpSmall: webpSmallPath.replace(rootDir, '').replace(/\\/g, '/'),
+      avifSmall: avifSmallPath.replace(rootDir, '').replace(/\\/g, '/')
     };
   } catch (err) {
     console.error('[makeWebpAndAvif] Error:', err);
-    return { webp: null, avif: null };
+    return { webp: null, avif: null, webpSmall: null, avifSmall: null };
   }
 }
 
@@ -120,8 +142,8 @@ async function convertImages(html, pageName) {
       maxWidth = null;
       maxHeight = null;
     } else if ($(el).closest('.service-card').length > 0) {
-      maxWidth = 400; // Đồng bộ cho hình ảnh trong card
-      maxHeight = 225; // Tỷ lệ 16:9, khớp với CSS (height: 200px)
+      maxWidth = 400;
+      maxHeight = 225;
     } else if (src.includes('about-us')) {
       maxWidth = 600;
       maxHeight = 400;
@@ -133,24 +155,23 @@ async function convertImages(html, pageName) {
       maxHeight = 800;
     }
 
-    const { webp, avif } = await makeWebpAndAvif(realPath, maxWidth, maxHeight, isIcon);
+    const { webp, avif, webpSmall, avifSmall } = await makeWebpAndAvif(realPath, maxWidth, maxHeight, isIcon);
     const optimizedJpeg = await optimizeJpeg(realPath);
 
-    if (webp && avif) {
+    if (webp && avif && webpSmall && avifSmall) {
       const width = maxWidth || $(el).attr('width') || '';
       const height = maxHeight || $(el).attr('height') || '';
-      // Gán class dựa trên ngữ cảnh
       let imgClass = 'img-fluid';
       if ($(el).closest('.service-card').length > 0) {
-        imgClass = 'card-img-top img-fluid'; // Hình ảnh trong card
+        imgClass = 'card-img-top img-fluid';
       } else if ($(el).hasClass('banner-img')) {
-        imgClass = 'banner-img img-fluid'; // Hình ảnh trong hero banner
+        imgClass = 'banner-img img-fluid';
       }
 
       const pictureHtml = `
 <picture>
-  <source media="(max-width: 768px)" srcset="${avif.replace(/\.[^/.]+$/, '-small.avif')}" type="image/avif">
-  <source media="(max-width: 768px)" srcset="${webp.replace(/\.[^/.]+$/, '-small.webp')}" type="image/webp">
+  <source media="(max-width: 768px)" srcset="${avifSmall}" type="image/avif">
+  <source media="(max-width: 768px)" srcset="${webpSmall}" type="image/webp">
   <source srcset="${avif}" type="image/avif">
   <source srcset="${webp}" type="image/webp">
   <img src="${optimizedJpeg || src}" alt="${alt}" class="${imgClass}" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''} loading="lazy" fetchpriority="${i < 3 ? 'high' : 'auto'}">
@@ -161,6 +182,7 @@ async function convertImages(html, pageName) {
   }
   return $.html();
 }
+
 // Build Static Pages
 async function buildStaticPages() {
   if (!fs.existsSync(pagesDir)) {
