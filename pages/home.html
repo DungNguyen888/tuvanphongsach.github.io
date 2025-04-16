@@ -4,167 +4,185 @@
   <meta charset="UTF-8">
   <title>Dịch vụ Tư Vấn Phòng Sạch đạt chuẩn GMP, ISO</title>
   <link rel="stylesheet" href="/style.css">
-  <style>
+   <style>
     .hero-banner {
-        position: relative;
-        width: 100%;
-        height: 500px;
-        overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 500px;
+      overflow: hidden;
     }
 
     .banner-img {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center; /* Căn giữa hình ảnh */
-        transform: translate(-50%, -50%); /* Căn giữa theo cả hai chiều */
-        z-index: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: translate(-50%, -50%);
+      z-index: 0;
     }
 
     .hero-banner .container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        color: white;
-        z-index: 1;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 1;
     }
 
     .hero-banner h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .hero-banner p {
-        font-size: 1.5rem;
-        font-weight: 500;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     .hero-banner .btn-custom {
-        margin-top: 20px;
-        background-color: #218838;
-        border: none;
-        padding: 12px 30px;
-        font-size: 1.2rem;
-        color: #fff;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
+      margin-top: 20px;
+      background-color: #2ecc71; /* Đổi từ #218838 thành #2ecc71 */
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .hero-banner .btn-custom:hover {
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
 
     /* Các style khác giữ nguyên */
     .highlight-card {
-        transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .highlight-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
     .highlight-card h3 {
-        font-size: 1.5rem;
-        color: var(--primary-color);
+      font-size: 1.5rem;
+      color: var(--primary-color);
     }
 
     .highlight-card p {
-        font-size: 1rem;
+      font-size: 1rem;
     }
 
     .highlight-card img.icon {
-        width: 64px;
-        height: 64px;
+      width: 64px;
+      height: 64px;
     }
 
     .service-card img {
-        transition: transform 0.3s;
+      transition: transform 0.3s;
     }
 
     .service-card:hover img {
-        transform: scale(1.05);
+      transform: scale(1.05);
     }
 
     .service-card h3 {
-        font-size: 1.25rem;
-        color: var(--primary-color);
+      font-size: 1.25rem;
+      color: var(--primary-color);
     }
 
     .service-card p {
-        font-size: 1rem;
+      font-size: 1rem;
     }
 
     .cta-section {
-        background: linear-gradient(135deg, var(--primary-color), #00aaff);
-        color: var(--text-light);
-        padding: 3rem 0;
+      background: linear-gradient(135deg, var(--primary-color), #00aaff);
+      color: var(--text-light);
+      padding: 3rem 0;
     }
 
     .cta-section p {
-        font-size: 1.2rem;
+      font-size: 1.2rem;
     }
 
     .cta-section .btn {
-        background-color: #1e7e34;
-        border: none;
-        padding: 12px 30px;
-        font-size: 1.2rem;
-        color: #fff;
-        transition: background-color 0.3s ease;
-        text-decoration: none;
+      background-color: #1e7e34; /* Nút trong cta-section cũng cần sửa */
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
     }
 
     .cta-section .btn:hover {
-        background-color: #155724;
-        color: #fff;
+      background-color: #155724;
+      color: #fff;
     }
 
     /* Responsive cho mobile */
     @media (max-width: 768px) {
-        .hero-banner {
-            height: 300px;
-        }
+      .hero-banner {
+        height: 300px;
+      }
 
-        .hero-banner h1 {
-            font-size: 2rem;
-        }
+      .hero-banner h1 {
+        font-size: 2rem;
+      }
 
-        .hero-banner p {
-            font-size: 1rem;
-        }
+      .hero-banner p {
+        font-size: 1rem;
+      }
 
-        .hero-banner .btn-custom {
-            padding: 10px 20px;
-            font-size: 1rem;
-        }
+      .hero-banner .btn-custom {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
 
-        .cta-section {
-            padding: 2rem 0;
-        }
+      .cta-section {
+        padding: 2rem 0;
+      }
 
-        .cta-section h2 {
-            font-size: 1.5rem;
-        }
+      .cta-section h2 {
+        font-size: 1.5rem;
+      }
 
-        .cta-section p {
-            font-size: 1rem;
-        }
+      .cta-section p {
+        font-size: 1rem;
+      }
 
-        .cta-section .btn {
-            padding: 10px 20px;
-            font-size: 1rem;
-        }
+      .cta-section .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Sửa nút .btn-custom ở phần khác (nếu có) */
+    .btn-custom {
+      background-color: #2ecc71 !important; /* Đổi màu nền */
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      color: #fff;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-custom:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      color: #fff;
     }
   </style>
 </head>
